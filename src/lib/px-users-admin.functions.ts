@@ -158,9 +158,12 @@ export const updatePlatformUser = createServerFn({ method: "POST" })
     await assertExecutivo(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const patch: Record<string, unknown> = { situacao: data.situacao, updated_at: new Date().toISOString() };
-    if (data.nome) patch["nome"] = data.nome;
-    patch["cargo"] = data.cargo;
+    const patch = {
+      situacao: data.situacao,
+      updated_at: new Date().toISOString(),
+      cargo: data.cargo,
+      ...(data.nome ? { nome: data.nome } : {}),
+    };
     const { error } = await supabaseAdmin.from("px_usuarios_meta").update(patch).eq("user_id", data.userId);
     if (error) throw new Error(error.message);
 
