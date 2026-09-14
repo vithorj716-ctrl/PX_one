@@ -1,21 +1,12 @@
 import Lenis from "lenis";
-import { useEffect, useRef, type ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { useEffect, type RefObject } from "react";
 
-type DesktopSmoothScrollProps = {
-  children: ReactNode;
-  className?: string;
-  contentClassName?: string;
-};
-
-export function DesktopSmoothScroll({ children, className, contentClassName }: DesktopSmoothScrollProps) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+export function useDesktopSmoothScroll(wrapperRef: RefObject<HTMLElement | null>) {
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
-    const content = contentRef.current;
-    if (!wrapper || !content) return;
+    const content = wrapper?.firstElementChild;
+    if (!wrapper || !(content instanceof HTMLElement)) return;
     if (window.matchMedia("(max-width: 1023px)").matches) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -30,11 +21,5 @@ export function DesktopSmoothScroll({ children, className, contentClassName }: D
       cancelAnimationFrame(frame);
       lenis.destroy();
     };
-  }, []);
-
-  return (
-    <div ref={wrapperRef} className={cn("min-h-0 flex-1 overflow-y-auto thin-scroll", className)}>
-      <div ref={contentRef} className={contentClassName}>{children}</div>
-    </div>
-  );
+  }, [wrapperRef]);
 }
