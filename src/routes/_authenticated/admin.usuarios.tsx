@@ -152,13 +152,92 @@ function AdminUsuarios() {
           </button>
           <div className="text-sm font-semibold">Usuários & Níveis de Acesso</div>
         </div>
-        <button onClick={load} className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-border inline-flex items-center gap-1.5">
-          <RefreshCw className="size-3.5" /> Atualizar
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button onClick={() => setNovoOpen((v) => !v)} className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-brand text-brand inline-flex items-center gap-1.5">
+            <UserPlus className="size-3.5" /> Novo usuário
+          </button>
+          <button onClick={load} className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-border inline-flex items-center gap-1.5">
+            <RefreshCw className="size-3.5" /> Atualizar
+          </button>
+        </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-4">
         {erro && <div className="text-xs text-red-400 rounded-md ring-1 ring-red-500/30 p-3">{erro}</div>}
+
+        {novoOpen && (
+          <div className="rounded-xl ring-1 ring-brand/30 bg-surface/40 p-4 space-y-3">
+            <div className="text-sm font-semibold">Novo usuário</div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <input
+                value={novo.login}
+                onChange={(e) => setNovo((s) => ({ ...s, login: e.target.value }))}
+                placeholder="Login (ex.: joao)"
+                className="bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+              />
+              <input
+                value={novo.nome}
+                onChange={(e) => setNovo((s) => ({ ...s, nome: e.target.value }))}
+                placeholder="Nome completo"
+                className="bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+              />
+              <input
+                value={novo.cargo}
+                onChange={(e) => setNovo((s) => ({ ...s, cargo: e.target.value }))}
+                placeholder="Cargo"
+                className="bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+              />
+              <input
+                type="password"
+                value={novo.password}
+                onChange={(e) => setNovo((s) => ({ ...s, password: e.target.value }))}
+                placeholder="Senha (mín. 8)"
+                className="bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+              />
+            </div>
+            <div>
+              <div className="text-[11px] uppercase text-muted-foreground mb-1.5">Níveis de acesso</div>
+              <div className="flex flex-wrap gap-1.5">
+                {APP_ROLES.map((role) => {
+                  const on = novo.roles.includes(role);
+                  return (
+                    <button
+                      key={role}
+                      onClick={() => setNovo((s) => ({ ...s, roles: toggleIn(s.roles, role) }))}
+                      className={`text-xs px-2.5 py-1 rounded-full ring-1 ${on ? "ring-brand text-brand bg-brand/10" : "ring-border text-muted-foreground"}`}
+                    >
+                      {ROLE_LABEL[role]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <div className="text-[11px] uppercase text-muted-foreground mb-1.5">Sistemas liberados</div>
+              <div className="flex flex-wrap gap-1.5">
+                {PX_SYSTEMS.map((s) => {
+                  const on = novo.sistemas.includes(s.key);
+                  return (
+                    <button
+                      key={s.key}
+                      onClick={() => setNovo((st) => ({ ...st, sistemas: toggleIn(st.sistemas, s.key) }))}
+                      className={`text-xs px-2.5 py-1 rounded-full ring-1 ${on ? "ring-brand text-brand bg-brand/10" : "ring-border text-muted-foreground"}`}
+                    >
+                      {s.nome}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <button
+              onClick={submitNovo}
+              disabled={criando || novo.login.trim().length < 3 || novo.password.length < 8}
+              className="text-xs px-3 py-2 rounded-md ring-1 ring-brand text-brand disabled:opacity-50"
+            >
+              {criando ? "Criando…" : "Criar usuário"}
+            </button>
+          </div>
+        )}
         {loading ? (
           <div className="text-sm text-muted-foreground">Carregando…</div>
         ) : rows.length === 0 ? (
