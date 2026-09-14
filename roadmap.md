@@ -12,3 +12,11 @@
 - [x] Reduce Canvas and continuous CSS animation costs
 - [x] Stop per-row table animation and simplify overlays
 - [x] Validate login and repeated TMS navigation across required viewport sizes
+
+## Definitive motion stabilization
+- [ ] Complete animation ownership audit across authenticated routes and shared UI
+- [ ] Centralize logo contrast treatment and single-run logo motion
+- [ ] Stabilize route content transitions, shells, headers, drawers, and overlays
+- [ ] Remove duplicate page entrances and unsafe broad CSS transitions
+- [ ] Bound metric and Canvas work, including reduced-motion behavior
+- [ ] Validate login, repeated navigation, overlays, mobile, desktop, console, lint, typecheck, and production build
