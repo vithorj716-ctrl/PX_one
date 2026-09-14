@@ -54,7 +54,7 @@ export function TmsShell({ children, title, subtitle, headerActions }: TmsShellP
 
 export function PersistentTmsShell({ children }: { children: ReactNode }) {
   return (
-    <ShellMotionProvider initialHeader={{ title: "PXLog TMS" }} persistent={false}>
+    <ShellMotionProvider initialHeader={{ title: "PXLog TMS" }}>
       <TmsShellFrame title="PXLog TMS"><PageTransition>{children}</PageTransition></TmsShellFrame>
     </ShellMotionProvider>
   );
@@ -62,9 +62,9 @@ export function PersistentTmsShell({ children }: { children: ReactNode }) {
 
 function TmsShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubtitle, headerActions: fallbackActions }: TmsShellProps) {
   const shell = useShellMotion();
-  const title = shell?.header.title === "PXLog TMS" ? fallbackTitle : (shell?.header.title ?? fallbackTitle);
-  const subtitle = shell?.header.title === "PXLog TMS" ? fallbackSubtitle : shell?.header.subtitle;
-  const headerActions = shell?.header.title === "PXLog TMS" ? fallbackActions : shell?.header.headerActions;
+  const title = shell?.header.title ?? fallbackTitle;
+  const subtitle = shell?.header.subtitle ?? fallbackSubtitle;
+  const headerActions = shell?.header.headerActions ?? fallbackActions;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -156,7 +156,7 @@ function TmsShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
             </button>
           </div>
         </header>
-        <ShellMotionProvider initialHeader={{ title, subtitle, headerActions }}><div className="p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">{children}</div></ShellMotionProvider>
+        <div className="p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">{children}</div>
       </main>
     </div>
   );
