@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Pencil, Trash2, Plus, X, Search } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { EmptyState } from "@/components/motion/feedback-states";
 
 
 export type FieldType = "text" | "textarea" | "number" | "date" | "select";
@@ -69,6 +71,7 @@ export function CrudTable({
   onDataChange,
   renderExtra,
 }: CrudTableProps) {
+  const reduced = useReducedMotion();
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -163,7 +166,7 @@ export function CrudTable({
   }, [rows, query, columns]);
 
   return (
-    <div className="space-y-4 animate-fade-in">
+    <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
         <div className="flex items-center gap-3 min-w-0">
           {title && <h3 className="text-sm font-semibold truncate">{title}</h3>}
@@ -181,7 +184,7 @@ export function CrudTable({
           </div>
           <button
             onClick={openCreate}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-brand text-brand-foreground text-xs font-medium hover:opacity-90 transition-opacity hover-glow shrink-0"
+            className="press px-sheen inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-brand text-brand-foreground text-xs font-medium shrink-0"
           >
             <Plus className="size-3.5" /> Novo
           </button>
@@ -213,15 +216,15 @@ export function CrudTable({
               ) : filteredRows.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length + 1} className="px-4 py-12 text-center text-muted-foreground text-sm">
-                    {query ? "Nenhum resultado para o filtro." : emptyMessage}
+                    <EmptyState title={query ? "Nenhum resultado" : emptyMessage} description={query ? "Tente outro termo de busca." : undefined} />
                   </td>
                 </tr>
               ) : (
                 filteredRows.map((row, idx) => (
-                  <tr
+                  <motion.tr
                     key={row.id}
-                    className="border-t border-border hover:bg-surface-2/50 transition-colors animate-fade-in"
-                    style={{ animationDelay: `${Math.min(idx * 30, 300)}ms` }}
+                    initial={reduced ? { opacity: 0 } : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduced ? 0 : Math.min(idx * 0.03, 0.3), duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                    className="row-hover border-t border-border"
                   >
                     {columns.map((c) => (
                       <td key={c.key} className={`px-4 py-3 ${c.className ?? ""}`}>
@@ -246,7 +249,7 @@ export function CrudTable({
                         </button>
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))
               )}
             </tbody>
@@ -254,26 +257,27 @@ export function CrudTable({
         </div>
       </div>
 
-      {confirmDelete && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in" onClick={() => setConfirmDelete(null)}>
-          <div className="bg-surface ring-1 ring-border rounded-xl w-full max-w-sm p-6 animate-scale-in" onClick={(e) => e.stopPropagation()}>
+      <AnimatePresence>{confirmDelete && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-[var(--overlay)] backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setConfirmDelete(null)}>
+          <motion.div initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 6, scale: 0.98 }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }} className="bg-surface ring-1 ring-border rounded-lg w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-sm font-semibold">Excluir registro?</h3>
             <p className="text-xs text-muted-foreground mt-2">Esta ação é permanente e não pode ser desfeita.</p>
             <div className="flex justify-end gap-2 mt-5">
               <button onClick={() => setConfirmDelete(null)} className="px-3 py-1.5 rounded-md text-xs text-muted-foreground hover:text-foreground hover:bg-surface-2 transition-colors">Cancelar</button>
               <button onClick={() => remove(confirmDelete)} className="px-3 py-1.5 rounded-md bg-destructive text-destructive-foreground text-xs font-medium hover:opacity-90 transition-opacity">Excluir</button>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        </motion.div>
+      )}</AnimatePresence>
 
 
       {renderExtra?.(rows)}
 
-      {open && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 animate-fade-in" onClick={() => setOpen(false)}>
-          <div
-            className="bg-surface ring-1 ring-border rounded-t-xl sm:rounded-xl w-full max-w-2xl max-h-[92vh] overflow-y-auto thin-scroll animate-scale-in"
+      <AnimatePresence>{open && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-[var(--overlay)] backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4" onClick={() => setOpen(false)}>
+          <motion.div
+            initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 16, scale: 0.98 }} transition={{ type: "spring", stiffness: 380, damping: 38 }}
+            className="bg-surface ring-1 ring-border rounded-t-lg sm:rounded-lg w-full max-w-2xl max-h-[92vh] overflow-y-auto thin-scroll pb-[env(safe-area-inset-bottom)]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-border sticky top-0 bg-surface z-10">
@@ -340,9 +344,9 @@ export function CrudTable({
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        </motion.div>
+      )}</AnimatePresence>
     </div>
   );
 }
