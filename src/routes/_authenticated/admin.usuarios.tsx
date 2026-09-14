@@ -178,13 +178,60 @@ function AdminUsuarios() {
                   </div>
                   <div className="text-xs text-muted-foreground">{u.nome ?? "—"} · {u.email}</div>
                 </div>
-                <button
-                  onClick={() => { setPwdFor(pwdFor === u.id ? null : u.id); setPwd(""); }}
-                  className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-border inline-flex items-center gap-1.5"
-                >
-                  <KeyRound className="size-3.5" /> Senha
-                </button>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => { setPwdFor(pwdFor === u.id ? null : u.id); setPwd(""); }}
+                    className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-border inline-flex items-center gap-1.5"
+                  >
+                    <KeyRound className="size-3.5" /> Senha
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditFor(editFor === u.id ? null : u.id);
+                      setEdit({ nome: u.nome ?? "", cargo: u.cargo ?? "", situacao: u.situacao ?? "ativo" });
+                    }}
+                    className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-border inline-flex items-center gap-1.5"
+                  >
+                    <Save className="size-3.5" /> Editar
+                  </button>
+                  <button
+                    onClick={() => excluir(u)}
+                    className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-red-500/30 text-red-400 inline-flex items-center gap-1.5"
+                  >
+                    <Trash2 className="size-3.5" /> Excluir
+                  </button>
+                </div>
               </div>
+
+              {editFor === u.id && (
+                <div className="grid gap-2 sm:grid-cols-3 pt-1">
+                  <input
+                    value={edit.nome}
+                    onChange={(e) => setEdit((s) => ({ ...s, nome: e.target.value }))}
+                    placeholder="Nome"
+                    className="bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+                  />
+                  <input
+                    value={edit.cargo}
+                    onChange={(e) => setEdit((s) => ({ ...s, cargo: e.target.value }))}
+                    placeholder="Cargo"
+                    className="bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+                  />
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={edit.situacao}
+                      onChange={(e) => setEdit((s) => ({ ...s, situacao: e.target.value }))}
+                      className="flex-1 bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+                    >
+                      <option value="ativo">Ativo</option>
+                      <option value="inativo">Inativo</option>
+                    </select>
+                    <button onClick={() => submitEdit(u)} className="text-xs px-3 py-2 rounded-md ring-1 ring-brand text-brand">
+                      Salvar
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <div className="flex flex-wrap gap-1.5">
                 {APP_ROLES.map((role) => {
