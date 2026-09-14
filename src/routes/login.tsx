@@ -36,12 +36,11 @@ function LoginPage() {
     const ctx = gsap.context(() => {
       const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
       timeline
-        .from("[data-login-panel]", { opacity: 0, y: reduced ? 0 : 10, duration: reduced ? 0.18 : 0.45 })
-        .from("[data-login-copy]", { opacity: 0, y: reduced ? 0 : 14, duration: reduced ? 0.16 : 0.6 }, "-=0.5")
+        .from("[data-login-copy]", { opacity: 0, y: reduced ? 0 : 8, duration: reduced ? 0.12 : 0.32 })
         .from("[data-login-rule]", { scaleX: 0, duration: reduced ? 0.16 : 0.7 }, "-=0.35")
         .from("[data-login-field]", { opacity: 0, y: reduced ? 0 : 16, stagger: reduced ? 0 : 0.1, duration: reduced ? 0.16 : 0.5 }, "-=0.4")
         .from("[data-login-submit]", { opacity: 0, y: reduced ? 0 : 10, duration: reduced ? 0.16 : 0.4 }, "-=0.2")
-        .set("[data-login-panel], [data-login-copy], [data-login-rule], [data-login-field], [data-login-submit]", { clearProps: "opacity,transform,filter" });
+        .set("[data-login-copy], [data-login-rule], [data-login-field], [data-login-submit]", { clearProps: "opacity,transform" });
     }, root);
     return () => {
       ctx.kill();
@@ -67,11 +66,11 @@ function LoginPage() {
 
   return (
     <div ref={rootRef} className="min-h-screen grid-etch flex items-center justify-center bg-background/70 px-4 py-10">
-      <form data-login-panel onSubmit={onSubmit} className="panel w-full max-w-sm space-y-5 p-6 sm:p-8">
+      <form onSubmit={onSubmit} className="panel w-full max-w-sm space-y-5 p-6 sm:p-8">
+        <AnimatedLogo className="mx-auto mb-4 w-36 rounded-sm">
+          <GrupoPxLogo height={92} priority className="w-full" />
+        </AnimatedLogo>
         <div data-login-copy className="text-center space-y-1">
-          <AnimatedLogo className="mx-auto mb-4 w-36 rounded-sm">
-            <GrupoPxLogo height={92} priority className="w-full" />
-          </AnimatedLogo>
           <h1 className="text-lg font-semibold">PX One</h1>
           <p className="text-xs text-muted-foreground">Acesso operacional seguro</p>
         </div>

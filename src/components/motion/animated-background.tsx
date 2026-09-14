@@ -17,11 +17,11 @@ export function AnimatedBackground() {
       canvas.style.display = "none";
       return;
     }
-    const lowPower = (navigator.hardwareConcurrency || 4) <= 4;
-    const speed = 1;
-    const particleTarget = mobile ? 38 : Math.min(200, Math.max(72, Math.floor(window.innerWidth / 9)));
-    const particleCount = lowPower ? Math.min(90, particleTarget) : particleTarget;
-    const waveCount = mobile || lowPower ? 4 : 6;
+    const lowPower = (navigator.hardwareConcurrency || 4) <= 6;
+    const speed = 0.65;
+    const particleTarget = mobile ? 14 : Math.min(48, Math.max(28, Math.floor(window.innerWidth / 36)));
+    const particleCount = lowPower ? Math.min(24, particleTarget) : particleTarget;
+    const waveCount = mobile || lowPower ? 2 : 3;
     const pointer = { x: 0, y: 0, tx: 0, ty: 0, active: 0, targetActive: 0 };
     const particles: Particle[] = [];
     let width = 0;
@@ -29,6 +29,7 @@ export function AnimatedBackground() {
     let dpr = 1;
     let scrollY = window.scrollY;
     let frame = 0;
+    let lastDraw = 0;
     let visible = document.visibilityState === "visible";
 
     const makeParticle = (initial = false): Particle => {
@@ -48,7 +49,7 @@ export function AnimatedBackground() {
     const resize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
-      dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2);
+      dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1 : 1.25);
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       canvas.style.width = `${width}px`;
@@ -82,6 +83,11 @@ export function AnimatedBackground() {
     const draw = (time: number) => {
       frame = 0;
       if (!visible) return;
+      if (time - lastDraw < 32) {
+        frame = requestAnimationFrame(draw);
+        return;
+      }
+      lastDraw = time;
       const t = time * 0.00012 * speed;
       pointer.x += (pointer.tx - pointer.x) * 0.03;
       pointer.y += (pointer.ty - pointer.y) * 0.03;
@@ -102,7 +108,7 @@ export function AnimatedBackground() {
       for (let line = 0; line < waveCount; line += 1) {
         ctx.beginPath();
         const baseY = height * (0.32 + line * 0.075) + pointer.y * (4 + line);
-        for (let x = -20; x <= width + 20; x += 12) {
+        for (let x = -20; x <= width + 20; x += 24) {
           const y = baseY + Math.sin(x * 0.008 + t * (4.2 + line * 0.28) + line) * (8 + line * 1.8)
             + Math.sin(x * 0.0025 - t * 3 + line * 0.7) * 11 + scrollDrift * 0.12;
           if (x === -20) ctx.moveTo(x, y); else ctx.lineTo(x, y);
