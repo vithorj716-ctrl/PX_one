@@ -19,9 +19,9 @@ export function AnimatedBackground() {
     }
     const lowPower = (navigator.hardwareConcurrency || 4) <= 6;
     const speed = 0.65;
-    const particleTarget = mobile ? 14 : Math.min(48, Math.max(28, Math.floor(window.innerWidth / 36)));
-    const particleCount = lowPower ? Math.min(24, particleTarget) : particleTarget;
-    const waveCount = mobile || lowPower ? 2 : 3;
+    const particleTarget = mobile ? 10 : Math.min(32, Math.max(20, Math.floor(window.innerWidth / 52)));
+    const particleCount = lowPower ? Math.min(mobile ? 8 : 16, particleTarget) : particleTarget;
+    const waveCount = mobile || lowPower ? 1 : 2;
     const pointer = { x: 0, y: 0, tx: 0, ty: 0, active: 0, targetActive: 0 };
     const particles: Particle[] = [];
     let width = 0;
@@ -49,7 +49,7 @@ export function AnimatedBackground() {
     const resize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
-      dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1 : 1.25);
+      dpr = Math.min(window.devicePixelRatio || 1, mobile || lowPower ? 1 : 1.25);
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       canvas.style.width = `${width}px`;
@@ -83,7 +83,7 @@ export function AnimatedBackground() {
     const draw = (time: number) => {
       frame = 0;
       if (!visible) return;
-      if (time - lastDraw < 32) {
+      if (time - lastDraw < 40) {
         frame = requestAnimationFrame(draw);
         return;
       }
@@ -96,7 +96,9 @@ export function AnimatedBackground() {
 
       const scrollDrift = Math.sin(scrollY * 0.001) * 18;
       drawMist(width * (0.18 + Math.sin(t) * 0.025) + pointer.x * 15, height * 0.13 + scrollDrift, Math.max(width, height) * 0.52, mobile ? 0.035 : 0.055);
-      drawMist(width * (0.84 + Math.cos(t * 0.82) * 0.02) + pointer.x * 10, height * 0.82 - scrollDrift, Math.max(width, height) * 0.46, mobile ? 0.025 : 0.045);
+      if (!mobile && !lowPower) {
+        drawMist(width * (0.84 + Math.cos(t * 0.82) * 0.02) + pointer.x * 10, height * 0.82 - scrollDrift, Math.max(width, height) * 0.46, 0.035);
+      }
 
       if (pointer.active > 0.01) {
         const px = ((pointer.x + 1) / 2) * width;

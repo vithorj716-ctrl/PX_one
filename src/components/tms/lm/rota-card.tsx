@@ -62,7 +62,7 @@ export function RotaCard({ r, onFinalizar }: { r: RotaCardData; onFinalizar?: (i
           <span className="font-mono">{r.peso.toFixed(0)}kg · {r.cubagem.toFixed(2)}m³</span>
         </div>
         <div className="h-2 rounded-full bg-black/40 overflow-hidden">
-          <div className="h-full transition-all" style={{ width: `${pct}%`, background: meta.color }} />
+          <div className="h-full transition-[width] duration-200" style={{ width: `${pct}%`, background: meta.color }} />
         </div>
       </div>
 

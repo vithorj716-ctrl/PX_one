@@ -8,7 +8,7 @@ export function AnimatedMetric({ label, value, icon, className, index = 0 }: { l
     <motion.div
       initial={reduced ? { opacity: 0 } : { opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: reduced ? 0.12 : 0.38, delay: reduced ? 0 : Math.min(index * 0.045, 0.3), ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: reduced ? 0.1 : 0.32, delay: reduced ? 0 : Math.min(index * 0.035, 0.18), ease: [0.22, 1, 0.36, 1] }}
       className={cn("panel-slab p-4", className)}
     >
       <div className="flex items-center justify-between gap-2 label-xs">{label}{icon}</div>
@@ -18,7 +18,7 @@ export function AnimatedMetric({ label, value, icon, className, index = 0 }: { l
           initial={reduced ? { opacity: 0.7 } : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           exit={reduced ? { opacity: 0 } : { opacity: 0, y: -5 }}
-          transition={{ duration: reduced ? 0.1 : 0.24, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: reduced ? 0.08 : 0.2, ease: [0.22, 1, 0.36, 1] }}
           className="num-display mt-2"
         >{value}</motion.div>
       </AnimatePresence>

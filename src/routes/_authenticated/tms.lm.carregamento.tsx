@@ -65,7 +65,7 @@ function LmCarregamento() {
             <div className="rounded-xl ring-1 ring-border bg-surface p-4"><div className="text-[10px] uppercase text-muted-foreground">% Carregado</div><div className="text-2xl font-bold text-green-500">{pct}%</div></div>
           </div>
           <div className="h-3 rounded-full bg-surface ring-1 ring-border overflow-hidden">
-            <div className="h-full bg-orange-500 transition-all" style={{ width: `${pct}%` }} />
+            <div className="h-full bg-orange-500 transition-[width] duration-200" style={{ width: `${pct}%` }} />
           </div>
           <ScanInput onScan={bipar} placeholder="Bipe etiqueta para carregar…" />
           {pct === 100 && (

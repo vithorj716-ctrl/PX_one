@@ -34,13 +34,14 @@ function LoginPage() {
     if (!root) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const ctx = gsap.context(() => {
-      const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
+      const timeline = gsap.timeline({ delay: reduced ? 0 : 0.54, defaults: { ease: "power3.out" } });
       timeline
-        .from("[data-login-copy]", { opacity: 0, y: reduced ? 0 : 8, duration: reduced ? 0.12 : 0.32 })
-        .from("[data-login-rule]", { scaleX: 0, duration: reduced ? 0.16 : 0.7 }, "-=0.35")
-        .from("[data-login-field]", { opacity: 0, y: reduced ? 0 : 16, stagger: reduced ? 0 : 0.1, duration: reduced ? 0.16 : 0.5 }, "-=0.4")
-        .from("[data-login-submit]", { opacity: 0, y: reduced ? 0 : 10, duration: reduced ? 0.16 : 0.4 }, "-=0.2")
-        .set("[data-login-copy], [data-login-rule], [data-login-field], [data-login-submit]", { clearProps: "opacity,transform" });
+        .fromTo("[data-login-copy]", { opacity: 0, y: reduced ? 0 : 8 }, { opacity: 1, y: 0, duration: reduced ? 0.08 : 0.28 }, 0.06)
+        .fromTo("[data-login-rule]", { scaleX: 0 }, { scaleX: 1, duration: reduced ? 0.08 : 0.3 }, 0.08)
+        .fromTo("[data-login-field='user']", { opacity: 0, y: reduced ? 0 : 12 }, { opacity: 1, y: 0, duration: reduced ? 0.08 : 0.28 }, 0.12)
+        .fromTo("[data-login-field='password']", { opacity: 0, y: reduced ? 0 : 12 }, { opacity: 1, y: 0, duration: reduced ? 0.08 : 0.28 }, 0.17)
+        .fromTo("[data-login-submit]", { opacity: 0, y: reduced ? 0 : 8 }, { opacity: 1, y: 0, duration: reduced ? 0.08 : 0.26 }, 0.23)
+        .set("[data-login-copy], [data-login-rule], [data-login-field], [data-login-submit]", { opacity: 1, transform: "none" });
     }, root);
     return () => {
       ctx.kill();
@@ -76,7 +77,7 @@ function LoginPage() {
         </div>
         <div data-login-rule className="brand-rule" />
 
-        <div data-login-field className="space-y-1.5">
+        <div data-login-field="user" className="space-y-1.5">
           <label className="text-xs text-muted-foreground">Usuário</label>
           <input
             autoFocus
@@ -86,7 +87,7 @@ function LoginPage() {
             autoComplete="username"
           />
         </div>
-        <div data-login-field className="space-y-1.5">
+        <div data-login-field="password" className="space-y-1.5">
           <label className="text-xs text-muted-foreground">Senha</label>
           <div className="relative">
             <input
