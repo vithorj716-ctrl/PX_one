@@ -20,3 +20,11 @@
 - [x] Remove duplicate page entrances and unsafe broad CSS transitions
 - [x] Bound metric and Canvas work, including reduced-motion behavior
 - [x] Validate login, repeated navigation, overlays, mobile, desktop, console, typecheck, and production build (lint unavailable: no ESLint configuration)
+
+## Motors Hub motion parity
+- [ ] Centralize timing, easing, spring, and stagger values from the confirmed reference
+- [ ] Match brand and login sequencing without competing animation owners
+- [ ] Match route, navigation, drawer, press, and desktop scroll behavior
+- [ ] Apply restrained dashboard metric/chart entry and preserve stable tables
+- [ ] Verify Canvas, reduced motion, cleanup, and overlay lifecycle
+- [ ] Validate login, ERP/TMS rapid navigation, all required viewports, console, lint, typecheck, and production build

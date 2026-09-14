@@ -1,7 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, type ReactNode } from "react";
-
-const EASE = [0.22, 1, 0.36, 1] as const;
+import { MOTION, MOTION_EASE } from "@/components/motion/tokens";
 
 type MobileDrawerProps = {
   open: boolean;
@@ -50,7 +49,7 @@ export function MobileDrawer({ open, side = "left", label, onClose, children, cl
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, pointerEvents: "none" }}
-          transition={{ duration: reduced ? 0.08 : 0.17, ease: EASE }}
+          transition={{ duration: reduced ? MOTION.reduced : MOTION.routeExit, ease: MOTION_EASE }}
         >
           <div className="absolute inset-0 bg-[var(--overlay)]" onClick={onClose} />
           <motion.aside
@@ -59,7 +58,7 @@ export function MobileDrawer({ open, side = "left", label, onClose, children, cl
             initial={reduced ? { opacity: 0 } : { x: hiddenX }}
             animate={reduced ? { opacity: 1 } : { x: 0 }}
             exit={reduced ? { opacity: 0 } : { x: hiddenX }}
-            transition={{ duration: reduced ? 0.08 : 0.24, ease: EASE }}
+            transition={{ duration: reduced ? MOTION.reduced : (open ? MOTION.drawerEnter : MOTION.drawerExit), ease: MOTION_EASE }}
             className={className}
           >
             {children}

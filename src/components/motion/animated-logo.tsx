@@ -1,8 +1,17 @@
 import { gsap } from "gsap";
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { BRAND_MOTION } from "@/components/motion/tokens";
 
-export function AnimatedLogo({ children, className = "" }: { children: ReactNode; className?: string }) {
+type AnimatedLogoProps = {
+  children: ReactNode;
+  className?: string;
+  wordmark?: string;
+  submark?: string;
+  variant?: "brand" | "login";
+};
+
+export function AnimatedLogo({ children, className = "", wordmark, submark, variant = "brand" }: AnimatedLogoProps) {
   const rootRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -11,27 +20,73 @@ export function AnimatedLogo({ children, className = "" }: { children: ReactNode
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const ctx = gsap.context(() => {
       if (reduced) {
-        gsap.set(root, { opacity: 1, transform: "none", filter: "none" });
+        gsap.set(root.querySelectorAll("[data-logo-mark], [data-logo-word], [data-logo-line]"), { opacity: 1, transform: "none", filter: "none" });
+        gsap.set(root.querySelector("[data-logo-sheen]"), { opacity: 0 });
         return;
       }
       const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
+      const login = variant === "login";
       timeline
-        .fromTo(root, { opacity: 0, scale: 0.94, y: 8 }, { opacity: 1, scale: 0.985, y: 0, duration: 0.48 })
-        .to(root, { scale: 1, duration: 0.12, ease: "power2.out" })
-        .fromTo("[data-logo-sheen]", { xPercent: -240, opacity: 0 }, { xPercent: 620, opacity: 0.14, duration: 0.52, ease: "power2.inOut" }, "-=0.02")
+        .fromTo("[data-logo-mark]", {
+          opacity: 0,
+          y: login ? 18 : 6,
+          scale: login ? 0.86 : 0.94,
+          filter: `blur(${login ? 10 : 6}px)`,
+        }, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          filter: "blur(0px)",
+          duration: login ? 0.9 : BRAND_MOTION.markDuration,
+        })
+        .fromTo("[data-logo-sheen]", { xPercent: -140, opacity: 0.12 }, {
+          xPercent: 140,
+          opacity: 0.12,
+          duration: BRAND_MOTION.sheenDuration,
+          ease: "power2.inOut",
+        }, "-=0.35")
+        .fromTo("[data-logo-word]", { opacity: 0, x: -8 }, {
+          opacity: 1,
+          x: 0,
+          duration: BRAND_MOTION.wordDuration,
+          stagger: BRAND_MOTION.wordStagger,
+        }, "-=0.7")
+        .fromTo("[data-logo-line]", { scaleX: 0 }, {
+          scaleX: 1,
+          duration: BRAND_MOTION.lineDuration,
+          transformOrigin: "left center",
+        }, "-=0.4")
         .set("[data-logo-sheen]", { opacity: 0 })
-        .set(root, { opacity: 1, transform: "none", filter: "none" });
+        .set("[data-logo-mark], [data-logo-word], [data-logo-line]", { opacity: 1, transform: "none", filter: "none" });
+
+      gsap.fromTo("[data-logo-sheen]", { xPercent: -140, opacity: 0 }, {
+        xPercent: 140,
+        opacity: 0.1,
+        duration: BRAND_MOTION.recurringSheenDuration,
+        ease: "power2.inOut",
+        repeat: -1,
+        repeatDelay: BRAND_MOTION.recurringSheenRepeatDelay,
+        delay: BRAND_MOTION.recurringSheenDelay,
+      });
     }, root);
     return () => {
       ctx.kill();
       ctx.revert();
     };
-  }, []);
+  }, [variant]);
 
   return (
-    <div ref={rootRef} className={cn("relative isolate overflow-hidden", className)}>
-      {children}
-      <span aria-hidden="true" data-logo-sheen className="logo-sheen-layer" />
+    <div ref={rootRef} className={cn(wordmark ? "flex min-w-0 items-center gap-3" : "", className)}>
+      <div data-logo-mark className="relative isolate overflow-hidden shrink-0">
+        {children}
+        <span aria-hidden="true" data-logo-sheen className="logo-sheen-layer" />
+      </div>
+      {wordmark && (
+        <div className="min-w-0 leading-none">
+          <div data-logo-word className="truncate text-sm font-semibold">{wordmark}</div>
+          {submark && <div className="mt-1.5 flex items-center gap-2"><span data-logo-line className="h-px w-5 bg-brand" /><span data-logo-word className="truncate text-[9px] uppercase tracking-widest text-brand">{submark}</span></div>}
+        </div>
+      )}
     </div>
   );
 }

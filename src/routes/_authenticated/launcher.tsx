@@ -52,11 +52,7 @@ function LauncherPage() {
     <div className="min-h-screen grid-etch bg-background/75 text-foreground">
       <header className="h-14 px-4 sm:px-6 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <AnimatedLogo className="w-16 shrink-0 rounded-sm"><GrupoPxLogo height={40} priority className="w-full" /></AnimatedLogo>
-          <div>
-            <div className="text-sm font-semibold leading-none">PX Platform</div>
-            <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Selecionar Sistema</div>
-          </div>
+          <AnimatedLogo wordmark="PX Platform" submark="Selecionar Sistema" className="min-w-0 shrink-0"><GrupoPxLogo height={40} priority className="w-16" /></AnimatedLogo>
         </div>
         <div className="flex items-center gap-2">
           <button

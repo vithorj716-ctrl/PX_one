@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   LayoutDashboard, Target, Calculator, TrendingUp, Gavel, ShieldAlert,
@@ -15,6 +15,8 @@ import { AnimatedLogo } from "@/components/motion/animated-logo";
 import { GrupoPxLogo } from "@/components/pxlog-logo";
 import { PageTransition } from "@/components/motion/page-transition";
 import { MobileDrawer } from "@/components/motion/mobile-drawer";
+import { useDesktopSmoothScroll } from "@/components/motion/desktop-smooth-scroll";
+import { MOTION_EASE, NAV_SPRING } from "@/components/motion/tokens";
 import { ShellMotionProvider, ShellPage, useShellMotion } from "@/components/motion/shell-motion-context";
 
 const navGroups = [
@@ -84,15 +86,9 @@ function AppSidebarContent({ collapsed, pathname, mobile = false, onToggleCollap
     <>
       <div className="p-4 flex items-center justify-between">
         <Link to="/" onClick={onNavigate} className="flex items-center gap-2 overflow-hidden">
-          <AnimatedLogo className={collapsed ? "w-10 shrink-0 rounded-sm" : "w-20 shrink-0 rounded-sm"}>
+          <AnimatedLogo wordmark={collapsed ? undefined : "PXOne"} submark={collapsed ? undefined : "Corporate OS"} className={collapsed ? "w-10 shrink-0 rounded-sm" : "min-w-0 shrink-0"}>
             <GrupoPxLogo height={collapsed ? 32 : 50} priority className="w-full" />
           </AnimatedLogo>
-          {!collapsed && (
-            <div className="overflow-hidden">
-              <span className="text-base font-semibold tracking-tight block leading-none">PXOne</span>
-              <span className="text-[9px] uppercase tracking-widest text-muted-foreground">Corporate OS</span>
-            </div>
-          )}
         </Link>
         <button
           onClick={onToggleCollapse}
@@ -125,7 +121,7 @@ function AppSidebarContent({ collapsed, pathname, mobile = false, onToggleCollap
                     title={collapsed ? item.label : undefined}
                     className={`group relative w-full flex items-center py-2.5 rounded-md text-sm transition-[color,background-color] duration-200 ${collapsed ? "justify-center px-2" : "px-3"} ${active ? "bg-surface-2 text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-surface/60"}`}
                   >
-                    {active && <motion.span layoutId={mobile ? "pxone-nav-mobile" : "pxone-nav-desktop"} transition={{ type: "spring", stiffness: 420, damping: 36 }} className="absolute inset-y-1 left-0 right-0 rounded-md bg-brand/8 border-l-2 border-brand" />}
+                    {active && <motion.span layoutId={mobile ? "pxone-nav-mobile" : "pxone-nav-desktop"} transition={NAV_SPRING} className="absolute inset-y-1 left-0 right-0 rounded-md bg-brand/8 border-l-2 border-brand" />}
                     <Icon className={`size-4 shrink-0 ${active ? "text-brand" : ""} ${collapsed ? "" : "mr-2.5"}`} />
                     {!collapsed && <span className="relative font-medium truncate">{item.label}</span>}
                   </Link>
@@ -191,8 +187,12 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
   const [now, setNow] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [search, setSearch] = useState("");
+  const [mobileHeaderCompact, setMobileHeaderCompact] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+  const mainContentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { setActiveSystem, activeSystem } = useSystem();
+  useDesktopSmoothScroll(mainRef, mainContentRef);
 
   useEffect(() => {
     if (!activeSystem || activeSystem.key !== "pxone-erp") {
@@ -240,6 +240,15 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
     setMobileRightOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    const main = mainRef.current;
+    if (!main) return;
+    const onScroll = () => setMobileHeaderCompact(main.scrollTop > 12);
+    onScroll();
+    main.addEventListener("scroll", onScroll, { passive: true });
+    return () => main.removeEventListener("scroll", onScroll);
+  }, []);
+
   // The shared drawer primitive owns drawer scroll locking.
   useEffect(() => {
     if (showSearch) {
@@ -263,7 +272,7 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
     <div className="flex h-[100dvh] overflow-hidden bg-background text-foreground">
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden lg:flex border-r border-border flex-col shrink-0 bg-sidebar transition-[width] duration-300 ease-out ${
+        className={`hidden lg:flex border-r border-border flex-col shrink-0 bg-sidebar transition-[width] duration-300 ease-[var(--ease-px)] ${
           collapsed ? "w-16" : "w-64"
         }`}
       >
@@ -278,8 +287,9 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
       </div>
 
       {/* Main */}
-      <main className="flex-1 overflow-y-auto thin-scroll bg-background min-w-0">
-        <header className="sticky top-0 z-[var(--z-sticky)] h-14 border-b border-border bg-background/85 backdrop-blur-xl px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2">
+      <main ref={mainRef} className="flex-1 overflow-y-auto thin-scroll bg-background min-w-0">
+        <div ref={mainContentRef}>
+        <header className={`sticky top-0 z-[var(--z-sticky)] border-b border-border bg-background/85 backdrop-blur-xl px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 transition-[height] duration-300 ease-[var(--ease-px)] ${mobileHeaderCompact ? "h-12 lg:h-14" : "h-14"}`}>
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <button
               onClick={() => { setMobileRightOpen(false); setMobileNavOpen(true); }}
@@ -289,7 +299,7 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
               <Menu className="size-5" />
             </button>
             <div className="min-w-0 flex items-center gap-2">
-              <h1 className="text-sm font-semibold truncate">{title}</h1>
+              <h1 className={`font-semibold truncate transition-[font-size] duration-300 ease-[var(--ease-px)] ${mobileHeaderCompact ? "text-xs lg:text-sm" : "text-sm"}`}>{title}</h1>
               {subtitle && (
                 <>
                   <div className="h-3.5 w-px bg-border hidden sm:block" />
@@ -340,11 +350,12 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
           </div>
         </header>
         <div className="p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">{children}</div>
+        </div>
       </main>
 
       {/* Right panel — desktop */}
       {rightPanel && (
-        <motion.aside initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }} className="hidden xl:block w-80 border-l border-border bg-sidebar/40 shrink-0 p-6 overflow-y-auto thin-scroll">
+        <motion.aside initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.34, ease: MOTION_EASE }} className="hidden xl:block w-80 border-l border-border bg-sidebar/40 shrink-0 p-6 overflow-y-auto thin-scroll">
           {rightPanel}
         </motion.aside>
       )}
@@ -367,7 +378,7 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
       {showSearch && (
         <motion.div role="dialog" aria-modal="true" aria-label="Buscar módulo" className="fixed inset-0 z-[var(--z-dialog)] bg-[var(--overlay)] flex items-start justify-center pt-16 sm:pt-32 px-3" onClick={() => setShowSearch(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, pointerEvents: "none" }}>
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 6, scale: 0.98 }} transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 6, scale: 0.98 }} transition={{ duration: 0.22, ease: MOTION_EASE }}
             className="w-full max-w-lg bg-surface ring-1 ring-border rounded-lg overflow-hidden shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >

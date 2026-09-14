@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { gsap } from "gsap";
 import { AnimatedLogo } from "@/components/motion/animated-logo";
 import { GrupoPxLogo } from "@/components/pxlog-logo";
+import { BRAND_MOTION } from "@/components/motion/tokens";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [
@@ -34,13 +35,13 @@ function LoginPage() {
     if (!root) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const ctx = gsap.context(() => {
-      const timeline = gsap.timeline({ delay: reduced ? 0 : 0.54, defaults: { ease: "power3.out" } });
+      const timeline = gsap.timeline({ delay: reduced ? 0 : BRAND_MOTION.loginContentDelay, defaults: { ease: "power3.out" } });
       timeline
-        .fromTo("[data-login-copy]", { opacity: 0, y: reduced ? 0 : 8 }, { opacity: 1, y: 0, duration: reduced ? 0.08 : 0.28 }, 0.06)
-        .fromTo("[data-login-rule]", { scaleX: 0 }, { scaleX: 1, duration: reduced ? 0.08 : 0.3 }, 0.08)
-        .fromTo("[data-login-field='user']", { opacity: 0, y: reduced ? 0 : 12 }, { opacity: 1, y: 0, duration: reduced ? 0.08 : 0.28 }, 0.12)
-        .fromTo("[data-login-field='password']", { opacity: 0, y: reduced ? 0 : 12 }, { opacity: 1, y: 0, duration: reduced ? 0.08 : 0.28 }, 0.17)
-        .fromTo("[data-login-submit]", { opacity: 0, y: reduced ? 0 : 8 }, { opacity: 1, y: 0, duration: reduced ? 0.08 : 0.26 }, 0.23)
+        .fromTo("[data-login-copy]", { opacity: 0, y: reduced ? 0 : 14 }, { opacity: 1, y: 0, duration: reduced ? 0.1 : 0.6 }, 0.06)
+        .fromTo("[data-login-rule]", { scaleX: 0 }, { scaleX: 1, duration: reduced ? 0.1 : 0.7, transformOrigin: "center" }, 0.08)
+        .fromTo("[data-login-field='user']", { opacity: 0, y: reduced ? 0 : 16 }, { opacity: 1, y: 0, duration: reduced ? 0.1 : 0.5 }, 0.12)
+        .fromTo("[data-login-field='password']", { opacity: 0, y: reduced ? 0 : 16 }, { opacity: 1, y: 0, duration: reduced ? 0.1 : 0.5 }, 0.22)
+        .fromTo("[data-login-submit]", { opacity: 0, y: reduced ? 0 : 12 }, { opacity: 1, y: 0, duration: reduced ? 0.1 : 0.45 }, 0.32)
         .set("[data-login-copy], [data-login-rule], [data-login-field], [data-login-submit]", { opacity: 1, transform: "none" });
     }, root);
     return () => {
@@ -68,7 +69,7 @@ function LoginPage() {
   return (
     <div ref={rootRef} className="min-h-screen grid-etch flex items-center justify-center bg-background/70 px-4 py-10">
       <form onSubmit={onSubmit} className="panel w-full max-w-sm space-y-5 p-6 sm:p-8">
-        <AnimatedLogo className="mx-auto mb-4 w-36 rounded-sm">
+        <AnimatedLogo variant="login" className="mx-auto mb-4 w-36 rounded-sm">
           <GrupoPxLogo height={92} priority className="w-full" />
         </AnimatedLogo>
         <div data-login-copy className="text-center space-y-1">
