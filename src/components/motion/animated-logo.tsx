@@ -26,7 +26,7 @@ export function AnimatedLogo({ children, className = "" }: { children: ReactNode
   return (
     <div ref={rootRef} className={cn("px-logo-idle relative isolate overflow-hidden", className)}>
       {children}
-      <span aria-hidden="true" data-logo-sheen className="px-sheen-layer" />
+      <span aria-hidden="true" data-logo-sheen className="px-sheen-layer px-sheen-manual" />
     </div>
   );
 }

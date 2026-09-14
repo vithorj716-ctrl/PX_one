@@ -292,6 +292,7 @@
   &:hover::after { transform: skewX(-20deg) translateX(520%); }
 }
 .px-sheen-layer { position: absolute; inset: -60% auto -60% -45%; width: 34%; transform: skewX(-20deg) translateX(-220%); background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--brand) 28%, transparent), transparent); animation: logoSheen 0.85s var(--ease-px) 0.7s both; pointer-events: none; }
+.px-sheen-layer.px-sheen-manual { animation: none; }
 @keyframes logoSheen { to { transform: skewX(-20deg) translateX(520%); } }
 @keyframes logoIdle { 0%, 100% { opacity: 0.88; } 50% { opacity: 1; } }
 .px-logo-idle::before { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--brand) 14%, transparent); animation: logoIdle 6s ease-in-out 1.4s infinite; pointer-events: none; }

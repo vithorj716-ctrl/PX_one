@@ -258,9 +258,9 @@ export function CrudTable({
       </div>
 
       <AnimatePresence>{confirmDelete && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-[var(--overlay)] backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setConfirmDelete(null)}>
+        <motion.div role="dialog" aria-modal="true" aria-labelledby="crud-delete-title" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, pointerEvents: "none" }} className="fixed inset-0 z-[var(--z-dialog)] bg-[var(--overlay)] backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setConfirmDelete(null)}>
           <motion.div initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 6, scale: 0.98 }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }} className="bg-surface ring-1 ring-border rounded-lg w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-sm font-semibold">Excluir registro?</h3>
+            <h3 id="crud-delete-title" className="text-sm font-semibold">Excluir registro?</h3>
             <p className="text-xs text-muted-foreground mt-2">Esta ação é permanente e não pode ser desfeita.</p>
             <div className="flex justify-end gap-2 mt-5">
               <button onClick={() => setConfirmDelete(null)} className="px-3 py-1.5 rounded-md text-xs text-muted-foreground hover:text-foreground hover:bg-surface-2 transition-colors">Cancelar</button>
@@ -274,14 +274,14 @@ export function CrudTable({
       {renderExtra?.(rows)}
 
       <AnimatePresence>{open && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-[var(--overlay)] backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4" onClick={() => setOpen(false)}>
+        <motion.div role="dialog" aria-modal="true" aria-labelledby="crud-form-title" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, pointerEvents: "none" }} className="fixed inset-0 z-[var(--z-dialog)] bg-[var(--overlay)] backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4" onClick={() => setOpen(false)}>
           <motion.div
             initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 16, scale: 0.98 }} transition={{ type: "spring", stiffness: 380, damping: 38 }}
             className="bg-surface ring-1 ring-border rounded-t-lg sm:rounded-lg w-full max-w-2xl max-h-[92vh] overflow-y-auto thin-scroll pb-[env(safe-area-inset-bottom)]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-border sticky top-0 bg-surface z-10">
-              <h3 className="text-sm font-medium">{editing ? "Editar registro" : "Novo registro"}</h3>
+               <h3 id="crud-form-title" className="text-sm font-medium">{editing ? "Editar registro" : "Novo registro"}</h3>
               <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground p-1">
                 <X className="size-5" />
               </button>

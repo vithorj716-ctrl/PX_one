@@ -80,7 +80,10 @@ export function InstallAppButton() {
 
       {showIOS && (
         <div
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="install-app-title"
+          className="fixed inset-0 z-[var(--z-dialog)] bg-[var(--overlay)] backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setShowIOS(false)}
         >
           <div
@@ -93,7 +96,7 @@ export function InstallAppButton() {
             >
               <X className="size-4" />
             </button>
-            <h3 className="text-sm font-semibold mb-2">Instalar PXOne</h3>
+            <h3 id="install-app-title" className="text-sm font-semibold mb-2">Instalar PXOne</h3>
             {isIOS() ? (
               <ol className="text-xs text-muted-foreground space-y-2 list-decimal pl-4">
                 <li>Toque no botão <Share className="size-3.5 inline -mt-0.5" /> Compartilhar do Safari.</li>

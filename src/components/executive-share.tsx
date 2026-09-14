@@ -599,14 +599,14 @@ function ExportModal({ module: mod, onClose }: { module: ModuleConfig; onClose: 
   if (!portalTarget) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 animate-fade-in" onClick={onClose}>
+    <div role="dialog" aria-modal="true" aria-labelledby="export-center-title" className="fixed inset-0 z-[var(--z-dialog)] bg-[var(--overlay)] backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 animate-fade-in" onClick={onClose}>
       <div
         className="bg-surface ring-1 ring-border rounded-t-xl sm:rounded-xl w-full max-w-3xl max-h-[92vh] sm:max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <header className="px-4 sm:px-6 py-4 border-b border-border flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="text-sm font-medium truncate">Centro de Exportação</h2>
+            <h2 id="export-center-title" className="text-sm font-medium truncate">Centro de Exportação</h2>
             <p className="text-xs text-muted-foreground mt-0.5 truncate">
               Módulo: <span className="text-foreground font-medium">{mod.title}</span>
             </p>

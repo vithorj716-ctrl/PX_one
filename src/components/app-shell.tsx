@@ -77,7 +77,7 @@ interface AppShellProps {
 
 export function AppShell({ children, title, subtitle, rightPanel, headerActions }: AppShellProps) {
   const persistentShell = useShellMotion();
-  if (persistentShell) {
+  if (persistentShell?.persistent) {
     return <ShellPage header={{ title, subtitle, rightPanel, headerActions }}>{children}</ShellPage>;
   }
   return <AppShellFrame title={title} subtitle={subtitle} rightPanel={rightPanel} headerActions={headerActions}>{children}</AppShellFrame>;
@@ -85,7 +85,7 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
 
 export function PersistentAppShell({ children }: { children: ReactNode }) {
   return (
-    <ShellMotionProvider initialHeader={{ title: "PXOne" }}>
+    <ShellMotionProvider initialHeader={{ title: "PXOne" }} persistent={false}>
       <AppShellFrame title="PXOne"><PageTransition>{children}</PageTransition></AppShellFrame>
     </ShellMotionProvider>
   );
@@ -93,10 +93,10 @@ export function PersistentAppShell({ children }: { children: ReactNode }) {
 
 function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubtitle, rightPanel: fallbackRightPanel, headerActions: fallbackActions }: AppShellProps) {
   const shell = useShellMotion();
-  const title = shell?.header.title ?? fallbackTitle;
-  const subtitle = shell?.header.subtitle ?? fallbackSubtitle;
-  const rightPanel = shell?.header.rightPanel ?? fallbackRightPanel;
-  const headerActions = shell?.header.headerActions ?? fallbackActions;
+  const title = shell?.header.title === "PXOne" ? fallbackTitle : (shell?.header.title ?? fallbackTitle);
+  const subtitle = shell?.header.title === "PXOne" ? fallbackSubtitle : shell?.header.subtitle;
+  const rightPanel = shell?.header.title === "PXOne" ? fallbackRightPanel : shell?.header.rightPanel;
+  const headerActions = shell?.header.title === "PXOne" ? fallbackActions : shell?.header.headerActions;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [collapsed, setCollapsed] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -347,7 +347,7 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
             </span>
           </div>
         </header>
-        <div className="p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">{children}</div>
+        <ShellMotionProvider initialHeader={{ title, subtitle, rightPanel, headerActions }}><div className="p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">{children}</div></ShellMotionProvider>
       </main>
 
       {/* Right panel — desktop */}

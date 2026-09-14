@@ -48,13 +48,13 @@ interface TmsShellProps {
 
 export function TmsShell({ children, title, subtitle, headerActions }: TmsShellProps) {
   const persistentShell = useShellMotion();
-  if (persistentShell) return <ShellPage header={{ title, subtitle, headerActions }}>{children}</ShellPage>;
+  if (persistentShell?.persistent) return <ShellPage header={{ title, subtitle, headerActions }}>{children}</ShellPage>;
   return <TmsShellFrame title={title} subtitle={subtitle} headerActions={headerActions}>{children}</TmsShellFrame>;
 }
 
 export function PersistentTmsShell({ children }: { children: ReactNode }) {
   return (
-    <ShellMotionProvider initialHeader={{ title: "PXLog TMS" }}>
+    <ShellMotionProvider initialHeader={{ title: "PXLog TMS" }} persistent={false}>
       <TmsShellFrame title="PXLog TMS"><PageTransition>{children}</PageTransition></TmsShellFrame>
     </ShellMotionProvider>
   );
@@ -62,9 +62,9 @@ export function PersistentTmsShell({ children }: { children: ReactNode }) {
 
 function TmsShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubtitle, headerActions: fallbackActions }: TmsShellProps) {
   const shell = useShellMotion();
-  const title = shell?.header.title ?? fallbackTitle;
-  const subtitle = shell?.header.subtitle ?? fallbackSubtitle;
-  const headerActions = shell?.header.headerActions ?? fallbackActions;
+  const title = shell?.header.title === "PXLog TMS" ? fallbackTitle : (shell?.header.title ?? fallbackTitle);
+  const subtitle = shell?.header.title === "PXLog TMS" ? fallbackSubtitle : shell?.header.subtitle;
+  const headerActions = shell?.header.title === "PXLog TMS" ? fallbackActions : shell?.header.headerActions;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -156,7 +156,7 @@ function TmsShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
             </button>
           </div>
         </header>
-        <div className="p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">{children}</div>
+        <ShellMotionProvider initialHeader={{ title, subtitle, headerActions }}><div className="p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">{children}</div></ShellMotionProvider>
       </main>
     </div>
   );

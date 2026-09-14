@@ -10,14 +10,16 @@ export type ShellHeader = {
 type ShellMotionContextValue = {
   header: ShellHeader;
   register: (header: ShellHeader) => void;
+  persistent: boolean;
 };
 
 const ShellMotionContext = createContext<ShellMotionContextValue | null>(null);
 
-export function ShellMotionProvider({ children, initialHeader }: { children: ReactNode; initialHeader: ShellHeader }) {
+export function ShellMotionProvider({ children, initialHeader, persistent = true }: { children: ReactNode; initialHeader: ShellHeader; persistent?: boolean }) {
   const [header, setHeader] = useState(initialHeader);
   const value = useMemo<ShellMotionContextValue>(() => ({
     header,
+    persistent,
     register: (next) => setHeader((current) => {
       if (
         current.title === next.title
@@ -27,7 +29,7 @@ export function ShellMotionProvider({ children, initialHeader }: { children: Rea
       ) return current;
       return next;
     }),
-  }), [header]);
+  }), [header, persistent]);
 
   return <ShellMotionContext.Provider value={value}>{children}</ShellMotionContext.Provider>;
 }

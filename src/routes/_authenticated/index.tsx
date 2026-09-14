@@ -78,7 +78,7 @@ function ExecutiveCommandCenter() {
       subtitle="Visão consolidada — dados reais do grupo"
     >
       {/* Hero */}
-      <section className="rounded-2xl ring-1 ring-border surface-animated p-6 md:p-8 animate-fade-in-up overflow-hidden relative">
+      <section className="rounded-2xl ring-1 ring-border surface-animated p-6 md:p-8 overflow-hidden relative">
         <div className="absolute -top-12 -right-12 size-48 rounded-full opacity-20 blur-3xl" style={{ background: "var(--gradient-brand)" }} />
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="size-4 text-brand" />
@@ -112,7 +112,7 @@ function ExecutiveCommandCenter() {
 
       {/* Charts */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 bg-surface ring-1 ring-border rounded-xl p-5 hover-lift animate-fade-in-up stagger-2">
+        <div className="lg:col-span-2 bg-surface ring-1 ring-border rounded-xl p-5 hover-lift">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-sm font-semibold">Custos por empresa</h3>
@@ -148,7 +148,7 @@ function ExecutiveCommandCenter() {
           )}
         </div>
 
-        <div className="bg-surface ring-1 ring-border rounded-xl p-5 hover-lift animate-fade-in-up stagger-3">
+        <div className="bg-surface ring-1 ring-border rounded-xl p-5 hover-lift">
           <h3 className="text-sm font-semibold mb-1">Distribuição por tipo</h3>
           <p className="text-[11px] text-muted-foreground mb-3">Fixo, variável, único, recorrente</p>
           {loading ? (
@@ -200,7 +200,7 @@ function KpiCard({
   return (
     <Link
       to={to}
-      className={`group p-4 bg-surface ring-1 ring-border rounded-xl hover-lift block animate-fade-in-up stagger-${delay}`}
+      className="group p-4 bg-surface ring-1 ring-border rounded-xl hover-lift block"
     >
       <div className="flex items-center justify-between">
         <Icon className={`size-4 ${accent}`} />
@@ -214,7 +214,7 @@ function KpiCard({
 
 function MiniCard({ icon: Icon, label, value, to }: { icon: any; label: string; value: number; to: string }) {
   return (
-    <Link to={to} className="group flex items-center gap-3 p-3 bg-surface ring-1 ring-border rounded-xl hover:ring-brand/40 transition-colors animate-fade-in">
+    <Link to={to} className="group flex items-center gap-3 p-3 bg-surface ring-1 ring-border rounded-xl hover:ring-brand/40 transition-colors">
       <div className="size-9 rounded-lg bg-surface-2 flex items-center justify-center group-hover:bg-brand/10 transition-colors">
         <Icon className="size-4 text-muted-foreground group-hover:text-brand transition-colors" />
       </div>
