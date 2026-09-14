@@ -14,9 +14,9 @@
 - [x] Validate login and repeated TMS navigation across required viewport sizes
 
 ## Definitive motion stabilization
-- [ ] Complete animation ownership audit across authenticated routes and shared UI
-- [ ] Centralize logo contrast treatment and single-run logo motion
-- [ ] Stabilize route content transitions, shells, headers, drawers, and overlays
-- [ ] Remove duplicate page entrances and unsafe broad CSS transitions
-- [ ] Bound metric and Canvas work, including reduced-motion behavior
-- [ ] Validate login, repeated navigation, overlays, mobile, desktop, console, lint, typecheck, and production build
+- [x] Complete animation ownership audit across authenticated routes and shared UI
+- [x] Centralize logo contrast treatment and single-run logo motion
+- [x] Stabilize route content transitions, shells, headers, drawers, and overlays
+- [x] Remove duplicate page entrances and unsafe broad CSS transitions
+- [x] Bound metric and Canvas work, including reduced-motion behavior
+- [x] Validate login, repeated navigation, overlays, mobile, desktop, console, typecheck, and production build (lint unavailable: no ESLint configuration)
