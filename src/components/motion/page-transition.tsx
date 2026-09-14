@@ -8,14 +8,18 @@ export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const reduced = useReducedMotion();
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="wait" initial={false} presenceAffectsLayout={false}>
       <motion.div
         key={pathname}
-        className="min-h-full"
-        initial={reduced ? { opacity: 0.98 } : { opacity: 0, y: 14, filter: "blur(8px)" }}
+        className="min-h-full will-change-transform"
+        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8, filter: "blur(3px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        exit={reduced ? { opacity: 0.98 } : { opacity: 0, y: -8, filter: "blur(6px)" }}
-        transition={{ duration: reduced ? 0.12 : 0.42, ease: EASE }}
+        exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4, filter: "blur(2px)", pointerEvents: "none" }}
+        transition={reduced ? { duration: 0.08 } : {
+          opacity: { duration: 0.2, ease: EASE },
+          y: { duration: 0.32, ease: EASE },
+          filter: { duration: 0.24, ease: EASE },
+        }}
       >
         {children}
       </motion.div>

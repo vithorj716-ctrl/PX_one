@@ -33,9 +33,13 @@ function LoginPage() {
         .from("[data-login-copy]", { opacity: 0, y: reduced ? 0 : 14, duration: reduced ? 0.16 : 0.6 }, "-=0.5")
         .from("[data-login-rule]", { scaleX: 0, duration: reduced ? 0.16 : 0.7 }, "-=0.35")
         .from("[data-login-field]", { opacity: 0, y: reduced ? 0 : 16, stagger: reduced ? 0 : 0.1, duration: reduced ? 0.16 : 0.5 }, "-=0.4")
-        .from("[data-login-submit]", { opacity: 0, y: reduced ? 0 : 10, duration: reduced ? 0.16 : 0.4 }, "-=0.2");
+        .from("[data-login-submit]", { opacity: 0, y: reduced ? 0 : 10, duration: reduced ? 0.16 : 0.4 }, "-=0.2")
+        .set("[data-login-panel], [data-login-logo], [data-login-copy], [data-login-rule], [data-login-field], [data-login-submit]", { clearProps: "opacity,transform,filter" });
     }, root);
-    return () => ctx.revert();
+    return () => {
+      ctx.kill();
+      ctx.revert();
+    };
   }, []);
 
   async function onSubmit(e: React.FormEvent) {

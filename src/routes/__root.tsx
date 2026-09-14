@@ -15,7 +15,6 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { EmpresaProvider } from "@/px-core/empresa-context";
 import { SystemProvider } from "@/px-platform/system-context";
 import { AnimatedBackground } from "@/components/motion/animated-background";
-import { PageTransition } from "@/components/motion/page-transition";
 
 function NotFoundComponent() {
   return (
@@ -157,7 +156,7 @@ function RootComponent() {
       <SystemProvider>
         <EmpresaProvider>
           <AnimatedBackground />
-          <PageTransition><Outlet /></PageTransition>
+          <Outlet />
           <Toaster theme="dark" position="top-right" />
         </EmpresaProvider>
       </SystemProvider>
