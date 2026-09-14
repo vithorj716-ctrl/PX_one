@@ -1,6 +1,6 @@
-# Joyful Tests
+# PXOne — Corporate OS
 
-teste
+Sistema Operacional Corporativo do Grupo PX
 
 This project was built with [Lovable](https://lovable.dev).
 

@@ -14,6 +14,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { EmpresaProvider } from "@/px-core/empresa-context";
 import { SystemProvider } from "@/px-platform/system-context";
+import { AnimatedBackground } from "@/components/motion/animated-background";
+import { PageTransition } from "@/components/motion/page-transition";
 
 function NotFoundComponent() {
   return (
@@ -100,6 +102,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "PXOne — Sistema Operacional Corporativo do Grupo PX" },
+      { name: "twitter:description", content: "Inteligência corporativa, operação logística e governança do Grupo PX." },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -121,7 +124,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>
@@ -153,7 +156,8 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <SystemProvider>
         <EmpresaProvider>
-          <Outlet />
+          <AnimatedBackground />
+          <PageTransition><Outlet /></PageTransition>
           <Toaster theme="dark" position="top-right" />
         </EmpresaProvider>
       </SystemProvider>
