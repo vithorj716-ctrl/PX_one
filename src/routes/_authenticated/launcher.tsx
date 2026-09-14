@@ -9,7 +9,14 @@ import { AnimatedLogo } from "@/components/motion/animated-logo";
 import { GrupoPxLogo } from "@/components/pxlog-logo";
 
 export const Route = createFileRoute("/_authenticated/launcher")({
-  head: () => ({ meta: [{ title: "PX Platform — Selecionar Sistema" }] }),
+  head: () => ({ meta: [
+    { title: "Selecionar sistema — Grupo PX" },
+    { name: "description", content: "Selecione um sistema da plataforma operacional do Grupo PX." },
+    { property: "og:title", content: "Selecionar sistema — Grupo PX" },
+    { property: "og:description", content: "Selecione um sistema da plataforma operacional do Grupo PX." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: LauncherPage,
 });
 
