@@ -44,6 +44,9 @@ function AdminUsuarios() {
   const fetchUsers = useServerFn(listPlatformUsers);
   const saveRoles = useServerFn(setUserRoles);
   const resetPwd = useServerFn(resetUserPassword);
+  const createUser = useServerFn(createPlatformUser);
+  const updateUser = useServerFn(updatePlatformUser);
+  const removeUser = useServerFn(deletePlatformUser);
 
   const [rows, setRows] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,6 +55,53 @@ function AdminUsuarios() {
   const [pwdFor, setPwdFor] = useState<string | null>(null);
   const [pwd, setPwd] = useState("");
   const [showPwd, setShowPwd] = useState(false);
+
+  const [novoOpen, setNovoOpen] = useState(false);
+  const [novo, setNovo] = useState({ login: "", nome: "", cargo: "", password: "", roles: [] as string[], sistemas: ["pxone-erp"] as string[] });
+  const [criando, setCriando] = useState(false);
+  const [editFor, setEditFor] = useState<string | null>(null);
+  const [edit, setEdit] = useState({ nome: "", cargo: "", situacao: "ativo" });
+
+  function toggleIn(list: string[], value: string) {
+    return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+  }
+
+  async function submitNovo() {
+    setCriando(true);
+    try {
+      await createUser({ data: novo });
+      toast.success(`Usuário ${novo.login} criado.`);
+      setNovo({ login: "", nome: "", cargo: "", password: "", roles: [], sistemas: ["pxone-erp"] });
+      setNovoOpen(false);
+      await load();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Falha ao criar usuário.");
+    } finally {
+      setCriando(false);
+    }
+  }
+
+  async function submitEdit(u: Usuario) {
+    try {
+      await updateUser({ data: { userId: u.id, nome: edit.nome, cargo: edit.cargo, situacao: edit.situacao } });
+      toast.success(`Dados de ${u.login} atualizados.`);
+      setEditFor(null);
+      await load();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Falha ao atualizar usuário.");
+    }
+  }
+
+  async function excluir(u: Usuario) {
+    if (!window.confirm(`Excluir definitivamente o usuário ${u.login}?`)) return;
+    try {
+      await removeUser({ data: { userId: u.id } });
+      toast.success(`Usuário ${u.login} excluído.`);
+      await load();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Falha ao excluir usuário.");
+    }
+  }
 
   async function load() {
     setLoading(true);
