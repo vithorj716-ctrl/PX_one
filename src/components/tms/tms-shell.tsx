@@ -102,7 +102,7 @@ function TmsShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
   const Navigation = ({ mobile = false }: { mobile?: boolean }) => (
     <>
       <div className="p-4 flex items-center gap-2 border-b border-border bg-foreground">
-        <AnimatedLogo className="shrink-0"><PxLogLogo height={28} /></AnimatedLogo>
+        <AnimatedLogo className="w-24 shrink-0 rounded-sm"><PxLogLogo height={58} priority className="w-full" /></AnimatedLogo>
         <div className="ml-auto text-[9px] uppercase tracking-widest text-background">Transfer Hub</div>
         {mobile && <button onClick={() => setMobileNavOpen(false)} aria-label="Fechar menu" className="press ml-1 flex size-11 items-center justify-center text-background"><X className="size-5" /></button>}
       </div>

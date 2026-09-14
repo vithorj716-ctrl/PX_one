@@ -16,9 +16,9 @@ export function AnimatedLogo({ children, className = "" }: { children: ReactNode
       }
       const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
       timeline
-        .fromTo(root, { opacity: 0, scale: 0.92, y: 8, filter: "blur(4px)" }, { opacity: 1, scale: 0.985, y: 0, filter: "blur(0px)", duration: 0.42 })
+        .fromTo(root, { opacity: 0, scale: 0.92, y: 8, filter: "blur(4px)" }, { opacity: 1, scale: 0.985, y: 0, filter: "blur(0px)", duration: 0.46 })
         .to(root, { scale: 1, duration: 0.16, ease: "power2.out", clearProps: "transform,filter,opacity" })
-        .fromTo("[data-logo-sheen]", { xPercent: -240, opacity: 0 }, { xPercent: 620, opacity: 0.72, duration: 0.72, ease: "power2.inOut", clearProps: "transform,opacity" }, "-=0.03");
+        .fromTo("[data-logo-sheen]", { xPercent: -240, opacity: 0 }, { xPercent: 620, opacity: 0.42, duration: 0.72, ease: "power2.inOut", clearProps: "transform,opacity" }, "-=0.03");
     }, root);
     return () => ctx.revert();
   }, []);

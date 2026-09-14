@@ -5,9 +5,18 @@ import * as Icons from "lucide-react";
 import { useSystem } from "@/px-platform/system-context";
 import { supabase } from "@/integrations/supabase/client";
 import { Settings, LogOut } from "lucide-react";
+import { AnimatedLogo } from "@/components/motion/animated-logo";
+import { GrupoPxLogo } from "@/components/pxlog-logo";
 
 export const Route = createFileRoute("/_authenticated/launcher")({
-  head: () => ({ meta: [{ title: "PX Platform — Selecionar Sistema" }] }),
+  head: () => ({ meta: [
+    { title: "Selecionar sistema — Grupo PX" },
+    { name: "description", content: "Selecione um sistema da plataforma operacional do Grupo PX." },
+    { property: "og:title", content: "Selecionar sistema — Grupo PX" },
+    { property: "og:description", content: "Selecione um sistema da plataforma operacional do Grupo PX." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: LauncherPage,
 });
 
@@ -43,9 +52,7 @@ function LauncherPage() {
     <div className="min-h-screen grid-etch bg-background/75 text-foreground">
       <header className="h-14 px-4 sm:px-6 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="size-7 rounded-md flex items-center justify-center" style={{ background: "var(--gradient-brand)" }}>
-            <span className="text-[11px] font-bold text-brand-foreground">PX</span>
-          </div>
+          <AnimatedLogo className="w-16 shrink-0 rounded-sm"><GrupoPxLogo height={40} priority className="w-full" /></AnimatedLogo>
           <div>
             <div className="text-sm font-semibold leading-none">PX Platform</div>
             <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Selecionar Sistema</div>

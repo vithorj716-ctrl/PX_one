@@ -12,6 +12,7 @@ import { InstallAppButton } from "@/components/install-app-button";
 import { EmpresaSelector } from "@/components/empresa-selector";
 import { useSystem } from "@/px-platform/system-context";
 import { AnimatedLogo } from "@/components/motion/animated-logo";
+import { GrupoPxLogo } from "@/components/pxlog-logo";
 import { PageTransition } from "@/components/motion/page-transition";
 import { ShellMotionProvider, ShellPage, useShellMotion } from "@/components/motion/shell-motion-context";
 
@@ -180,8 +181,8 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
     <>
       <div className="p-4 flex items-center justify-between">
         <Link to="/" onClick={onNavigate} className="flex items-center gap-2 overflow-hidden">
-          <AnimatedLogo className="size-7 rounded-md flex items-center justify-center shrink-0 bg-[image:var(--gradient-brand)]">
-            <span className="text-[11px] font-bold text-brand-foreground">PX</span>
+          <AnimatedLogo className={collapsed ? "w-10 shrink-0 rounded-sm" : "w-20 shrink-0 rounded-sm"}>
+            <GrupoPxLogo height={collapsed ? 32 : 50} priority className="w-full" />
           </AnimatedLogo>
           {!collapsed && (
             <div className="overflow-hidden">
@@ -246,8 +247,8 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
 
       <div className="p-3 border-t border-border">
         <div className={`flex items-center gap-2 p-2 rounded-lg bg-surface/60 ring-1 ring-border ${collapsed ? "justify-center" : ""}`}>
-          <div className="size-8 rounded-full flex items-center justify-center shrink-0" style={{ background: "var(--gradient-brand)" }}>
-            <span className="text-[10px] font-bold text-brand-foreground">PX</span>
+          <div className="size-8 rounded-md flex items-center justify-center shrink-0 overflow-hidden">
+            <GrupoPxLogo height={28} className="w-full" />
           </div>
           {!collapsed && (
             <div className="min-w-0 flex-1">
