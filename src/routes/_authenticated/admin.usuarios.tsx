@@ -1,8 +1,17 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, RefreshCw, ShieldCheck, KeyRound, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, RefreshCw, ShieldCheck, KeyRound, Eye, EyeOff, UserPlus, Trash2, Save } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
-import { listPlatformUsers, setUserRoles, resetUserPassword, APP_ROLES } from "@/lib/px-users-admin.functions";
+import {
+  listPlatformUsers,
+  setUserRoles,
+  resetUserPassword,
+  createPlatformUser,
+  updatePlatformUser,
+  deletePlatformUser,
+  APP_ROLES,
+} from "@/lib/px-users-admin.functions";
+import { PX_SYSTEMS } from "@/px-platform/systems";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/usuarios")({
@@ -35,6 +44,9 @@ function AdminUsuarios() {
   const fetchUsers = useServerFn(listPlatformUsers);
   const saveRoles = useServerFn(setUserRoles);
   const resetPwd = useServerFn(resetUserPassword);
+  const createUser = useServerFn(createPlatformUser);
+  const updateUser = useServerFn(updatePlatformUser);
+  const removeUser = useServerFn(deletePlatformUser);
 
   const [rows, setRows] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,6 +55,53 @@ function AdminUsuarios() {
   const [pwdFor, setPwdFor] = useState<string | null>(null);
   const [pwd, setPwd] = useState("");
   const [showPwd, setShowPwd] = useState(false);
+
+  const [novoOpen, setNovoOpen] = useState(false);
+  const [novo, setNovo] = useState({ login: "", nome: "", cargo: "", password: "", roles: [] as string[], sistemas: ["pxone-erp"] as string[] });
+  const [criando, setCriando] = useState(false);
+  const [editFor, setEditFor] = useState<string | null>(null);
+  const [edit, setEdit] = useState({ nome: "", cargo: "", situacao: "ativo" });
+
+  function toggleIn(list: string[], value: string) {
+    return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+  }
+
+  async function submitNovo() {
+    setCriando(true);
+    try {
+      await createUser({ data: novo });
+      toast.success(`Usuário ${novo.login} criado.`);
+      setNovo({ login: "", nome: "", cargo: "", password: "", roles: [], sistemas: ["pxone-erp"] });
+      setNovoOpen(false);
+      await load();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Falha ao criar usuário.");
+    } finally {
+      setCriando(false);
+    }
+  }
+
+  async function submitEdit(u: Usuario) {
+    try {
+      await updateUser({ data: { userId: u.id, nome: edit.nome, cargo: edit.cargo, situacao: edit.situacao } });
+      toast.success(`Dados de ${u.login} atualizados.`);
+      setEditFor(null);
+      await load();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Falha ao atualizar usuário.");
+    }
+  }
+
+  async function excluir(u: Usuario) {
+    if (!window.confirm(`Excluir definitivamente o usuário ${u.login}?`)) return;
+    try {
+      await removeUser({ data: { userId: u.id } });
+      toast.success(`Usuário ${u.login} excluído.`);
+      await load();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Falha ao excluir usuário.");
+    }
+  }
 
   async function load() {
     setLoading(true);
@@ -93,13 +152,92 @@ function AdminUsuarios() {
           </button>
           <div className="text-sm font-semibold">Usuários & Níveis de Acesso</div>
         </div>
-        <button onClick={load} className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-border inline-flex items-center gap-1.5">
-          <RefreshCw className="size-3.5" /> Atualizar
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button onClick={() => setNovoOpen((v) => !v)} className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-brand text-brand inline-flex items-center gap-1.5">
+            <UserPlus className="size-3.5" /> Novo usuário
+          </button>
+          <button onClick={load} className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-border inline-flex items-center gap-1.5">
+            <RefreshCw className="size-3.5" /> Atualizar
+          </button>
+        </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-4">
         {erro && <div className="text-xs text-red-400 rounded-md ring-1 ring-red-500/30 p-3">{erro}</div>}
+
+        {novoOpen && (
+          <div className="rounded-xl ring-1 ring-brand/30 bg-surface/40 p-4 space-y-3">
+            <div className="text-sm font-semibold">Novo usuário</div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <input
+                value={novo.login}
+                onChange={(e) => setNovo((s) => ({ ...s, login: e.target.value }))}
+                placeholder="Login (ex.: joao)"
+                className="bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+              />
+              <input
+                value={novo.nome}
+                onChange={(e) => setNovo((s) => ({ ...s, nome: e.target.value }))}
+                placeholder="Nome completo"
+                className="bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+              />
+              <input
+                value={novo.cargo}
+                onChange={(e) => setNovo((s) => ({ ...s, cargo: e.target.value }))}
+                placeholder="Cargo"
+                className="bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+              />
+              <input
+                type="password"
+                value={novo.password}
+                onChange={(e) => setNovo((s) => ({ ...s, password: e.target.value }))}
+                placeholder="Senha (mín. 8)"
+                className="bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+              />
+            </div>
+            <div>
+              <div className="text-[11px] uppercase text-muted-foreground mb-1.5">Níveis de acesso</div>
+              <div className="flex flex-wrap gap-1.5">
+                {APP_ROLES.map((role) => {
+                  const on = novo.roles.includes(role);
+                  return (
+                    <button
+                      key={role}
+                      onClick={() => setNovo((s) => ({ ...s, roles: toggleIn(s.roles, role) }))}
+                      className={`text-xs px-2.5 py-1 rounded-full ring-1 ${on ? "ring-brand text-brand bg-brand/10" : "ring-border text-muted-foreground"}`}
+                    >
+                      {ROLE_LABEL[role]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <div className="text-[11px] uppercase text-muted-foreground mb-1.5">Sistemas liberados</div>
+              <div className="flex flex-wrap gap-1.5">
+                {PX_SYSTEMS.map((s) => {
+                  const on = novo.sistemas.includes(s.key);
+                  return (
+                    <button
+                      key={s.key}
+                      onClick={() => setNovo((st) => ({ ...st, sistemas: toggleIn(st.sistemas, s.key) }))}
+                      className={`text-xs px-2.5 py-1 rounded-full ring-1 ${on ? "ring-brand text-brand bg-brand/10" : "ring-border text-muted-foreground"}`}
+                    >
+                      {s.nome}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <button
+              onClick={submitNovo}
+              disabled={criando || novo.login.trim().length < 3 || novo.password.length < 8}
+              className="text-xs px-3 py-2 rounded-md ring-1 ring-brand text-brand disabled:opacity-50"
+            >
+              {criando ? "Criando…" : "Criar usuário"}
+            </button>
+          </div>
+        )}
         {loading ? (
           <div className="text-sm text-muted-foreground">Carregando…</div>
         ) : rows.length === 0 ? (
@@ -119,13 +257,60 @@ function AdminUsuarios() {
                   </div>
                   <div className="text-xs text-muted-foreground">{u.nome ?? "—"} · {u.email}</div>
                 </div>
-                <button
-                  onClick={() => { setPwdFor(pwdFor === u.id ? null : u.id); setPwd(""); }}
-                  className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-border inline-flex items-center gap-1.5"
-                >
-                  <KeyRound className="size-3.5" /> Senha
-                </button>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => { setPwdFor(pwdFor === u.id ? null : u.id); setPwd(""); }}
+                    className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-border inline-flex items-center gap-1.5"
+                  >
+                    <KeyRound className="size-3.5" /> Senha
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditFor(editFor === u.id ? null : u.id);
+                      setEdit({ nome: u.nome ?? "", cargo: u.cargo ?? "", situacao: u.situacao ?? "ativo" });
+                    }}
+                    className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-border inline-flex items-center gap-1.5"
+                  >
+                    <Save className="size-3.5" /> Editar
+                  </button>
+                  <button
+                    onClick={() => excluir(u)}
+                    className="text-xs px-2.5 py-1.5 rounded-md ring-1 ring-red-500/30 text-red-400 inline-flex items-center gap-1.5"
+                  >
+                    <Trash2 className="size-3.5" /> Excluir
+                  </button>
+                </div>
               </div>
+
+              {editFor === u.id && (
+                <div className="grid gap-2 sm:grid-cols-3 pt-1">
+                  <input
+                    value={edit.nome}
+                    onChange={(e) => setEdit((s) => ({ ...s, nome: e.target.value }))}
+                    placeholder="Nome"
+                    className="bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+                  />
+                  <input
+                    value={edit.cargo}
+                    onChange={(e) => setEdit((s) => ({ ...s, cargo: e.target.value }))}
+                    placeholder="Cargo"
+                    className="bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+                  />
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={edit.situacao}
+                      onChange={(e) => setEdit((s) => ({ ...s, situacao: e.target.value }))}
+                      className="flex-1 bg-background ring-1 ring-border rounded-md px-3 py-2 text-sm outline-none focus:ring-brand"
+                    >
+                      <option value="ativo">Ativo</option>
+                      <option value="inativo">Inativo</option>
+                    </select>
+                    <button onClick={() => submitEdit(u)} className="text-xs px-3 py-2 rounded-md ring-1 ring-brand text-brand">
+                      Salvar
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <div className="flex flex-wrap gap-1.5">
                 {APP_ROLES.map((role) => {
