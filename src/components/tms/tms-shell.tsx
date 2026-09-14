@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import {
   Truck, Package, ScanLine, FileText, Search, AlertTriangle, Users, Tag, CircleDollarSign,
@@ -12,6 +12,8 @@ import { AnimatedLogo } from "@/components/motion/animated-logo";
 import { PageTransition } from "@/components/motion/page-transition";
 import { ShellMotionProvider, ShellPage, useShellMotion } from "@/components/motion/shell-motion-context";
 import { MobileDrawer } from "@/components/motion/mobile-drawer";
+import { useDesktopSmoothScroll } from "@/components/motion/desktop-smooth-scroll";
+import { NAV_SPRING } from "@/components/motion/tokens";
 
 type NavItem = { to: string; label: string; icon: typeof Truck; exact?: boolean; group: string };
 
@@ -56,8 +58,7 @@ function TmsNavigation({ pathname, mobile = false, reduced, onClose, onSwitchSys
   return (
     <>
       <div className="p-4 flex items-center gap-2 border-b border-border bg-foreground">
-        <AnimatedLogo className="w-24 shrink-0 rounded-sm"><PxLogLogo height={58} priority className="w-full" /></AnimatedLogo>
-        <div className="ml-auto text-[9px] uppercase tracking-widest text-background">Transfer Hub</div>
+        <AnimatedLogo wordmark="PXLog" submark="Transfer Hub" className="min-w-0 shrink-0 text-background"><PxLogLogo height={58} priority className="w-24" /></AnimatedLogo>
         {mobile && <button onClick={onClose} aria-label="Fechar menu" className="press ml-1 flex size-11 items-center justify-center text-background"><X className="size-5" /></button>}
       </div>
       <nav className="flex-1 px-2 space-y-2 overflow-y-auto thin-scroll pb-4">
@@ -68,7 +69,7 @@ function TmsNavigation({ pathname, mobile = false, reduced, onClose, onSwitchSys
               const Icon = item.icon;
               const active = isActive(item.to, item.exact);
               return <Link key={item.to} to={item.to} onClick={onClose} className={`relative flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors ${active ? "text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-brand/5"}`}>
-                {active && <motion.span layoutId={mobile ? "tms-nav-mobile" : "tms-nav-desktop"} transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 36 }} className="absolute inset-y-0.5 left-0 right-0 rounded-md border-l-2 border-brand bg-brand/8" />}
+                {active && <motion.span layoutId={mobile ? "tms-nav-mobile" : "tms-nav-desktop"} transition={reduced ? { duration: 0 } : NAV_SPRING} className="absolute inset-y-0.5 left-0 right-0 rounded-md border-l-2 border-brand bg-brand/8" />}
                 <Icon className={`relative size-4 shrink-0 ${active ? "text-brand" : ""}`} />
                 <span className="relative font-medium truncate">{item.label}</span>
               </Link>;
@@ -114,7 +115,11 @@ function TmsShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
   const navigate = useNavigate();
   const reduced = useReducedMotion() ?? false;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [mobileHeaderCompact, setMobileHeaderCompact] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+  const mainContentRef = useRef<HTMLDivElement>(null);
   const { activeSystem, setActiveSystem } = useSystem();
+  useDesktopSmoothScroll(mainRef, mainContentRef);
 
   // Garante contexto = TMS quando o usuário aterrissa via deep-link
   useEffect(() => {
@@ -135,16 +140,25 @@ function TmsShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
   }
 
   useEffect(() => { setMobileNavOpen(false); }, [pathname]);
+  useEffect(() => {
+    const main = mainRef.current;
+    if (!main) return;
+    const onScroll = () => setMobileHeaderCompact(main.scrollTop > 12);
+    onScroll();
+    main.addEventListener("scroll", onScroll, { passive: true });
+    return () => main.removeEventListener("scroll", onScroll);
+  }, []);
   return (
     <div className="flex h-[100dvh] overflow-hidden bg-background text-foreground">
       <aside className="hidden lg:flex w-64 flex-col border-r border-border shrink-0 bg-sidebar"><TmsNavigation pathname={pathname} reduced={reduced} onSwitchSystem={trocarSistema} onSignOut={sair} /></aside>
       <div className="lg:hidden"><MobileDrawer open={mobileNavOpen} label="Navegação TMS" onClose={() => setMobileNavOpen(false)} className="relative w-72 max-w-[85vw] h-full bg-sidebar border-r border-border flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"><TmsNavigation pathname={pathname} mobile reduced={reduced} onClose={() => setMobileNavOpen(false)} onSwitchSystem={trocarSistema} onSignOut={sair} /></MobileDrawer></div>
 
-      <main className="flex-1 overflow-y-auto thin-scroll min-w-0 bg-background/80">
-        <header className="sticky top-0 z-[var(--z-sticky)] h-14 border-b border-border px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 backdrop-blur-xl bg-background/85">
+      <main ref={mainRef} className="flex-1 overflow-y-auto thin-scroll min-w-0 bg-background/80">
+        <div ref={mainContentRef}>
+        <header className={`sticky top-0 z-[var(--z-sticky)] border-b border-border px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 backdrop-blur-xl bg-background/85 transition-[height] duration-300 ease-[var(--ease-px)] ${mobileHeaderCompact ? "h-12 lg:h-14" : "h-14"}`}>
           <div className="min-w-0 flex items-center gap-2">
             <button onClick={() => setMobileNavOpen(true)} aria-label="Abrir menu" className="press lg:hidden flex size-11 -ml-2 items-center justify-center text-muted-foreground"><Menu className="size-5" /></button>
-            <div className="contents"><h1 className="text-sm font-semibold truncate">{title}</h1>
+            <div className="contents"><h1 className={`font-semibold truncate transition-[font-size] duration-300 ease-[var(--ease-px)] ${mobileHeaderCompact ? "text-xs lg:text-sm" : "text-sm"}`}>{title}</h1>
             {subtitle && (
               <>
                 <div className="h-3.5 w-px bg-border hidden sm:block" />
@@ -163,6 +177,7 @@ function TmsShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
           </div>
         </header>
         <div className="p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">{children}</div>
+        </div>
       </main>
     </div>
   );

@@ -1,11 +1,11 @@
 import Lenis from "lenis";
 import { useEffect, type RefObject } from "react";
 
-export function useDesktopSmoothScroll(wrapperRef: RefObject<HTMLElement | null>) {
+export function useDesktopSmoothScroll(wrapperRef: RefObject<HTMLElement | null>, contentRef: RefObject<HTMLElement | null>) {
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
-    const content = wrapper?.firstElementChild;
+    const content = contentRef.current;
     if (!wrapper || !(content instanceof HTMLElement)) return;
     if (window.matchMedia("(max-width: 1023px)").matches) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -21,5 +21,5 @@ export function useDesktopSmoothScroll(wrapperRef: RefObject<HTMLElement | null>
       cancelAnimationFrame(frame);
       lenis.destroy();
     };
-  }, [wrapperRef]);
+  }, [contentRef, wrapperRef]);
 }
