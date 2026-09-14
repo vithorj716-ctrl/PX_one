@@ -26,7 +26,7 @@ const ERP_ROOTS = new Set([
   "/", "/ai-analyst", "/aplicacoes", "/business-plan", "/consolidado", "/custos",
   "/decisions", "/documents", "/empresas", "/financial-intelligence", "/growth",
   "/investor", "/kpis", "/markup", "/okr", "/payback", "/platform", "/risk",
-  "/timeline", "/valuation",
+  "/registry", "/timeline", "/valuation",
 ]);
 
 function AuthenticatedLayout() {

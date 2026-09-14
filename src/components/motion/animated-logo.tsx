@@ -11,20 +11,25 @@ export function AnimatedLogo({ children, className = "" }: { children: ReactNode
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const ctx = gsap.context(() => {
       if (reduced) {
-        gsap.fromTo(root, { opacity: 0 }, { opacity: 1, duration: 0.1, clearProps: "opacity" });
+        gsap.set(root, { opacity: 1, transform: "none", filter: "none" });
         return;
       }
       const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
       timeline
-        .fromTo(root, { opacity: 0, scale: 0.92, y: 8, filter: "blur(4px)" }, { opacity: 1, scale: 0.985, y: 0, filter: "blur(0px)", duration: 0.46 })
-        .to(root, { scale: 1, duration: 0.16, ease: "power2.out", clearProps: "transform,filter,opacity" })
-        .fromTo("[data-logo-sheen]", { xPercent: -240, opacity: 0 }, { xPercent: 620, opacity: 0.42, duration: 0.72, ease: "power2.inOut", clearProps: "transform,opacity" }, "-=0.03");
+        .fromTo(root, { opacity: 0, scale: 0.94, y: 8 }, { opacity: 1, scale: 0.985, y: 0, duration: 0.48 })
+        .to(root, { scale: 1, duration: 0.12, ease: "power2.out" })
+        .fromTo("[data-logo-sheen]", { xPercent: -240, opacity: 0 }, { xPercent: 620, opacity: 0.22, duration: 0.58, ease: "power2.inOut" }, "-=0.02")
+        .set("[data-logo-sheen]", { opacity: 0 })
+        .set(root, { opacity: 1, transform: "none", filter: "none" });
     }, root);
-    return () => ctx.revert();
+    return () => {
+      ctx.kill();
+      ctx.revert();
+    };
   }, []);
 
   return (
-    <div ref={rootRef} className={cn("px-logo-idle relative isolate overflow-hidden", className)}>
+    <div ref={rootRef} className={cn("relative isolate overflow-hidden", className)}>
       {children}
       <span aria-hidden="true" data-logo-sheen className="px-sheen-layer px-sheen-manual" />
     </div>

@@ -12,13 +12,12 @@ export function PageTransition({ children }: { children: ReactNode }) {
       <motion.div
         key={pathname}
         className="min-h-full will-change-transform"
-        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8, filter: "blur(3px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4, filter: "blur(2px)", pointerEvents: "none" }}
+        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={reduced ? { opacity: 0, pointerEvents: "none" } : { opacity: 0, y: -3, pointerEvents: "none" }}
         transition={reduced ? { duration: 0.08 } : {
-          opacity: { duration: 0.2, ease: EASE },
-          y: { duration: 0.32, ease: EASE },
-          filter: { duration: 0.24, ease: EASE },
+          opacity: { duration: 0.17, ease: EASE },
+          y: { duration: 0.28, ease: EASE },
         }}
       >
         {children}
