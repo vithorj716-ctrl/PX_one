@@ -1,85 +1,91 @@
+# Reformulação completa do sistema de movimento do PX One
 
-# Integração definitiva do Ecossistema PX
+## Objetivo
 
-Este projeto (PX One) já é o **Core/ERP** e já expõe a **PX API** (Fases 1–4 concluídas: `/api/public/v1/*`, JWT, idempotência, OpenAPI). Falta a camada de **integração federada** entre os três sistemas, **sem tocar em UI, menus, telas, regras ou banco**.
+Elevar o PX One para uma experiência operacional mais fluida, precisa e premium, preservando integralmente autenticação, Supabase externo, permissões, empresa e sistema ativos, regras de negócio, rotas e fluxos existentes. A identidade continua sendo PX One: preto/grafite, azul-ciano PX e cores semânticas de estado.
 
-A proposta é puramente **infraestrutura de integração**: cliente HTTP outbound + contratos inbound + observabilidade. Nada visual muda.
+## Auditoria consolidada
 
-## Princípio
+- O app usa React 19, TanStack Start/Router, Tailwind v4, shadcn/Radix e Supabase externo.
+- A autenticação e proteção de rotas permanecem em `/_authenticated`; sistema e empresa ativos possuem contextos próprios e armazenamento já consolidado.
+- Existem dois shells principais: PX One corporativo e PXLog TMS. Ambos possuem navegação, cabeçalho, painéis móveis e ações próprias que serão refinados, não reconstruídos.
+- Hoje o movimento é CSS disperso: fades, scale, shimmer e transições simples. Não existem Motion, GSAP, Lenis, transições coordenadas, reduced motion ou Canvas animado.
+- O manifesto PWA existe e já está ligado ao documento, mas não há service worker nem estratégia de atualização/cache.
+- Há resíduos de template nos metadados raiz e o idioma do documento está incorreto.
+- Existem muitos pontos compartilhados de alto impacto: CRUD/tabelas, diálogos, botões, métricas, gráficos, seletor de empresa, launcher e estados de loading/empty.
 
-- PX One **continua** dono de: financeiro, contas, fluxo de caixa, BI, admin, auditoria.
-- PX Comercial passa a ser **Master Data** de: clientes, contatos, tabelas de frete, cotações, propostas, regras comerciais.
-- PX Log passa a ser **Master Data** de: solicitações, embarques, viagens, entregas, tracking, ocorrências.
-- Comunicação **só por API**. Nenhum acesso cruzado a banco.
+## Implementação
 
-## O que será criado (somente backend, zero UI)
+### 1. Fundação visual e de movimento
 
-### 1. SDK outbound `src/px-integration/` (novo, isolado)
-Cliente HTTP tipado que o PX One usa para consumir CRM e TMS. **Não substitui** nada existente — fica disponível para quem quiser plugar depois.
+- Ampliar os tokens globais existentes com durações, easings, superfícies técnicas, brilho, backdrop e intensidade de movimento.
+- Criar utilitários semânticos para painéis integrados, divisores, rótulos, números, regra de marca, grid técnico, press, row-hover, sheen PX, status vivo e skeleton.
+- Manter os tokens PX atuais; remover cores visuais avulsas somente nos pontos tocados pela reformulação.
+- Adicionar uma política global de `prefers-reduced-motion`, preservando apenas feedback essencial e reduzindo deslocamento, blur e duração.
 
-```
-src/px-integration/
-├── client.ts          # fetch wrapper: baseURL, JWT (client_credentials), retry, timeout, circuit breaker
-├── cache.ts           # cache em memória com TTL curto (60s default) para performance
-├── errors.ts          # PxIntegrationError com código + mensagem amigável
-├── crm.ts             # SDK PX Comercial: getClientes, getCliente, getTabelaFrete, getCotacao…
-├── tms.ts             # SDK PX Log: getOperacoes, getFaturamentoOperacional…
-└── config.ts          # lê PX_CRM_BASE_URL, PX_TMS_BASE_URL, PX_CRM_API_KEY, PX_TMS_API_KEY
-```
+### 2. Primitivas reutilizáveis
 
-### 2. Endpoints inbound novos no PX One (`/api/public/v1/`)
-Apenas o que CRM/TMS vão precisar consumir do Core que ainda não existe:
+Criar um conjunto pequeno e reutilizável:
 
-- `POST /financeiro/lancamentos` — TMS publica faturamento operacional (idempotente por `operacao_id`).
-- `GET  /financeiro/consolidado` — leitura agregada para dashboards externos.
-- `GET  /dashboard/executivo` — leitura consolidada (financeiro + agregados puxados do CRM/TMS via SDK outbound, com fallback resiliente).
+- `AnimatedBackground`: um único Canvas fixo com brumas PX, ondas técnicas, partículas em profundidade, spot do ponteiro, adaptação mobile/low-power, DPR limitado, pausa por visibilidade e cleanup completo.
+- `PageTransition`/`MotionPage`: `AnimatePresence mode="wait"`, chave por pathname, entrada/saída única e sem sobreposição pesada com páginas internas.
+- `AnimatedLogo` e `PxSheen`: entrada coordenada da marca e brilho diagonal restrito a ações de destaque.
+- `AnimatedMetric`/`AnimatedNumber`: entrada escalonada e troca vertical apenas quando valores mudarem.
+- `LoadingRows`, `LoadingStats`, `EmptyState` e `StatusIndicator`: estados estáveis e acessíveis.
+- Primitivas de painel, diálogo e drawer somente onde os componentes compartilhados atuais não fornecerem o comportamento necessário.
 
-Todos seguem o mesmo padrão já estabelecido: JWT scoped, envelope `{status,data,...}`, paginação cursor, idempotência onde faz sentido.
+### 3. Shells e navegação
 
-### 3. Tabela de integração (uma única migration)
-- `px_integration_links` — vínculo lógico entre entidades de domínios diferentes (ex.: `operacao_tms_id` ↔ `cotacao_crm_id` ↔ `cliente_crm_id`). Permite rastrear sem duplicar dados.
-- `px_integration_inbox` — log de eventos recebidos (audit + replay).
+- Inserir o fundo reativo uma única vez na estrutura raiz, atrás de todo o conteúdo e sem capturar interação.
+- Refinar AppShell e TmsShell sem alterar menus, rotas ou ações.
+- Usar indicador ativo compartilhado com `layoutId` e spring `stiffness: 420`, `damping: 36`.
+- Coordenar a entrada estrutural: shell, cabeçalho, título, controles e conteúdo, evitando animações duplicadas nas páginas.
+- Transformar painéis móveis em drawers curtos; respeitar safe areas, bloqueio de scroll, foco e áreas de toque.
+- Manter scroll nativo nos painéis da aplicação. Lenis não será adicionado porque os shells usam áreas internas roláveis e ele criaria um segundo sistema concorrente sem benefício operacional.
 
-Ambas com RLS, GRANTs e acesso só via `service_role` (consumido pela API).
+### 4. Login e launcher
 
-### 4. Resiliência
-- Timeout default 8s, 2 retries com backoff exponencial.
-- Circuit breaker abre após 5 falhas seguidas, semi-aberto após 30s.
-- Em falha: SDK lança `PxIntegrationError`; endpoints públicos retornam `503` com `Retry-After` e mensagem amigável; quem chama decide se degrada.
-- Cache de leitura (clientes/tabelas de frete) com TTL 60s para reduzir round-trips e suportar indisponibilidade momentânea.
+- Reorganizar apenas apresentação e movimento do login; preservar credenciais, domínio, chamadas Supabase, mensagens e redirecionamentos.
+- Criar timeline GSAP para fundo, marca, título, divisor, campos, botão e mensagens, com `gsap.context()` e `revert()`.
+- Aplicar sheen PX e resposta de press ao botão principal.
+- Refinar launcher e administração com a mesma linguagem técnica, entrada escalonada, estados estruturados e cards menos genéricos.
 
-### 5. Segredos a configurar (uso futuro, opcional)
-Quando CRM e TMS publicarem suas APIs, salvar via `add_secret`:
-- `PX_CRM_BASE_URL`, `PX_CRM_CLIENT_ID`, `PX_CRM_CLIENT_SECRET`
-- `PX_TMS_BASE_URL`, `PX_TMS_CLIENT_ID`, `PX_TMS_CLIENT_SECRET`
+### 5. Componentes e dados
 
-Enquanto não houver URL configurada, o SDK fica em **modo standby**: qualquer chamada retorna erro estruturado sem quebrar nada.
+- Atualizar Button, Dialog, Table, Popover e o CRUD compartilhado para microinterações coerentes, entradas/saídas com presença, foco visível e dimensões estáveis.
+- Animar linhas de tabelas discretamente no primeiro carregamento e destacar somente linhas/células alteradas.
+- Aplicar entrada escalonada às métricas reutilizadas nos dashboards PX One, TMS e Last Mile.
+- Animar barras, linhas e áreas de gráficos apenas na entrada ou mudança real dos dados.
+- Substituir loaders isolados prioritários por skeletons estruturais e empty states com ícones Lucide e ação contextual quando já existir ação correspondente.
+- Estados críticos terão pulso lento de opacidade, sem piscadas ou dependência exclusiva de animação.
 
-## O que NÃO muda
+### 6. PWA e acabamento institucional
 
-- Nenhuma rota visual, nenhum componente, nenhum menu, nenhum hook de UI.
-- Nenhum schema de tabela existente.
-- Nenhuma regra de negócio (cálculo de frete, markup, custos, KPIs).
-- Telas de TMS continuam usando `tms_clientes` localmente até que o time do TMS migre para consumir o CRM via SDK — essa migração será feita lá, não aqui.
+- Corrigir idioma para `pt-BR` e remover metadados herdados de outro projeto.
+- Garantir metadados PX One completos e únicos nas rotas de conteúdo tocadas, sem alterar URLs ou navegação.
+- Integrar o service worker ao PWA existente com atualização automática, limpeza de cache antigo, `skipWaiting` e `clientsClaim`, sem duplicar manifesto ou registro.
+- Preservar assets locais, instalação atual e compatibilidade com produção.
 
 ## Detalhes técnicos
 
-- `createServerFn` apenas para handlers admin; integrações ficam em módulos puros chamados pelos endpoints `/api/public/v1/*` e por server functions futuras.
-- Sem `supabaseAdmin` no topo de arquivos — sempre `await import` dentro do handler.
-- OpenAPI atualizado com os 3 novos endpoints.
-- Painel `/admin/px-api` ganha um card "Integrações" só-leitura mostrando status de CRM/TMS (online/offline/standby) — é um único componente novo já dentro de uma página existente, não conta como mudança de UX porque não altera nada do que já está lá; **se preferir, removo esse card**.
+- Bibliotecas: `motion` para presença, layout, springs e estados locais; `gsap` para timelines coordenadas do login e entradas estruturais específicas; Canvas 2D para o fundo.
+- Easing principal: `[0.22, 1, 0.36, 1]`; GSAP com `power3.out`, `power2.out`, `power2.inOut` e `sine.inOut`.
+- Transição de página: entrada `opacity 0→1`, `y 14→0`, `blur 8→0`, 0,42s; saída `opacity 1→0`, `y 0→-8`, `blur 0→6`.
+- Canvas: 6 ondas desktop/4 mobile, partículas adaptativas de 12–200 com teto de 90 em hardware limitado, interpolação do ponteiro em 0,03 por quadro e DPR máximo 2/1,5.
+- Nenhuma alteração de schema, migração, banco, autenticação, autorização, regra de negócio, API pública, função de servidor ou integração Supabase.
+- Nenhum uso de Lovable Cloud.
 
-## Ordem de implementação
+## Validação
 
-1. Migration `px_integration_links` + `px_integration_inbox`.
-2. SDK `src/px-integration/*` (client + crm + tms + cache + errors + config).
-3. 3 endpoints novos em `/api/public/v1/`.
-4. OpenAPI atualizado.
-5. (Opcional) Card de status no painel admin.
+- Verificar tipos/testes existentes e ausência de erros no console.
+- Testar login visualmente: sequência, foco, press, sheen, erro e fundo reativo.
+- Testar navegação autenticada em desktop: indicador deslizante, troca de páginas sem flash/duplicação e scroll natural.
+- Testar 320, 375, 768, 1024, 1280 e tela larga: densidade adaptativa, safe areas, drawers, inputs sem zoom e ausência de overflow.
+- Verificar métricas, tabelas, gráficos, loading, empty states e atualização localizada de dados.
+- Verificar reduced motion e pausa do Canvas em aba oculta.
+- Verificar manifesto, service worker, assets e atualização em build de produção.
+- Auditar ao final que fluxos, rotas, autenticação, permissões, empresa ativa, sistema ativo, Supabase e regras de negócio não foram modificados.
 
-## Pergunta antes de executar
+## Entrega
 
-1. **CRM e TMS já têm API publicada** com URL/credenciais, ou devo deixar o SDK em standby aguardando? (Você mencionou que `PX_ONE_BASE_URL` ainda não foi salva no outro lado — provavelmente vamos ficar em standby dos dois lados por enquanto.)
-2. **Posso adicionar o card "Integrações" só-leitura** no painel `/admin/px-api`, ou prefere zero alteração visual (mesmo informativa)?
-
-Confirme essas duas e eu executo tudo em sequência.
+O resumo final listará arquivos criados e alterados, componentes de animação, bibliotecas, áreas reformuladas, testes executados e qualquer fluxo que não tenha podido ser validado por falta de sessão ou dados.
