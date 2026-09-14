@@ -327,9 +327,9 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
 
       {/* Right panel — desktop */}
       {rightPanel && (
-        <aside className="hidden xl:block w-80 border-l border-border bg-sidebar/40 shrink-0 p-6 overflow-y-auto thin-scroll animate-fade-in">
+        <motion.aside initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }} className="hidden xl:block w-80 border-l border-border bg-sidebar/40 shrink-0 p-6 overflow-y-auto thin-scroll">
           {rightPanel}
-        </aside>
+        </motion.aside>
       )}
 
       {/* Right panel — mobile drawer */}
