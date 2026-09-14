@@ -1,8 +1,17 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, RefreshCw, ShieldCheck, KeyRound, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, RefreshCw, ShieldCheck, KeyRound, Eye, EyeOff, UserPlus, Trash2, Save } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
-import { listPlatformUsers, setUserRoles, resetUserPassword, APP_ROLES } from "@/lib/px-users-admin.functions";
+import {
+  listPlatformUsers,
+  setUserRoles,
+  resetUserPassword,
+  createPlatformUser,
+  updatePlatformUser,
+  deletePlatformUser,
+  APP_ROLES,
+} from "@/lib/px-users-admin.functions";
+import { PX_SYSTEMS } from "@/px-platform/systems";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/usuarios")({
