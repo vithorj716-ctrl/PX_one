@@ -8,6 +8,9 @@ import {
 import { useSystem } from "@/px-platform/system-context";
 import { supabase } from "@/integrations/supabase/client";
 import { PxLogLogo } from "@/components/pxlog-logo";
+import { AnimatedLogo } from "@/components/motion/animated-logo";
+import { PageTransition } from "@/components/motion/page-transition";
+import { ShellMotionProvider, ShellPage, useShellMotion } from "@/components/motion/shell-motion-context";
 
 type NavItem = { to: string; label: string; icon: typeof Truck; exact?: boolean; group: string };
 
@@ -44,6 +47,24 @@ interface TmsShellProps {
 }
 
 export function TmsShell({ children, title, subtitle, headerActions }: TmsShellProps) {
+  const persistentShell = useShellMotion();
+  if (persistentShell) return <ShellPage header={{ title, subtitle, headerActions }}>{children}</ShellPage>;
+  return <TmsShellFrame title={title} subtitle={subtitle} headerActions={headerActions}>{children}</TmsShellFrame>;
+}
+
+export function PersistentTmsShell({ children }: { children: ReactNode }) {
+  return (
+    <ShellMotionProvider initialHeader={{ title: "PXLog TMS" }}>
+      <TmsShellFrame title="PXLog TMS"><PageTransition>{children}</PageTransition></TmsShellFrame>
+    </ShellMotionProvider>
+  );
+}
+
+function TmsShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubtitle, headerActions: fallbackActions }: TmsShellProps) {
+  const shell = useShellMotion();
+  const title = shell?.header.title ?? fallbackTitle;
+  const subtitle = shell?.header.subtitle ?? fallbackSubtitle;
+  const headerActions = shell?.header.headerActions ?? fallbackActions;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -81,7 +102,7 @@ export function TmsShell({ children, title, subtitle, headerActions }: TmsShellP
   const Navigation = ({ mobile = false }: { mobile?: boolean }) => (
     <>
       <div className="p-4 flex items-center gap-2 border-b border-border bg-foreground">
-        <PxLogLogo height={28} />
+        <AnimatedLogo className="shrink-0"><PxLogLogo height={28} /></AnimatedLogo>
         <div className="ml-auto text-[9px] uppercase tracking-widest text-background">Transfer Hub</div>
         {mobile && <button onClick={() => setMobileNavOpen(false)} aria-label="Fechar menu" className="press ml-1 flex size-11 items-center justify-center text-background"><X className="size-5" /></button>}
       </div>
@@ -111,19 +132,19 @@ export function TmsShell({ children, title, subtitle, headerActions }: TmsShellP
   return (
     <div className="flex h-[100dvh] overflow-hidden bg-background text-foreground">
       <aside className="hidden lg:flex w-64 flex-col border-r border-border shrink-0 bg-sidebar"><Navigation /></aside>
-      <AnimatePresence>{mobileNavOpen && <motion.div className="lg:hidden fixed inset-0 z-50 flex" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><div className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-sm" onClick={() => setMobileNavOpen(false)} /><motion.aside initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", stiffness: 380, damping: 38 }} className="relative w-72 max-w-[85vw] h-full bg-sidebar border-r border-border flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"><Navigation mobile /></motion.aside></motion.div>}</AnimatePresence>
+      <AnimatePresence>{mobileNavOpen && <motion.div role="dialog" aria-modal="true" aria-label="Navegação TMS" className="lg:hidden fixed inset-0 z-[var(--z-drawer)] flex" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, pointerEvents: "none" }}><div className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-sm" onClick={() => setMobileNavOpen(false)} /><motion.aside initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", stiffness: 380, damping: 38 }} className="relative w-72 max-w-[85vw] h-full bg-sidebar border-r border-border flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"><Navigation mobile /></motion.aside></motion.div>}</AnimatePresence>
 
       <main className="flex-1 overflow-y-auto thin-scroll min-w-0 bg-background/80">
-        <motion.header initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="sticky top-0 z-20 h-14 border-b border-border px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 backdrop-blur-xl bg-background/85">
+        <header className="sticky top-0 z-[var(--z-sticky)] h-14 border-b border-border px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 backdrop-blur-xl bg-background/85">
           <div className="min-w-0 flex items-center gap-2">
             <button onClick={() => setMobileNavOpen(true)} aria-label="Abrir menu" className="press lg:hidden flex size-11 -ml-2 items-center justify-center text-muted-foreground"><Menu className="size-5" /></button>
-            <h1 className="text-sm font-semibold truncate">{title}</h1>
+            <AnimatePresence mode="wait" initial={false}><motion.div key={`${title}:${subtitle ?? ""}`} initial={{ opacity: 0, y: 3 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -2 }} transition={{ duration: 0.16 }} className="contents"><h1 className="text-sm font-semibold truncate">{title}</h1>
             {subtitle && (
               <>
                 <div className="h-3.5 w-px bg-border hidden sm:block" />
                 <span className="text-sm text-muted-foreground truncate hidden sm:inline">{subtitle}</span>
               </>
-            )}
+            )}</motion.div></AnimatePresence>
           </div>
           <div className="flex items-center gap-2">
             {headerActions}
@@ -134,7 +155,7 @@ export function TmsShell({ children, title, subtitle, headerActions }: TmsShellP
               <Grid3x3 className="size-3.5" /> Trocar Sistema
             </button>
           </div>
-        </motion.header>
+        </header>
         <div className="p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">{children}</div>
       </main>
     </div>

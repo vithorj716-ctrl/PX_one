@@ -12,6 +12,8 @@ import { InstallAppButton } from "@/components/install-app-button";
 import { EmpresaSelector } from "@/components/empresa-selector";
 import { useSystem } from "@/px-platform/system-context";
 import { AnimatedLogo } from "@/components/motion/animated-logo";
+import { PageTransition } from "@/components/motion/page-transition";
+import { ShellMotionProvider, ShellPage, useShellMotion } from "@/components/motion/shell-motion-context";
 
 const navGroups = [
   {
@@ -74,6 +76,27 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, title, subtitle, rightPanel, headerActions }: AppShellProps) {
+  const persistentShell = useShellMotion();
+  if (persistentShell) {
+    return <ShellPage header={{ title, subtitle, rightPanel, headerActions }}>{children}</ShellPage>;
+  }
+  return <AppShellFrame title={title} subtitle={subtitle} rightPanel={rightPanel} headerActions={headerActions}>{children}</AppShellFrame>;
+}
+
+export function PersistentAppShell({ children }: { children: ReactNode }) {
+  return (
+    <ShellMotionProvider initialHeader={{ title: "PXOne" }}>
+      <AppShellFrame title="PXOne"><PageTransition>{children}</PageTransition></AppShellFrame>
+    </ShellMotionProvider>
+  );
+}
+
+function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubtitle, rightPanel: fallbackRightPanel, headerActions: fallbackActions }: AppShellProps) {
+  const shell = useShellMotion();
+  const title = shell?.header.title ?? fallbackTitle;
+  const subtitle = shell?.header.subtitle ?? fallbackSubtitle;
+  const rightPanel = shell?.header.rightPanel ?? fallbackRightPanel;
+  const headerActions = shell?.header.headerActions ?? fallbackActions;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [collapsed, setCollapsed] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -251,7 +274,7 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
       {/* Mobile Sidebar Drawer */}
       <AnimatePresence>
       {mobileNavOpen && (
-        <motion.div className="lg:hidden fixed inset-0 z-50 flex" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+         <motion.div role="dialog" aria-modal="true" aria-label="Navegação" className="lg:hidden fixed inset-0 z-[var(--z-drawer)] flex" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, pointerEvents: "none" }}>
           <motion.div className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-sm" onClick={() => setMobileNavOpen(false)} />
           <motion.aside initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", stiffness: 380, damping: 38 }} className="relative w-72 max-w-[85vw] bg-sidebar border-r border-border flex flex-col h-full pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
             <SidebarInner onNavigate={() => setMobileNavOpen(false)} />
@@ -262,7 +285,7 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
 
       {/* Main */}
       <main className="flex-1 overflow-y-auto thin-scroll bg-background min-w-0">
-        <motion.header initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }} className="sticky top-0 z-20 h-14 border-b border-border bg-background/85 backdrop-blur-xl px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2">
+        <header className="sticky top-0 z-[var(--z-sticky)] h-14 border-b border-border bg-background/85 backdrop-blur-xl px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <button
               onClick={() => setMobileNavOpen(true)}
@@ -271,7 +294,8 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
             >
               <Menu className="size-5" />
             </button>
-            <div className="min-w-0 flex items-center gap-2">
+            <AnimatePresence mode="wait" initial={false}>
+            <motion.div key={`${title}:${subtitle ?? ""}`} initial={{ opacity: 0, y: 3 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -2 }} transition={{ duration: 0.16 }} className="min-w-0 flex items-center gap-2">
               <h1 className="text-sm font-semibold truncate">{title}</h1>
               {subtitle && (
                 <>
@@ -279,7 +303,8 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
                   <span className="text-sm text-muted-foreground truncate hidden sm:inline">{subtitle}</span>
                 </>
               )}
-            </div>
+            </motion.div>
+            </AnimatePresence>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <button
@@ -321,7 +346,7 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
               <span className="size-1.5 rounded-full bg-brand inline-block mr-1.5 animate-pulse-glow" /> {now}
             </span>
           </div>
-        </motion.header>
+        </header>
         <div className="p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">{children}</div>
       </main>
 
@@ -335,7 +360,7 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
       {/* Right panel — mobile drawer */}
       <AnimatePresence>
       {rightPanel && mobileRightOpen && (
-        <motion.div className="xl:hidden fixed inset-0 z-50 flex justify-end" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+         <motion.div role="dialog" aria-modal="true" aria-label="Painel lateral" className="xl:hidden fixed inset-0 z-[var(--z-drawer)] flex justify-end" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, pointerEvents: "none" }}>
           <div className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-sm" onClick={() => setMobileRightOpen(false)} />
           <motion.aside initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", stiffness: 380, damping: 38 }} className="relative w-80 max-w-[90vw] bg-sidebar border-l border-border h-full overflow-y-auto thin-scroll pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
             <div className="flex items-center justify-between p-3 border-b border-border sticky top-0 bg-sidebar z-10">
@@ -353,7 +378,7 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
       {/* Command palette */}
       <AnimatePresence>
       {showSearch && (
-        <motion.div className="fixed inset-0 z-50 bg-[var(--overlay)] backdrop-blur-sm flex items-start justify-center pt-16 sm:pt-32 px-3" onClick={() => setShowSearch(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div role="dialog" aria-modal="true" aria-label="Buscar módulo" className="fixed inset-0 z-[var(--z-dialog)] bg-[var(--overlay)] backdrop-blur-sm flex items-start justify-center pt-16 sm:pt-32 px-3" onClick={() => setShowSearch(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, pointerEvents: "none" }}>
           <motion.div
             initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 6, scale: 0.98 }} transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             className="w-full max-w-lg bg-surface ring-1 ring-border rounded-lg overflow-hidden shadow-2xl"
