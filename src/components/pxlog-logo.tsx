@@ -1,15 +1,8 @@
-import logoAsset from "@/assets/pxlog-logo.png.asset.json";
-
 export function PxLogLogo({ className = "", height = 28 }: { className?: string; height?: number }) {
   return (
-    <img
-      src={logoAsset.url}
-      alt="PXLog"
-      style={{ height, width: "auto" }}
-      className={className}
-      draggable={false}
-    />
+    <span className={`inline-flex items-baseline font-bold leading-none tracking-normal ${className}`} style={{ fontSize: height * 0.72 }} aria-label="PXLog">
+      <span className="text-brand">PX</span><span className="text-background">Log</span>
+    </span>
   );
 }
 
-export const PXLOG_LOGO_URL = logoAsset.url;

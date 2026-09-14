@@ -13,8 +13,12 @@ export function AnimatedBackground() {
 
     const mobile = window.matchMedia("(max-width: 767px)").matches;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      canvas.style.display = "none";
+      return;
+    }
     const lowPower = (navigator.hardwareConcurrency || 4) <= 4;
-    const speed = reduced ? 0.35 : 1;
+    const speed = 1;
     const particleTarget = mobile ? 38 : Math.min(200, Math.max(72, Math.floor(window.innerWidth / 9)));
     const particleCount = lowPower ? Math.min(90, particleTarget) : particleTarget;
     const waveCount = mobile || lowPower ? 4 : 6;

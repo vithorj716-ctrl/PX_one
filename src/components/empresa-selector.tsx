@@ -38,7 +38,7 @@ export function EmpresaSelector() {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-1.5 w-64 bg-surface ring-1 ring-border rounded-lg shadow-xl z-50 overflow-hidden animate-fade-in">
+        <div className="absolute right-0 mt-1.5 w-64 bg-surface ring-1 ring-border rounded-lg shadow-xl z-[var(--z-popover)] overflow-hidden animate-fade-in">
           <div className="p-1 max-h-80 overflow-y-auto thin-scroll">
             <button
               onClick={() => { setEmpresa(null); setOpen(false); }}
