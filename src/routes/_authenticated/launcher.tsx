@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import * as Icons from "lucide-react";
 import { useSystem } from "@/px-platform/system-context";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/_authenticated/launcher")({
 function LauncherPage() {
   const { loading, allowedSystems, setActiveSystem, touchLastAccess } = useSystem();
   const navigate = useNavigate();
+  const reduced = useReducedMotion();
 
   // Auto-enter se só houver 1 sistema
   useEffect(() => {
@@ -38,7 +40,7 @@ function LauncherPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen grid-etch bg-background/75 text-foreground">
       <header className="h-14 px-4 sm:px-6 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="size-7 rounded-md flex items-center justify-center" style={{ background: "var(--gradient-brand)" }}>
@@ -80,14 +82,15 @@ function LauncherPage() {
             Você ainda não possui acesso a nenhum sistema. Procure o administrador.
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {allowedSystems.map((s) => {
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {allowedSystems.map((s, index) => {
               const Icon = (Icons as any)[s.icone] ?? Icons.AppWindow;
               return (
-                <button
+                <motion.button
                   key={s.key}
                   onClick={() => enter(s.key, s.rota)}
-                  className="text-left rounded-2xl ring-1 ring-border bg-surface/40 hover:bg-surface/70 transition p-5 group"
+                  initial={reduced ? { opacity: 0 } : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: reduced ? 0 : index * 0.055, ease: [0.22, 1, 0.36, 1] }} whileTap={reduced ? undefined : { scale: 0.985 }}
+                  className="text-left panel-slab hover:bg-surface/70 transition-colors p-5 group"
                 >
                   <div
                     className="size-12 rounded-xl flex items-center justify-center mb-4"
@@ -98,7 +101,7 @@ function LauncherPage() {
                   <div className="font-semibold">{s.nome}</div>
                   <div className="text-xs text-muted-foreground mt-1 line-clamp-2">{s.descricao}</div>
                   <div className="mt-4 text-[10px] uppercase tracking-widest text-muted-foreground">Entrar →</div>
-                </button>
+                </motion.button>
               );
             })}
           </div>
