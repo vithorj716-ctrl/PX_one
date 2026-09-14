@@ -6,4 +6,3 @@ export function PxLogLogo({ className = "", height = 28 }: { className?: string;
   );
 }
 
-export const PXLOG_LOGO_URL = "";

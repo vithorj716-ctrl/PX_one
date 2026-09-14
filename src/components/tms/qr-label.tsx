@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 import JsBarcode from "jsbarcode";
-import { PXLOG_LOGO_URL } from "@/components/pxlog-logo";
+import { PxLogLogo } from "@/components/pxlog-logo";
 
 export function QrSvg({ value, size = 96 }: { value: string; size?: number }) {
   const [svg, setSvg] = useState<string>("");
@@ -139,7 +139,7 @@ export function QrLabel(props: QrLabelProps) {
           gap: "2mm",
         }}
       >
-        <img src={PXLOG_LOGO_URL} alt="PXLog" style={{ height: "6mm", width: "auto" }} />
+        <PxLogLogo height={23} />
         <div style={{ fontSize: "8pt", fontWeight: 800, fontFamily: "monospace", letterSpacing: "0.05em" }}>
           MINUTA {minutaFmt}
         </div>
