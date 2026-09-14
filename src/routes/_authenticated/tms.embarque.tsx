@@ -392,7 +392,7 @@ function EmbarqueOperacao({ viagemId, onSair }: { viagemId: string; onSair: () =
             <span>Embarcados</span><span>{embarcados.length}/{v.qtd_volumes_prev}</span>
           </div>
           <div className="h-2 rounded-full bg-background overflow-hidden">
-            <div className="h-full bg-brand transition-all" style={{ width: `${pct}%` }} />
+            <div className="h-full bg-brand transition-[width] duration-200" style={{ width: `${pct}%` }} />
           </div>
           <div className="text-right text-[10px] text-muted-foreground mt-0.5">{pct}%</div>
         </div>

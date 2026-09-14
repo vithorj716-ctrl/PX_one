@@ -83,7 +83,7 @@ export function InstallAppButton() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="install-app-title"
-          className="fixed inset-0 z-[var(--z-dialog)] bg-[var(--overlay)] backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-[var(--z-dialog)] bg-[var(--overlay)] flex items-center justify-center p-4"
           onClick={() => setShowIOS(false)}
         >
           <div

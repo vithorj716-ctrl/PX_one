@@ -11,13 +11,13 @@ export function PageTransition({ children }: { children: ReactNode }) {
     <AnimatePresence mode="wait" initial={false} presenceAffectsLayout={false}>
       <motion.div
         key={pathname}
-        className="min-h-full will-change-transform"
-        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 6 }}
+        className="min-h-full"
+        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={reduced ? { opacity: 0, pointerEvents: "none" } : { opacity: 0, y: -3, pointerEvents: "none" }}
+        exit={reduced ? { opacity: 0, pointerEvents: "none" } : { opacity: 0, y: -2, pointerEvents: "none" }}
         transition={reduced ? { duration: 0.08 } : {
-          opacity: { duration: 0.17, ease: EASE },
-          y: { duration: 0.28, ease: EASE },
+          opacity: { duration: 0.16, ease: EASE },
+          y: { duration: 0.24, ease: EASE },
         }}
       >
         {children}

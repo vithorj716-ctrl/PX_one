@@ -1,6 +1,6 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import {
   Truck, Package, ScanLine, FileText, Search, AlertTriangle, Users, Tag, CircleDollarSign,
   Grid3x3, LogOut, MapPin, Route as RouteIcon, Camera, BarChart3, Settings, Menu, X,
@@ -11,6 +11,7 @@ import { PxLogLogo } from "@/components/pxlog-logo";
 import { AnimatedLogo } from "@/components/motion/animated-logo";
 import { PageTransition } from "@/components/motion/page-transition";
 import { ShellMotionProvider, ShellPage, useShellMotion } from "@/components/motion/shell-motion-context";
+import { MobileDrawer } from "@/components/motion/mobile-drawer";
 
 type NavItem = { to: string; label: string; icon: typeof Truck; exact?: boolean; group: string };
 
@@ -134,17 +135,10 @@ function TmsShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
   }
 
   useEffect(() => { setMobileNavOpen(false); }, [pathname]);
-  useEffect(() => {
-    if (!mobileNavOpen) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = previous; };
-  }, [mobileNavOpen]);
-
   return (
     <div className="flex h-[100dvh] overflow-hidden bg-background text-foreground">
       <aside className="hidden lg:flex w-64 flex-col border-r border-border shrink-0 bg-sidebar"><TmsNavigation pathname={pathname} reduced={reduced} onSwitchSystem={trocarSistema} onSignOut={sair} /></aside>
-      <AnimatePresence>{mobileNavOpen && <motion.div role="dialog" aria-modal="true" aria-label="Navegação TMS" className="lg:hidden fixed inset-0 z-[var(--z-drawer)] flex" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, pointerEvents: "none" }}><div className="absolute inset-0 bg-[var(--overlay)]" onClick={() => setMobileNavOpen(false)} /><motion.aside initial={reduced ? false : { x: "-100%" }} animate={{ x: 0 }} exit={reduced ? { opacity: 0 } : { x: "-100%" }} transition={reduced ? { duration: 0.08 } : { type: "spring", stiffness: 380, damping: 38 }} className="relative w-72 max-w-[85vw] h-full bg-sidebar border-r border-border flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"><TmsNavigation pathname={pathname} mobile reduced={reduced} onClose={() => setMobileNavOpen(false)} onSwitchSystem={trocarSistema} onSignOut={sair} /></motion.aside></motion.div>}</AnimatePresence>
+      <div className="lg:hidden"><MobileDrawer open={mobileNavOpen} label="Navegação TMS" onClose={() => setMobileNavOpen(false)} className="relative w-72 max-w-[85vw] h-full bg-sidebar border-r border-border flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"><TmsNavigation pathname={pathname} mobile reduced={reduced} onClose={() => setMobileNavOpen(false)} onSwitchSystem={trocarSistema} onSignOut={sair} /></MobileDrawer></div>
 
       <main className="flex-1 overflow-y-auto thin-scroll min-w-0 bg-background/80">
         <header className="sticky top-0 z-[var(--z-sticky)] h-14 border-b border-border px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 backdrop-blur-xl bg-background/85">

@@ -78,7 +78,7 @@ function MarkupEngine() {
           const active = tab === t.id;
           return (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-[color,background-color,border-color] duration-200 ${
                 active ? "bg-surface-2 text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
               }`}>
               <Icon className="size-3.5" /> {t.label}
@@ -132,7 +132,7 @@ function DashboardTab({ calcs, custosTotais }: { calcs: Calc[]; custosTotais: { 
   ];
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {cards.map((c, i) => {
           const Icon = c.icon;
@@ -244,7 +244,7 @@ function CalculadoraTab({ empresas, onSaved }: { empresas: Empresa[]; onSaved: (
   }
 
   return (
-    <div className="grid lg:grid-cols-[1fr_360px] gap-6 animate-fade-in">
+    <div className="grid lg:grid-cols-[1fr_360px] gap-6">
       <div className="space-y-4">
         <div className="rounded-xl bg-surface ring-1 ring-border p-4">
           <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Identificação</h3>
@@ -387,7 +387,7 @@ function CenariosTab() {
   ];
 
   return (
-    <div className="space-y-4 animate-fade-in">
+    <div className="space-y-4">
       <div className="rounded-xl bg-surface ring-1 ring-border p-4">
         <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Cenário base</h3>
         <div className="grid md:grid-cols-4 gap-3">
@@ -483,7 +483,7 @@ function HistoricoTab({ calcs, empresas, onChanged }: { calcs: Calc[]; empresas:
   }
 
   return (
-    <div className="space-y-3 animate-fade-in">
+    <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
         <input placeholder="Buscar produto/categoria/fornecedor" value={q} onChange={e => setQ(e.target.value)}
           className="flex-1 min-w-[200px] bg-surface ring-1 ring-border rounded-md px-3 py-1.5 text-sm outline-none focus:ring-brand" />
@@ -563,7 +563,7 @@ function IATab() {
   }
 
   return (
-    <div className="grid lg:grid-cols-[1fr_280px] gap-4 animate-fade-in">
+    <div className="grid lg:grid-cols-[1fr_280px] gap-4">
       <div className="rounded-xl bg-surface ring-1 ring-border flex flex-col h-[60vh]">
         <div className="flex-1 overflow-y-auto thin-scroll p-4 space-y-3">
           {hist.length === 0 && <div className="text-xs text-muted-foreground">Pergunte algo sobre seus preços. A IA usa apenas indicadores agregados (consumo mínimo de tokens).</div>}

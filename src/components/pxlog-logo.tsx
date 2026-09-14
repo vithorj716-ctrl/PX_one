@@ -9,17 +9,18 @@ type GrupoPxLogoProps = {
 
 export function GrupoPxLogo({ className = "", height = 28, priority = false }: GrupoPxLogoProps) {
   return (
-    <img
-      src={logoAsset.url}
-      alt="Grupo PX"
-      width={Math.round(height * 1.56)}
-      height={height}
-      loading={priority ? "eager" : "lazy"}
-      fetchPriority={priority ? "high" : "auto"}
-      decoding="async"
-      className={cn("block h-auto max-w-full object-contain", className)}
-      style={{ height }}
-    />
+    <span className={cn("logo-surface inline-flex max-w-full items-center justify-center", className)} style={{ height }}>
+      <img
+        src={logoAsset.url}
+        alt="Grupo PX"
+        width={Math.round(height * 1.56)}
+        height={height}
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "auto"}
+        decoding="async"
+        className="block h-full max-w-full object-contain"
+      />
+    </span>
   );
 }
 

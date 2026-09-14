@@ -14,6 +14,7 @@ import { useSystem } from "@/px-platform/system-context";
 import { AnimatedLogo } from "@/components/motion/animated-logo";
 import { GrupoPxLogo } from "@/components/pxlog-logo";
 import { PageTransition } from "@/components/motion/page-transition";
+import { MobileDrawer } from "@/components/motion/mobile-drawer";
 import { ShellMotionProvider, ShellPage, useShellMotion } from "@/components/motion/shell-motion-context";
 
 const navGroups = [
@@ -70,11 +71,12 @@ const ALL_LINKS: NavLink[] = navGroups.flatMap((g) => g.items as unknown as NavL
 interface AppSidebarContentProps {
   collapsed: boolean;
   pathname: string;
+  mobile?: boolean;
   onToggleCollapse: () => void;
   onNavigate?: () => void;
 }
 
-function AppSidebarContent({ collapsed, pathname, onToggleCollapse, onNavigate }: AppSidebarContentProps) {
+function AppSidebarContent({ collapsed, pathname, mobile = false, onToggleCollapse, onNavigate }: AppSidebarContentProps) {
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
 
@@ -123,7 +125,7 @@ function AppSidebarContent({ collapsed, pathname, onToggleCollapse, onNavigate }
                     title={collapsed ? item.label : undefined}
                     className={`group relative w-full flex items-center py-2.5 rounded-md text-sm transition-[color,background-color] duration-200 ${collapsed ? "justify-center px-2" : "px-3"} ${active ? "bg-surface-2 text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-surface/60"}`}
                   >
-                    {active && <motion.span layoutId="pxone-nav-active" transition={{ type: "spring", stiffness: 420, damping: 36 }} className="absolute inset-y-1 left-0 right-0 rounded-md bg-brand/8 border-l-2 border-brand" />}
+                    {active && <motion.span layoutId={mobile ? "pxone-nav-mobile" : "pxone-nav-desktop"} transition={{ type: "spring", stiffness: 420, damping: 36 }} className="absolute inset-y-1 left-0 right-0 rounded-md bg-brand/8 border-l-2 border-brand" />}
                     <Icon className={`size-4 shrink-0 ${active ? "text-brand" : ""} ${collapsed ? "" : "mr-2.5"}`} />
                     {!collapsed && <span className="relative font-medium truncate">{item.label}</span>}
                   </Link>
@@ -238,15 +240,14 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
     setMobileRightOpen(false);
   }, [pathname]);
 
-  // Lock body scroll when any drawer is open
+  // The shared drawer primitive owns drawer scroll locking.
   useEffect(() => {
-    const anyOpen = mobileNavOpen || mobileRightOpen || showSearch;
-    if (anyOpen) {
+    if (showSearch) {
       const prev = document.body.style.overflow;
       document.body.style.overflow = "hidden";
       return () => { document.body.style.overflow = prev; };
     }
-  }, [mobileNavOpen, mobileRightOpen, showSearch]);
+  }, [showSearch]);
 
   function toggleCollapse() {
     const next = !collapsed;
@@ -270,23 +271,18 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
       </aside>
 
       {/* Mobile Sidebar Drawer */}
-      <AnimatePresence>
-      {mobileNavOpen && (
-         <motion.div role="dialog" aria-modal="true" aria-label="Navegação" className="lg:hidden fixed inset-0 z-[var(--z-drawer)] flex" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, pointerEvents: "none" }}>
-           <motion.div className="absolute inset-0 bg-[var(--overlay)]" onClick={() => setMobileNavOpen(false)} />
-          <motion.aside initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", stiffness: 380, damping: 38 }} className="relative w-72 max-w-[85vw] bg-sidebar border-r border-border flex flex-col h-full pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
-             <AppSidebarContent collapsed={false} pathname={pathname} onToggleCollapse={toggleCollapse} onNavigate={() => setMobileNavOpen(false)} />
-          </motion.aside>
-        </motion.div>
-      )}
-      </AnimatePresence>
+      <div className="lg:hidden">
+        <MobileDrawer open={mobileNavOpen} label="Navegação" onClose={() => setMobileNavOpen(false)} className="relative w-72 max-w-[85vw] bg-sidebar border-r border-border flex flex-col h-full pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+          <AppSidebarContent mobile collapsed={false} pathname={pathname} onToggleCollapse={toggleCollapse} onNavigate={() => setMobileNavOpen(false)} />
+        </MobileDrawer>
+      </div>
 
       {/* Main */}
       <main className="flex-1 overflow-y-auto thin-scroll bg-background min-w-0">
         <header className="sticky top-0 z-[var(--z-sticky)] h-14 border-b border-border bg-background/85 backdrop-blur-xl px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <button
-              onClick={() => setMobileNavOpen(true)}
+              onClick={() => { setMobileRightOpen(false); setMobileNavOpen(true); }}
               className="lg:hidden p-2 -ml-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface/60"
               aria-label="Abrir menu"
             >
@@ -331,7 +327,7 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
             <ExportButton />
             {rightPanel && (
               <button
-                onClick={() => setMobileRightOpen(true)}
+                 onClick={() => { setMobileNavOpen(false); setMobileRightOpen(true); }}
                 className="xl:hidden p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface/60"
                 aria-label="Abrir painel"
               >
@@ -354,11 +350,8 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
       )}
 
       {/* Right panel — mobile drawer */}
-      <AnimatePresence>
-      {rightPanel && mobileRightOpen && (
-         <motion.div role="dialog" aria-modal="true" aria-label="Painel lateral" className="xl:hidden fixed inset-0 z-[var(--z-drawer)] flex justify-end" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, pointerEvents: "none" }}>
-           <div className="absolute inset-0 bg-[var(--overlay)]" onClick={() => setMobileRightOpen(false)} />
-          <motion.aside initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", stiffness: 380, damping: 38 }} className="relative w-80 max-w-[90vw] bg-sidebar border-l border-border h-full overflow-y-auto thin-scroll pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+      <div className="xl:hidden">
+      {rightPanel && <MobileDrawer open={mobileRightOpen} side="right" label="Painel lateral" onClose={() => setMobileRightOpen(false)} className="relative w-80 max-w-[90vw] bg-sidebar border-l border-border h-full overflow-y-auto thin-scroll pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
             <div className="flex items-center justify-between p-3 border-b border-border sticky top-0 bg-sidebar z-10">
               <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Painel</span>
               <button onClick={() => setMobileRightOpen(false)} className="p-1.5 rounded-md text-muted-foreground hover:text-foreground">
@@ -366,10 +359,8 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
               </button>
             </div>
             <div className="p-5">{rightPanel}</div>
-          </motion.aside>
-        </motion.div>
-      )}
-      </AnimatePresence>
+      </MobileDrawer>}
+      </div>
 
       {/* Command palette */}
       <AnimatePresence>

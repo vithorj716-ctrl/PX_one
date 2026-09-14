@@ -599,7 +599,7 @@ function ExportModal({ module: mod, onClose }: { module: ModuleConfig; onClose: 
   if (!portalTarget) return null;
 
   return createPortal(
-    <div role="dialog" aria-modal="true" aria-labelledby="export-center-title" className="fixed inset-0 z-[var(--z-dialog)] bg-[var(--overlay)] backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 animate-fade-in" onClick={onClose}>
+    <div role="dialog" aria-modal="true" aria-labelledby="export-center-title" className="fixed inset-0 z-[var(--z-dialog)] bg-[var(--overlay)] flex items-end sm:items-center justify-center sm:p-4" onClick={onClose}>
       <div
         className="bg-surface ring-1 ring-border rounded-t-xl sm:rounded-xl w-full max-w-3xl max-h-[92vh] sm:max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
@@ -646,7 +646,7 @@ function ExportModal({ module: mod, onClose }: { module: ModuleConfig; onClose: 
                   key={f.id}
                   disabled={loadingData || busy !== null}
                   onClick={() => handleExport(f.id)}
-                  className="text-left p-4 rounded-lg ring-1 ring-border bg-background hover:ring-brand hover:bg-surface-2/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-start gap-3 group"
+                  className="text-left p-4 rounded-lg ring-1 ring-border bg-background hover:ring-brand hover:bg-surface-2/40 transition-[color,background-color,border-color] duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-start gap-3 group"
                 >
                   <div className="size-9 rounded-md bg-brand/10 flex items-center justify-center text-brand shrink-0 group-hover:bg-brand group-hover:text-brand-foreground transition-colors">
                     {isBusy ? <Loader2 className="size-4 animate-spin" /> : <Icon className="size-4" />}
