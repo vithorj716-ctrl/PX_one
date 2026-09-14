@@ -1,5 +1,6 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import {
   LayoutDashboard, Target, Calculator, TrendingUp, Gavel, ShieldAlert,
   Users, Sparkles, Goal, Rocket, FileText, Clock, Wallet, Building2,
@@ -10,6 +11,7 @@ import { ExportButton } from "@/components/executive-share";
 import { InstallAppButton } from "@/components/install-app-button";
 import { EmpresaSelector } from "@/components/empresa-selector";
 import { useSystem } from "@/px-platform/system-context";
+import { AnimatedLogo } from "@/components/motion/animated-logo";
 
 const navGroups = [
   {
@@ -155,9 +157,9 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
     <>
       <div className="p-4 flex items-center justify-between">
         <Link to="/" onClick={onNavigate} className="flex items-center gap-2 overflow-hidden">
-          <div className="size-7 rounded-md flex items-center justify-center shrink-0" style={{ background: "var(--gradient-brand)" }}>
+          <AnimatedLogo className="size-7 rounded-md flex items-center justify-center shrink-0 bg-[image:var(--gradient-brand)]">
             <span className="text-[11px] font-bold text-brand-foreground">PX</span>
-          </div>
+          </AnimatedLogo>
           {!collapsed && (
             <div className="overflow-hidden">
               <span className="text-base font-semibold tracking-tight block leading-none">PXOne</span>
@@ -208,11 +210,9 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
                         : "text-muted-foreground hover:text-foreground hover:bg-surface/60"
                     }`}
                   >
-                    {active && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full bg-brand animate-fade-in" />
-                    )}
+                    {active && <motion.span layoutId="pxone-nav-active" transition={{ type: "spring", stiffness: 420, damping: 36 }} className="absolute inset-y-1 left-0 right-0 rounded-md bg-brand/8 border-l-2 border-brand" />}
                     <Icon className={`size-4 shrink-0 ${active ? "text-brand" : ""} ${collapsed ? "" : "mr-2.5"}`} />
-                    {!collapsed && <span className="font-medium truncate">{item.label}</span>}
+                    {!collapsed && <span className="relative font-medium truncate">{item.label}</span>}
                   </Link>
                 );
               })}
@@ -249,18 +249,20 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
       </aside>
 
       {/* Mobile Sidebar Drawer */}
+      <AnimatePresence>
       {mobileNavOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fade-in" onClick={() => setMobileNavOpen(false)} />
-          <aside className="relative w-72 max-w-[85vw] bg-sidebar border-r border-border flex flex-col h-full animate-slide-down">
+        <motion.div className="lg:hidden fixed inset-0 z-50 flex" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-sm" onClick={() => setMobileNavOpen(false)} />
+          <motion.aside initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", stiffness: 380, damping: 38 }} className="relative w-72 max-w-[85vw] bg-sidebar border-r border-border flex flex-col h-full pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
             <SidebarInner onNavigate={() => setMobileNavOpen(false)} />
-          </aside>
-        </div>
+          </motion.aside>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* Main */}
       <main className="flex-1 overflow-y-auto thin-scroll bg-background min-w-0">
-        <header className="sticky top-0 z-20 h-14 border-b border-border bg-background/85 backdrop-blur-xl px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2">
+        <motion.header initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }} className="sticky top-0 z-20 h-14 border-b border-border bg-background/85 backdrop-blur-xl px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <button
               onClick={() => setMobileNavOpen(true)}
@@ -319,8 +321,8 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
               <span className="size-1.5 rounded-full bg-brand inline-block mr-1.5 animate-pulse-glow" /> {now}
             </span>
           </div>
-        </header>
-        <div className="p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-fade-in">{children}</div>
+        </motion.header>
+        <div className="p-3 sm:p-5 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">{children}</div>
       </main>
 
       {/* Right panel — desktop */}
@@ -331,10 +333,11 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
       )}
 
       {/* Right panel — mobile drawer */}
+      <AnimatePresence>
       {rightPanel && mobileRightOpen && (
-        <div className="xl:hidden fixed inset-0 z-50 flex justify-end">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fade-in" onClick={() => setMobileRightOpen(false)} />
-          <aside className="relative w-80 max-w-[90vw] bg-sidebar border-l border-border h-full overflow-y-auto thin-scroll animate-slide-down">
+        <motion.div className="xl:hidden fixed inset-0 z-50 flex justify-end" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <div className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-sm" onClick={() => setMobileRightOpen(false)} />
+          <motion.aside initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", stiffness: 380, damping: 38 }} className="relative w-80 max-w-[90vw] bg-sidebar border-l border-border h-full overflow-y-auto thin-scroll pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
             <div className="flex items-center justify-between p-3 border-b border-border sticky top-0 bg-sidebar z-10">
               <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Painel</span>
               <button onClick={() => setMobileRightOpen(false)} className="p-1.5 rounded-md text-muted-foreground hover:text-foreground">
@@ -342,15 +345,18 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
               </button>
             </div>
             <div className="p-5">{rightPanel}</div>
-          </aside>
-        </div>
+          </motion.aside>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* Command palette */}
+      <AnimatePresence>
       {showSearch && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-start justify-center pt-16 sm:pt-32 px-3 animate-fade-in" onClick={() => setShowSearch(false)}>
-          <div
-            className="w-full max-w-lg bg-surface ring-1 ring-border rounded-xl overflow-hidden shadow-2xl animate-scale-in"
+        <motion.div className="fixed inset-0 z-50 bg-[var(--overlay)] backdrop-blur-sm flex items-start justify-center pt-16 sm:pt-32 px-3" onClick={() => setShowSearch(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 6, scale: 0.98 }} transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full max-w-lg bg-surface ring-1 ring-border rounded-lg overflow-hidden shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
@@ -382,9 +388,10 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
                 })
               )}
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   );
 }
