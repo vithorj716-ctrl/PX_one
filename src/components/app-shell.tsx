@@ -272,7 +272,7 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
     : ALL_LINKS;
 
   return (
-    <div className="flex h-[100dvh] overflow-hidden bg-background text-foreground">
+    <div className="flex h-[100dvh] overflow-hidden bg-background/80 text-foreground">
       {/* Desktop Sidebar */}
       <aside
         className={`sidebar-shell hidden lg:flex border-r border-border flex-col shrink-0 bg-sidebar ${
@@ -290,7 +290,7 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
       </div>
 
       {/* Main */}
-      <main ref={mainRef} className="flex-1 overflow-y-auto thin-scroll bg-background min-w-0">
+      <main ref={mainRef} className="flex-1 overflow-y-auto thin-scroll bg-transparent min-w-0">
         <div ref={mainContentRef}>
         <header
           data-compact={mobileHeaderCompact ? "true" : "false"}

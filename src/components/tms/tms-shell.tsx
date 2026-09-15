@@ -153,7 +153,7 @@ function TmsShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
     return () => main.removeEventListener("scroll", onScroll);
   }, []);
   return (
-    <div className="flex h-[100dvh] overflow-hidden bg-background text-foreground">
+    <div className="flex h-[100dvh] overflow-hidden bg-background/80 text-foreground">
       <aside className="hidden lg:flex w-64 flex-col border-r border-border shrink-0 bg-sidebar"><TmsNavigation pathname={pathname} reduced={reduced} onSwitchSystem={trocarSistema} onSignOut={sair} /></aside>
       <div className="lg:hidden"><MobileDrawer open={mobileNavOpen} label="Navegação TMS" onClose={() => setMobileNavOpen(false)} className="relative w-72 max-w-[85vw] h-full bg-sidebar border-r border-border flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"><TmsNavigation pathname={pathname} mobile reduced={reduced} onClose={() => setMobileNavOpen(false)} onSwitchSystem={trocarSistema} onSignOut={sair} /></MobileDrawer></div>
 
