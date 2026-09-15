@@ -44,7 +44,7 @@ export function AnimatedLogo({ children, className = "", wordmark, submark, vari
           scale: 1,
           filter: "blur(0px)",
           duration: login ? 0.9 : BRAND_MOTION.markDuration,
-        })
+        });
       if (sheenSel) timeline
         .fromTo(sheenSel, { xPercent: -140, opacity: 0.12 }, {
           xPercent: 140,
@@ -66,7 +66,8 @@ export function AnimatedLogo({ children, className = "", wordmark, submark, vari
           transformOrigin: "left center",
         }, "-=0.4");
       if (sheenSel) timeline.set(sheenSel, { opacity: 0 });
-      timeline.set([markSel, wordSel, lineSel].filter(Boolean) as string[], { opacity: 1, transform: "none", filter: "none" });
+      const finals = [markSel, wordSel, lineSel].filter(Boolean) as string[];
+      if (finals.length) timeline.set(finals, { opacity: 1, transform: "none", filter: "none" });
 
       if (sheenSel) gsap.fromTo(sheenSel, { xPercent: -140, opacity: 0 }, {
         xPercent: 140,
