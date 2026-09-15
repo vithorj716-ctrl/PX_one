@@ -28,7 +28,10 @@ export const Route = createFileRoute("/_authenticated")({
     if (requirement) {
       const access = await getMyAccess();
       if (!hasSystemAccess(access, requirement.system)) {
-        throw redirect({ to: "/acesso-negado", search: { sistema: requirement.system } });
+        throw redirect({
+          to: "/acesso-negado",
+          search: { sistema: requirement.system, modulo: undefined },
+        });
       }
       if (requirement.module && !hasModuleAccess(access, requirement.system, requirement.module)) {
         throw redirect({
