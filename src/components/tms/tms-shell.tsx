@@ -1,6 +1,6 @@
-import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { useRouterState, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { useReducedMotion } from "motion/react";
 import {
   Truck, Package, ScanLine, FileText, Search, AlertTriangle, Users, Tag, CircleDollarSign,
   Grid3x3, LogOut, MapPin, Route as RouteIcon, Camera, BarChart3, Settings, Menu, X,
@@ -13,7 +13,7 @@ import { PageTransition } from "@/components/motion/page-transition";
 import { ShellMotionProvider, ShellPage, useShellMotion } from "@/components/motion/shell-motion-context";
 import { MobileDrawer } from "@/components/motion/mobile-drawer";
 import { useDesktopSmoothScroll } from "@/components/motion/desktop-smooth-scroll";
-import { NAV_SPRING } from "@/components/motion/tokens";
+import { NavItem } from "@/components/motion/nav-item";
 
 type NavItem = { to: string; label: string; icon: typeof Truck; exact?: boolean; group: string };
 
@@ -65,15 +65,18 @@ function TmsNavigation({ pathname, mobile = false, reduced, onClose, onSwitchSys
         {Array.from(new Set(TMS_NAV.map((i) => i.group))).map((group) => (
           <div key={group} className="space-y-0.5">
             <div className="px-3 pt-2 pb-1 text-[9px] uppercase tracking-widest text-muted-foreground/70">{group}</div>
-            {TMS_NAV.filter((i) => i.group === group).map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.to, item.exact);
-              return <Link key={item.to} to={item.to} onClick={onClose} className={`relative flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors ${active ? "text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-brand/5"}`}>
-                {active && <motion.span layoutId={mobile ? "tms-nav-mobile" : "tms-nav-desktop"} transition={reduced ? { duration: 0 } : NAV_SPRING} className="absolute inset-y-0.5 left-0 right-0 rounded-md border-l-2 border-brand bg-brand/8" />}
-                <Icon className={`relative size-4 shrink-0 ${active ? "text-brand" : ""}`} />
-                <span className="relative font-medium truncate">{item.label}</span>
-              </Link>;
-            })}
+            {TMS_NAV.filter((i) => i.group === group).map((item) => (
+              <NavItem
+                key={item.to}
+                to={item.to}
+                label={item.label}
+                icon={item.icon}
+                active={isActive(item.to, item.exact)}
+                indicatorId={mobile ? "tms-nav-mobile" : "tms-nav-desktop"}
+                reduced={reduced}
+                onClick={onClose}
+              />
+            ))}
           </div>
         ))}
       </nav>
@@ -155,10 +158,13 @@ function TmsShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
 
       <main ref={mainRef} className="flex-1 overflow-y-auto thin-scroll min-w-0 bg-background/80">
         <div ref={mainContentRef}>
-        <header className={`sticky top-0 z-[var(--z-sticky)] border-b border-border px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 backdrop-blur-xl bg-background/85 transition-[height] duration-300 ease-[var(--ease-px)] ${mobileHeaderCompact ? "h-12 lg:h-14" : "h-14"}`}>
+        <header
+          data-compact={mobileHeaderCompact ? "true" : "false"}
+          className={`sticky top-0 z-[var(--z-sticky)] flex h-14 items-center justify-between gap-2 border-b px-3 backdrop-blur-xl transition-[background-color,border-color,box-shadow,padding] duration-[var(--motion-base)] ease-[var(--ease-px)] sm:px-4 lg:px-6 ${mobileHeaderCompact ? "border-border bg-background/92 py-1.5 shadow-[0_8px_24px_-20px_rgba(0,0,0,0.9)]" : "border-transparent bg-background/80 py-3"}`}
+        >
           <div className="min-w-0 flex items-center gap-2">
             <button onClick={() => setMobileNavOpen(true)} aria-label="Abrir menu" className="press lg:hidden flex size-11 -ml-2 items-center justify-center text-muted-foreground"><Menu className="size-5" /></button>
-            <div className="contents"><h1 className={`font-semibold truncate transition-[font-size] duration-300 ease-[var(--ease-px)] ${mobileHeaderCompact ? "text-xs lg:text-sm" : "text-sm"}`}>{title}</h1>
+            <div className="contents"><h1 className="truncate text-sm font-semibold">{title}</h1>
             {subtitle && (
               <>
                 <div className="h-3.5 w-px bg-border hidden sm:block" />
