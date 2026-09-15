@@ -64,7 +64,10 @@ export function SystemProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const allowedSystems = useMemo(
-    () => PX_SYSTEMS.filter((s) => allowedKeys.includes(s.key) && s.status === "ativo"),
+    () =>
+      PX_SYSTEMS.filter(
+        (s) => s.status === "ativo" && (allowedKeys.includes("*") || allowedKeys.includes(s.key)),
+      ),
     [allowedKeys],
   );
 
