@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { EmpresaProvider } from "@/px-core/empresa-context";
 import { SystemProvider } from "@/px-platform/system-context";
 import { AnimatedBackground } from "@/components/motion/animated-background";
+import { initCapabilityFlags } from "@/lib/browser-capabilities";
 
 function NotFoundComponent() {
   return (
@@ -140,16 +141,31 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
+  // Feature-detection flags for CSS graceful degradation (no user-agent sniffing).
+  useEffect(() => initCapabilityFlags(), []);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
-    import("@/integrations/supabase/client").then(({ supabase }) => {
+    // The unsubscribe must be owned by the effect, not by the dynamic import's
+    // callback — otherwise the auth listener survives every unmount.
+    let unsubscribe: (() => void) | null = null;
+    let cancelled = false;
+
+    void import("@/integrations/supabase/client").then(({ supabase }) => {
+      if (cancelled) return;
       const { data } = supabase.auth.onAuthStateChange((event) => {
         if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
         router.invalidate();
         if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
       });
-      return () => data.subscription.unsubscribe();
+      unsubscribe = () => data.subscription.unsubscribe();
     });
+
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+      unsubscribe = null;
+    };
   }, [router, queryClient]);
 
   return (
