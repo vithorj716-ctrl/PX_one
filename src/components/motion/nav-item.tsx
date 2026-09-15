@@ -25,7 +25,7 @@ type NavItemProps = {
 export function NavItem({ to, label, icon: Icon, active, indicatorId, collapsed = false, reduced = false, onClick }: NavItemProps) {
   return (
     <Link
-      to={to}
+      to={to as never}
       onClick={onClick}
       aria-current={active ? "page" : undefined}
       title={collapsed ? label : undefined}
