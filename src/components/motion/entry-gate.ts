@@ -1,22 +1,15 @@
 /**
  * Should an entry timeline actually animate?
  *
- * FAIL-SAFE IS VISIBLE CONTENT: nothing is ever hidden waiting for JavaScript.
- * The consequence is that on a server-rendered first load the screen may already
- * be painted by the time hydration runs the timeline — animating from opacity 0
- * at that point reads as a flicker ("the page jumped back").
+ * Yes — always, in the browser. An earlier version gated the entry on a
+ * "fresh paint" window (700ms after load) to avoid a theoretical flicker on
+ * server-rendered first paint. On real machines hydration regularly lands
+ * later than that, so the gate silently downgraded every entry animation to a
+ * barely visible variant — which is exactly why the brand mark read as static.
  *
- * So: on the very first client mount we animate only when hydration landed while
- * the paint is still fresh; after that (every client-side navigation, every
- * remount) entries always animate, exactly like a client-rendered app.
+ * FAIL-SAFE IS STILL VISIBLE CONTENT: nothing is hidden waiting for JS; the
+ * timelines only ever animate elements that are already painted.
  */
-const FRESH_PAINT_MS = 700;
-
-let hydrated = false;
-
 export function canAnimateEntry(): boolean {
-  if (typeof window === "undefined") return false;
-  if (hydrated) return true;
-  hydrated = true;
-  return performance.now() < FRESH_PAINT_MS;
+  return typeof window !== "undefined";
 }

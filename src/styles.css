@@ -115,13 +115,16 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html, body {
+  html {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
-  body { min-width: 320px; overflow-x: hidden; }
+  /* body MUST stay transparent: the ambient canvas sits at z-index -10, and a
+     painted body background box would cover it entirely (that is why the
+     background looked dead). The page color lives on <html>. */
+  body { background-color: transparent; min-width: 320px; overflow-x: hidden; }
   button, a, input, select, textarea { letter-spacing: 0; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { scrollbar-width: none; }
