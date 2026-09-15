@@ -1,4 +1,5 @@
-import { createContext, useContext, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
+import { useRouterState } from "@tanstack/react-router";
+import { createContext, useContext, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 export type ShellHeader = {
   title: string;
@@ -38,10 +39,28 @@ export function useShellMotion() {
   return useContext(ShellMotionContext);
 }
 
+/**
+ * Publishes a page's header into the persistent shell.
+ *
+ * Two rules keep this loop-free while the route transition overlaps pages:
+ * 1) Ownership — the page only publishes while ITS pathname is the current one,
+ *    so the outgoing page never fights the incoming one for the header.
+ * 2) Stable deps — `headerActions`/`rightPanel` are fresh JSX objects on every
+ *    render, so they must NOT be effect dependencies; they are read from a ref at
+ *    publish time instead. Using them as deps re-published on every render and
+ *    React aborted with "Maximum update depth exceeded".
+ */
 export function ShellPage({ children, header }: { children: ReactNode; header: ShellHeader }) {
   const shell = useShellMotion();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const ownPath = useRef(pathname);
+  const latest = useRef(header);
+  latest.current = header;
+
   useLayoutEffect(() => {
-    shell?.register(header);
-  }, [shell, header.title, header.subtitle, header.headerActions, header.rightPanel]);
+    if (ownPath.current !== pathname) return;
+    shell?.register(latest.current);
+  }, [shell, pathname, header.title, header.subtitle]);
+
   return <>{children}</>;
 }
