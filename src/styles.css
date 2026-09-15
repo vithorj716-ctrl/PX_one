@@ -354,14 +354,13 @@
 }
 .nav-item:hover .nav-tooltip, .nav-item:focus-visible .nav-tooltip { opacity: 1; transform: translate(0, -50%) scale(1); }
 
-/* ===== Sidebar label reveal =====
-   Coordinated with the width transition so text never appears clipped. */
-.sidebar-shell { transition: width var(--motion-base) var(--ease-px); }
-.sidebar-label {
-  min-width: 0;
-  transition: opacity var(--motion-fast) var(--ease-px), transform var(--motion-base) var(--ease-px);
-}
-.sidebar-collapsed .sidebar-label { opacity: 0; transform: translateX(-6px); pointer-events: none; }
+/* ===== Sidebar collapse =====
+   Width, spacing and label clipping move together, so text is never cut mid-word
+   and the icon column stays optically centred while the panel resizes. */
+.sidebar-shell { overflow-x: hidden; transition: width var(--motion-base) var(--ease-px); }
+.sidebar-shell nav { transition: padding var(--motion-base) var(--ease-px); }
+.sidebar-collapsed nav { padding-inline: 0.5rem; }
+.sidebar-collapsed .nav-item-hover { inset: 0.125rem 0.375rem; }
 
 /* ===== Dropdown / popover panel ===== */
 @utility dropdown-panel {
