@@ -17,7 +17,7 @@ type AuthzRpc = {
     args: Record<string, string | null>,
   ): PromiseLike<{ data: boolean | null; error: { message: string } | null }>;
   rpc(
-    fn: "px_effective_access" | "px_effective_systems",
+    fn: "px_effective_access" | "px_effective_systems" | "get_my_effective_access",
     args?: Record<string, string>,
   ): PromiseLike<{ data: unknown; error: { message: string } | null }>;
   from(table: string): {
@@ -36,39 +36,32 @@ export class AuthorizationError extends Error {
   }
 }
 
-/** Carrega o acesso efetivo do usuário autenticado. Fonte única para app e telas. */
+/** Carrega o acesso efetivo do usuário autenticado. Fonte única: get_my_effective_access(). */
 export async function loadEffectiveAccess(
   supabase: unknown,
   userId: string,
 ): Promise<EffectiveAccess> {
   const client = authzClient(supabase);
-  const [perms, systems, roles, empresas, master, admin] = await Promise.all([
-    client.rpc("px_effective_access"),
-    client.rpc("px_effective_systems"),
-    client.from("user_roles").select("role"),
-    client.from("px_usuario_empresas").select("empresa_id"),
-    client.rpc("px_is_master", {}),
-    client.rpc("px_is_admin", {}),
-  ]);
-
+  const { data, error } = await client.rpc("get_my_effective_access");
+  if (error) throw new AuthorizationError(`Falha ao carregar autorização: ${error.message}`);
+  const raw = (data ?? null) as null | {
+    roles: string[] | null;
+    is_master_admin: boolean;
+    is_admin: boolean;
+    systems: SystemGrant[] | null;
+    permissions: PermissionGrant[] | null;
+    empresas: string[] | null;
+  };
+  if (!raw) throw new AuthorizationError("Falha ao carregar autorização: resposta vazia.");
   return {
     ...EMPTY_ACCESS,
     userId,
-    levels: (roles.data ?? []).map((r) => String(r.role)),
-    isMaster: master.data === true,
-    isAdmin: admin.data === true,
-    systems: ((systems.data as SystemGrant[] | null) ?? []).map((s) => ({
-      sistema_key: s.sistema_key,
-      origem: s.origem,
-    })),
-    permissions: ((perms.data as PermissionGrant[] | null) ?? []).map((p) => ({
-      sistema_key: p.sistema_key,
-      modulo_key: p.modulo_key,
-      recurso: p.recurso,
-      acao: p.acao,
-      origem: p.origem,
-    })),
-    empresas: (empresas.data ?? []).map((e) => String(e.empresa_id)),
+    levels: raw.roles ?? [],
+    isMaster: raw.is_master_admin === true,
+    isAdmin: raw.is_admin === true,
+    systems: raw.systems ?? [],
+    permissions: raw.permissions ?? [],
+    empresas: (raw.empresas ?? []).map((e) => String(e)),
   };
 }
 
