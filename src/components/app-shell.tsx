@@ -1,6 +1,6 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   LayoutDashboard, Target, Calculator, TrendingUp, Gavel, ShieldAlert,
   Users, Sparkles, Goal, Rocket, FileText, Clock, Wallet, Building2,
@@ -16,7 +16,9 @@ import { GrupoPxLogo } from "@/components/pxlog-logo";
 import { PageTransition } from "@/components/motion/page-transition";
 import { MobileDrawer } from "@/components/motion/mobile-drawer";
 import { useDesktopSmoothScroll } from "@/components/motion/desktop-smooth-scroll";
-import { MOTION_EASE, NAV_SPRING } from "@/components/motion/tokens";
+import { DIALOG_MOTION, DURATION, MOTION_EASE, OVERLAY_MOTION } from "@/components/motion/tokens";
+import { NavItem } from "@/components/motion/nav-item";
+import { acquireScrollLock } from "@/components/motion/scroll-lock";
 import { ShellMotionProvider, ShellPage, useShellMotion } from "@/components/motion/shell-motion-context";
 
 const navGroups = [
@@ -79,6 +81,7 @@ interface AppSidebarContentProps {
 }
 
 function AppSidebarContent({ collapsed, pathname, mobile = false, onToggleCollapse, onNavigate }: AppSidebarContentProps) {
+  const reduced = useReducedMotion() ?? false;
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
 
@@ -110,23 +113,19 @@ function AppSidebarContent({ collapsed, pathname, mobile = false, onToggleCollap
             {!collapsed && <p className="px-2 pt-4 pb-2 text-[10px] font-medium uppercase tracking-widest text-muted-foreground/70">{group.label}</p>}
             {collapsed && <div className="my-3 mx-3 h-px bg-border/60" />}
             <div className="space-y-0.5">
-              {group.items.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.to, "exact" in item ? item.exact : false);
-                return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    onClick={onNavigate}
-                    title={collapsed ? item.label : undefined}
-                    className={`group relative w-full flex items-center py-2.5 rounded-md text-sm transition-[color,background-color] duration-200 ${collapsed ? "justify-center px-2" : "px-3"} ${active ? "bg-surface-2 text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-surface/60"}`}
-                  >
-                    {active && <motion.span layoutId={mobile ? "pxone-nav-mobile" : "pxone-nav-desktop"} transition={NAV_SPRING} className="absolute inset-y-1 left-0 right-0 rounded-md bg-brand/8 border-l-2 border-brand" />}
-                    <Icon className={`size-4 shrink-0 ${active ? "text-brand" : ""} ${collapsed ? "" : "mr-2.5"}`} />
-                    {!collapsed && <span className="relative font-medium truncate">{item.label}</span>}
-                  </Link>
-                );
-              })}
+              {group.items.map((item) => (
+                <NavItem
+                  key={item.to}
+                  to={item.to}
+                  label={item.label}
+                  icon={item.icon}
+                  active={isActive(item.to, "exact" in item ? item.exact : false)}
+                  indicatorId={mobile ? "pxone-nav-mobile" : "pxone-nav-desktop"}
+                  collapsed={collapsed}
+                  reduced={reduced}
+                  onClick={onNavigate}
+                />
+              ))}
             </div>
           </div>
         ))}
@@ -251,11 +250,14 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
 
   // The shared drawer primitive owns drawer scroll locking.
   useEffect(() => {
-    if (showSearch) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => { document.body.style.overflow = prev; };
-    }
+    if (!showSearch) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const release = acquireScrollLock();
+    return () => {
+      document.body.style.overflow = prev;
+      release();
+    };
   }, [showSearch]);
 
   function toggleCollapse() {
@@ -272,8 +274,8 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
     <div className="flex h-[100dvh] overflow-hidden bg-background text-foreground">
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden lg:flex border-r border-border flex-col shrink-0 bg-sidebar transition-[width] duration-300 ease-[var(--ease-px)] ${
-          collapsed ? "w-16" : "w-64"
+        className={`sidebar-shell hidden lg:flex border-r border-border flex-col shrink-0 bg-sidebar ${
+          collapsed ? "sidebar-collapsed w-16" : "w-64"
         }`}
       >
         <AppSidebarContent collapsed={collapsed} pathname={pathname} onToggleCollapse={toggleCollapse} />
@@ -289,7 +291,10 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
       {/* Main */}
       <main ref={mainRef} className="flex-1 overflow-y-auto thin-scroll bg-background min-w-0">
         <div ref={mainContentRef}>
-        <header className={`sticky top-0 z-[var(--z-sticky)] border-b border-border bg-background/85 backdrop-blur-xl px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 transition-[height] duration-300 ease-[var(--ease-px)] ${mobileHeaderCompact ? "h-12 lg:h-14" : "h-14"}`}>
+        <header
+          data-compact={mobileHeaderCompact ? "true" : "false"}
+          className={`sticky top-0 z-[var(--z-sticky)] flex h-14 items-center justify-between gap-2 border-b px-3 backdrop-blur-xl transition-[background-color,border-color,box-shadow,padding] duration-[var(--motion-base)] ease-[var(--ease-px)] sm:px-4 lg:px-6 ${mobileHeaderCompact ? "border-border bg-background/92 py-1.5 shadow-[0_8px_24px_-20px_rgba(0,0,0,0.9)]" : "border-transparent bg-background/80 py-3"}`}
+        >
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <button
               onClick={() => { setMobileRightOpen(false); setMobileNavOpen(true); }}
@@ -299,7 +304,7 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
               <Menu className="size-5" />
             </button>
             <div className="min-w-0 flex items-center gap-2">
-              <h1 className={`font-semibold truncate transition-[font-size] duration-300 ease-[var(--ease-px)] ${mobileHeaderCompact ? "text-xs lg:text-sm" : "text-sm"}`}>{title}</h1>
+              <h1 className="truncate text-sm font-semibold">{title}</h1>
               {subtitle && (
                 <>
                   <div className="h-3.5 w-px bg-border hidden sm:block" />
@@ -376,9 +381,11 @@ function AppShellFrame({ children, title: fallbackTitle, subtitle: fallbackSubti
       {/* Command palette */}
       <AnimatePresence>
       {showSearch && (
-        <motion.div role="dialog" aria-modal="true" aria-label="Buscar módulo" className="fixed inset-0 z-[var(--z-dialog)] bg-[var(--overlay)] flex items-start justify-center pt-16 sm:pt-32 px-3" onClick={() => setShowSearch(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, pointerEvents: "none" }}>
+        <motion.div role="dialog" aria-modal="true" aria-label="Buscar módulo" className="fixed inset-0 z-[var(--z-dialog)] bg-[var(--overlay)] flex items-start justify-center pt-16 sm:pt-32 px-3" onClick={() => setShowSearch(false)} initial={OVERLAY_MOTION.initial} animate={OVERLAY_MOTION.animate} exit={OVERLAY_MOTION.exit} transition={{ duration: DURATION.modalExit, ease: MOTION_EASE }}>
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 6, scale: 0.98 }} transition={{ duration: 0.22, ease: MOTION_EASE }}
+            initial={DIALOG_MOTION.initial} animate={DIALOG_MOTION.animate} exit={DIALOG_MOTION.exit}
+            transition={{ duration: DURATION.modal, ease: MOTION_EASE }}
+            data-lenis-prevent
             className="w-full max-w-lg bg-surface ring-1 ring-border rounded-lg overflow-hidden shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
