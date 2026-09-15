@@ -97,3 +97,39 @@ describe("mapa de rotas", () => {
     expect(requirementForPath("/conta")).toBeNull();
   });
 });
+
+// Erro de carregamento nunca deve ser confundido com ausência de acesso.
+import { describe as d2, expect as e2, it as i2 } from "vitest";
+import { AccessLoadError, normalizeAccess } from "../access-client";
+import { hasSystemAccess as hsa } from "../access";
+
+d2("acesso efetivo do banco", () => {
+  i2("MASTER_ADMIN recebe curinga e acessa qualquer sistema", () => {
+    const access = normalizeAccess({
+      user_id: "u1", authenticated: true, active: true, roles: ["master_admin"],
+      is_master_admin: true, is_admin: true, is_executive: true,
+      systems: [{ sistema_key: "*", origem: "Tipo de usuário MASTER_ADMIN" }],
+      profiles: [], permissions: [], empresas: [],
+    });
+    e2(access.isMaster).toBe(true);
+    e2(hsa(access, "pxlog-tms")).toBe(true);
+    e2(hsa(access, "pxone-erp")).toBe(true);
+  });
+
+  i2("usuário comum só acessa o sistema concedido", () => {
+    const access = normalizeAccess({
+      user_id: "u2", authenticated: true, active: true, roles: ["gestor"],
+      is_master_admin: false, is_admin: false, is_executive: false,
+      systems: [{ sistema_key: "pxlog-tms", origem: "Acesso direto ao sistema" }],
+      profiles: [], permissions: [], empresas: [],
+    });
+    e2(hsa(access, "pxlog-tms")).toBe(true);
+    e2(hsa(access, "pxone-erp")).toBe(false);
+  });
+
+  i2("falha de autorização é erro, não negação", () => {
+    const err = new AccessLoadError("boom", { stage: "rpc.get_my_effective_access" });
+    e2(err).toBeInstanceOf(Error);
+    e2(err.detail.stage).toBe("rpc.get_my_effective_access");
+  });
+});
