@@ -17,12 +17,13 @@ export function PageTransition({ children }: { children: ReactNode }) {
       <motion.div
         key={pathname}
         className="min-h-full"
-        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={reduced ? { opacity: 0, pointerEvents: "none" } : { opacity: 0, y: -3, pointerEvents: "none" }}
+        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.995 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={reduced ? { opacity: 0, pointerEvents: "none" } : { opacity: 0, y: -6, scale: 0.998, pointerEvents: "none" }}
         transition={reduced ? { duration: DURATION.reduced } : {
           opacity: { duration: DURATION.pageExit, ease: MOTION_EASE },
           y: { duration: DURATION.page, ease: MOTION_EASE },
+          scale: { duration: DURATION.page, ease: MOTION_EASE },
         }}
       >
         {children}
