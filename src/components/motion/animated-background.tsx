@@ -57,7 +57,7 @@ export function AnimatedBackground() {
           radius: 0.35 + z * 0.85,
           vx: (Math.random() - 0.5) * 0.08 * z,
           vy: -(0.035 + Math.random() * 0.09) * z,
-          alpha: 0.06 + Math.random() * 0.16,
+          alpha: 0.14 + Math.random() * 0.24,
           phase: Math.random() * Math.PI * 2,
         };
       };
@@ -111,15 +111,15 @@ export function AnimatedBackground() {
         ctx.clearRect(0, 0, width, height);
 
         const scrollDrift = Math.sin(scrollY * 0.001) * 18;
-        drawMist(width * (0.18 + Math.sin(t) * 0.025) + pointer.x * 15, height * 0.13 + scrollDrift, Math.max(width, height) * 0.52, compact ? 0.04 : 0.06);
+        drawMist(width * (0.18 + Math.sin(t) * 0.025) + pointer.x * 15, height * 0.13 + scrollDrift, Math.max(width, height) * 0.52, compact ? 0.09 : 0.13);
         if (!compact) {
-          drawMist(width * (0.84 + Math.cos(t * 0.82) * 0.02) + pointer.x * 10, height * 0.82 - scrollDrift, Math.max(width, height) * 0.46, 0.04);
+          drawMist(width * (0.84 + Math.cos(t * 0.82) * 0.02) + pointer.x * 10, height * 0.82 - scrollDrift, Math.max(width, height) * 0.46, 0.09);
         }
 
         if (pointer.active > 0.01) {
           const px = ((pointer.x + 1) / 2) * width;
           const py = ((pointer.y + 1) / 2) * height;
-          drawMist(px, py, compact ? 180 : 260, 0.035 * pointer.active);
+          drawMist(px, py, compact ? 180 : 260, 0.06 * pointer.active);
         }
 
         ctx.lineWidth = 1;
@@ -131,7 +131,7 @@ export function AnimatedBackground() {
               + Math.sin(x * 0.0025 - t * 3 + line * 0.7) * 11 + scrollDrift * 0.12;
             if (x === -20) ctx.moveTo(x, y); else ctx.lineTo(x, y);
           }
-          ctx.strokeStyle = `rgba(55,200,218,${0.03 + line * 0.006})`;
+          ctx.strokeStyle = `rgba(55,200,218,${0.07 + line * 0.01})`;
           ctx.stroke();
         }
 
