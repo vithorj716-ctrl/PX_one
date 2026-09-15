@@ -1,6 +1,6 @@
 // Painel de administração da PX API — restrito a administradores da plataforma (px_is_admin).
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowLeft, KeyRound, Plus, Power, RefreshCw, ShieldCheck } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
