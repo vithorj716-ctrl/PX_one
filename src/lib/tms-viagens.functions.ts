@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertCan } from "@/authz/authz.server";
 
 const MOTIVOS_CANCEL = [
   "solicitacao_duplicada",
@@ -34,6 +35,7 @@ export const iniciarEmbarque = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxlog-tms", "viagens", "tms_viagens", "update");
     const { supabase, userId } = context;
 
     // Totais previstos a partir das minutas (apenas não canceladas)
@@ -199,6 +201,7 @@ export const finalizarEmbarque = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { viagem_id: string; forcar?: boolean }) => d)
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxlog-tms", "viagens", "tms_viagens", "update");
     const { supabase, userId } = context;
     const { data: viagem } = await supabase.from("tms_viagens").select("*").eq("id", data.viagem_id).maybeSingle() as any;
     if (!viagem) throw new Error("Viagem não encontrada");
