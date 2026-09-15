@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
 import * as Icons from "lucide-react";
 import { useSystem } from "@/px-platform/system-context";
@@ -21,23 +22,26 @@ export const Route = createFileRoute("/_authenticated/launcher")({
 });
 
 function LauncherPage() {
-  const { loading, allowedSystems, setActiveSystem, touchLastAccess } = useSystem();
+  const { loading, error, allowedSystems, setActiveSystem, refresh, touchLastAccess } = useSystem();
   const navigate = useNavigate();
   const reduced = useReducedMotion();
+  const queryClient = useQueryClient();
 
   // Auto-enter se só houver 1 sistema
   useEffect(() => {
-    if (loading) return;
+    if (loading || error) return;
     if (allowedSystems.length === 1) {
       const s = allowedSystems[0];
       setActiveSystem(s.key);
       void touchLastAccess(s.key);
       navigate({ to: s.rota as any });
     }
-  }, [loading, allowedSystems, navigate, setActiveSystem, touchLastAccess]);
+  }, [loading, error, allowedSystems, navigate, setActiveSystem, touchLastAccess]);
 
   async function logout() {
     setActiveSystem(null);
+    await queryClient.cancelQueries();
+    queryClient.clear();
     await supabase.auth.signOut();
     navigate({ to: "/login" });
   }
@@ -80,6 +84,16 @@ function LauncherPage() {
 
         {loading ? (
           <div className="text-center text-sm text-muted-foreground">Carregando sistemas…</div>
+        ) : error ? (
+          <div className="text-center text-sm">
+            <p className="text-destructive">Não foi possível carregar seus acessos.</p>
+            <button
+              onClick={() => void refresh()}
+              className="mt-3 inline-flex items-center justify-center rounded-md border border-border px-4 py-2 text-sm text-foreground hover:bg-surface/60"
+            >
+              Tentar novamente
+            </button>
+          </div>
         ) : allowedSystems.length === 0 ? (
           <div className="text-center text-sm text-muted-foreground">
             Você ainda não possui acesso a nenhum sistema. Procure o administrador.
