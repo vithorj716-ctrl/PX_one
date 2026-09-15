@@ -6,6 +6,7 @@ import { AuthzProvider } from "@/authz/authz-context";
 import { fetchMyEffectiveAccess } from "@/authz/access-client";
 import { hasModuleAccess, hasSystemAccess } from "@/authz/access";
 import { requirementForPath } from "@/authz/route-map";
+import { PageTransition } from "@/components/motion/page-transition";
 
 // PX Platform — gate único: sessão + acesso ao sistema + acesso ao módulo.
 // Nenhuma página deve repetir estas checagens; use o mapa em src/authz/route-map.ts.
@@ -60,15 +61,25 @@ const ERP_ROOTS = new Set([
   "/registry", "/timeline", "/valuation",
 ]);
 
+// Uma única camada de transição de rota no app: o shell (header, sidebar, nav,
+// background) permanece montado e apenas o conteúdo da rota é animado.
 function AuthenticatedLayout() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const isStandaloneTms = pathname.startsWith("/tms/etiquetas/") || pathname.startsWith("/tms/lm/motorista/");
   if (pathname === "/tms" || (pathname.startsWith("/tms/") && !isStandaloneTms)) {
-    return <AuthzProvider><PersistentTmsShell><Outlet /></PersistentTmsShell></AuthzProvider>;
+    return (
+      <AuthzProvider>
+        <PersistentTmsShell><PageTransition><Outlet /></PageTransition></PersistentTmsShell>
+      </AuthzProvider>
+    );
   }
   const root = pathname === "/" ? "/" : `/${pathname.split("/").filter(Boolean)[0] ?? ""}`;
   if (ERP_ROOTS.has(root)) {
-    return <AuthzProvider><PersistentAppShell><Outlet /></PersistentAppShell></AuthzProvider>;
+    return (
+      <AuthzProvider>
+        <PersistentAppShell><PageTransition><Outlet /></PageTransition></PersistentAppShell>
+      </AuthzProvider>
+    );
   }
-  return <AuthzProvider><Outlet /></AuthzProvider>;
+  return <AuthzProvider><PageTransition><Outlet /></PageTransition></AuthzProvider>;
 }

@@ -13,7 +13,7 @@ import { EmpresaSelector } from "@/components/empresa-selector";
 import { useSystem } from "@/px-platform/system-context";
 import { AnimatedLogo } from "@/components/motion/animated-logo";
 import { GrupoPxLogo } from "@/components/pxlog-logo";
-import { PageTransition } from "@/components/motion/page-transition";
+
 import { MobileDrawer } from "@/components/motion/mobile-drawer";
 import { useDesktopSmoothScroll } from "@/components/motion/desktop-smooth-scroll";
 import { DIALOG_MOTION, DURATION, MOTION_EASE, OVERLAY_MOTION } from "@/components/motion/tokens";
@@ -168,7 +168,8 @@ export function AppShell({ children, title, subtitle, rightPanel, headerActions 
 export function PersistentAppShell({ children }: { children: ReactNode }) {
   return (
     <ShellMotionProvider initialHeader={{ title: "PXOne" }}>
-      <AppShellFrame title="PXOne"><PageTransition>{children}</PageTransition></AppShellFrame>
+      {/* The route transition is declared ONCE, in the authenticated layout. */}
+      <AppShellFrame title="PXOne">{children}</AppShellFrame>
     </ShellMotionProvider>
   );
 }

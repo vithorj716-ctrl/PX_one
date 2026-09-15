@@ -9,7 +9,7 @@ import { useSystem } from "@/px-platform/system-context";
 import { supabase } from "@/integrations/supabase/client";
 import { PxLogLogo } from "@/components/pxlog-logo";
 import { AnimatedLogo } from "@/components/motion/animated-logo";
-import { PageTransition } from "@/components/motion/page-transition";
+
 import { ShellMotionProvider, ShellPage, useShellMotion } from "@/components/motion/shell-motion-context";
 import { MobileDrawer } from "@/components/motion/mobile-drawer";
 import { useDesktopSmoothScroll } from "@/components/motion/desktop-smooth-scroll";
@@ -104,7 +104,8 @@ export function TmsShell({ children, title, subtitle, headerActions }: TmsShellP
 export function PersistentTmsShell({ children }: { children: ReactNode }) {
   return (
     <ShellMotionProvider initialHeader={{ title: "PXLog TMS" }}>
-      <TmsShellFrame title="PXLog TMS"><PageTransition>{children}</PageTransition></TmsShellFrame>
+      {/* The route transition is declared ONCE, in the authenticated layout. */}
+      <TmsShellFrame title="PXLog TMS">{children}</TmsShellFrame>
     </ShellMotionProvider>
   );
 }
