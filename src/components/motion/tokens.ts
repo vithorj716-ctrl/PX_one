@@ -21,8 +21,8 @@ export const DURATION = {
   drawerExit: 0.19,
   modal: 0.22,
   modalExit: 0.15,
-  page: 0.28,
-  pageExit: 0.16,
+  page: 0.34,
+  pageExit: 0.14,
   emphasis: 0.5,
   reduced: 0.1,
 } as const;
@@ -47,8 +47,17 @@ export const NAV_SPRING = { type: "spring", stiffness: 420, damping: 36, mass: 0
 /** Slightly softer spring for tabs and secondary indicators. */
 export const TAB_SPRING = { type: "spring", stiffness: 380, damping: 34 } as const;
 
+/** Route content: stagger applied to the immediate blocks of the incoming page. */
+export const CONTENT_ENTER = {
+  duration: 0.36,
+  stagger: 0.045,
+  y: 10,
+  maxTargets: 14,
+} as const;
+
 export const BRAND_MOTION = {
   markDuration: 0.7,
+  markBlur: 6,
   sheenDuration: 0.9,
   wordDuration: 0.45,
   wordStagger: 0.08,
@@ -56,7 +65,7 @@ export const BRAND_MOTION = {
   recurringSheenDuration: 1.1,
   recurringSheenDelay: 3,
   recurringSheenRepeatDelay: 4.5,
-  loginContentDelay: 0.22,
+  
 } as const;
 
 /** Reusable Motion variants so presence animations stay consistent. */

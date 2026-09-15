@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { gsap } from "gsap";
 import { AnimatedLogo } from "@/components/motion/animated-logo";
 import { GrupoPxLogo } from "@/components/pxlog-logo";
-import { BRAND_MOTION, GSAP_EASE } from "@/components/motion/tokens";
+import { GSAP_EASE } from "@/components/motion/tokens";
+import { canAnimateEntry } from "@/components/motion/entry-gate";
 import { useIsomorphicLayoutEffect } from "@/components/motion/use-isomorphic-layout-effect";
 
 export const Route = createFileRoute("/login")({
@@ -36,6 +37,10 @@ function LoginPage() {
     if (!root) return;
     const targets = "[data-login-copy], [data-login-rule], [data-login-field], [data-login-submit]";
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Already-painted screen + late hydration: play the softened variant (never
+    // opacity 0) so the sequence is still visible without un-painting the form.
+    const late = !canAnimateEntry();
+    const from = (y: number) => ({ opacity: late ? 0.6 : 0, y: late ? Math.round(y / 2) : y });
 
     const ctx = gsap.context(() => {
       if (reduced) {
@@ -43,18 +48,18 @@ function LoginPage() {
         return;
       }
       const timeline = gsap.timeline({
-        delay: BRAND_MOTION.loginContentDelay,
+        // No artificial delay: the sequence starts on the mount commit.
         defaults: { ease: GSAP_EASE },
         // Clearing inline props hands the elements back to CSS, so the button's
         // press/hover states keep working after the entry animation.
         onComplete: () => gsap.set(targets, { clearProps: "opacity,transform" }),
       });
       timeline
-        .fromTo("[data-login-copy]", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6 }, 0.06)
-        .fromTo("[data-login-rule]", { scaleX: 0 }, { scaleX: 1, duration: 0.7, transformOrigin: "center" }, 0.08)
-        .fromTo("[data-login-field='user']", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5 }, 0.12)
-        .fromTo("[data-login-field='password']", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5 }, 0.22)
-        .fromTo("[data-login-submit]", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.45 }, 0.32);
+        .fromTo("[data-login-copy]", from(14), { opacity: 1, y: 0, duration: 0.6 }, 0.06)
+        .fromTo("[data-login-rule]", { scaleX: late ? 0.3 : 0 }, { scaleX: 1, duration: 0.7, transformOrigin: "center" }, 0.08)
+        .fromTo("[data-login-field='user']", from(16), { opacity: 1, y: 0, duration: 0.5 }, 0.12)
+        .fromTo("[data-login-field='password']", from(16), { opacity: 1, y: 0, duration: 0.5 }, 0.22)
+        .fromTo("[data-login-submit]", from(12), { opacity: 1, y: 0, duration: 0.45 }, 0.32);
     }, root);
 
     return () => {

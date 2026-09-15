@@ -3,6 +3,7 @@ import { useRef, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { BRAND_MOTION, GSAP_EASE } from "@/components/motion/tokens";
 import { useIsomorphicLayoutEffect } from "@/components/motion/use-isomorphic-layout-effect";
+import { canAnimateEntry } from "@/components/motion/entry-gate";
 
 type AnimatedLogoProps = {
   children: ReactNode;
@@ -26,6 +27,10 @@ export function AnimatedLogo({ children, className = "", wordmark, submark, vari
     const root = rootRef.current;
     if (!root) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // `late` = the screen was already painted before hydration ran. The entry then
+    // plays a softened variant that never drops to opacity 0, so the mark still
+    // moves but nothing ever un-paints.
+    const late = !canAnimateEntry();
     const all = "[data-logo-mark], [data-logo-word], [data-logo-line]";
 
     const ctx = gsap.context(() => {
@@ -53,14 +58,16 @@ export function AnimatedLogo({ children, className = "", wordmark, submark, vari
 
       if (markSel) {
         timeline.fromTo(markSel, {
-          opacity: 0,
-          y: login ? 14 : 5,
-          scale: login ? 0.9 : 0.96,
+          opacity: late ? 0.55 : 0,
+          y: late ? 5 : (login ? 16 : 8),
+          scale: late ? 0.975 : (login ? 0.9 : 0.95),
+          filter: `blur(${late ? 3 : (login ? 10 : BRAND_MOTION.markBlur)}px)`,
         }, {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: login ? 0.8 : BRAND_MOTION.markDuration,
+          filter: "blur(0px)",
+          duration: late ? 0.5 : (login ? 0.85 : BRAND_MOTION.markDuration),
         });
       }
       if (sheenSel) {
@@ -72,7 +79,7 @@ export function AnimatedLogo({ children, className = "", wordmark, submark, vari
         }, "-=0.35");
       }
       if (wordSel) {
-        timeline.fromTo(wordSel, { opacity: 0, x: -8 }, {
+        timeline.fromTo(wordSel, { opacity: late ? 0.6 : 0, x: late ? -4 : -8 }, {
           opacity: 1,
           x: 0,
           duration: BRAND_MOTION.wordDuration,
@@ -80,7 +87,7 @@ export function AnimatedLogo({ children, className = "", wordmark, submark, vari
         }, "-=0.7");
       }
       if (lineSel) {
-        timeline.fromTo(lineSel, { scaleX: 0 }, {
+        timeline.fromTo(lineSel, { scaleX: late ? 0.25 : 0 }, {
           scaleX: 1,
           duration: BRAND_MOTION.lineDuration,
           transformOrigin: "left center",

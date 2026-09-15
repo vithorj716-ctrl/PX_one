@@ -16,8 +16,6 @@ import { EmpresaProvider } from "@/px-core/empresa-context";
 import { SystemProvider } from "@/px-platform/system-context";
 import { AnimatedBackground } from "@/components/motion/animated-background";
 import { initCapabilityFlags } from "@/lib/browser-capabilities";
-import { armMotionRuntime } from "@/components/motion/motion-runtime";
-import { useIsomorphicLayoutEffect } from "@/components/motion/use-isomorphic-layout-effect";
 
 function NotFoundComponent() {
   return (
@@ -142,10 +140,6 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
-
-  // Runs before the first client paint, so the CSS safety reveal is dropped and
-  // the GSAP entry timelines own opacity/transform from the very first frame.
-  useIsomorphicLayoutEffect(() => armMotionRuntime(), []);
 
   // Feature-detection flags for CSS graceful degradation (no user-agent sniffing).
   useEffect(() => initCapabilityFlags(), []);

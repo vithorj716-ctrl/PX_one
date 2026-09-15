@@ -55,3 +55,11 @@
 - [x] `@number-flow/react` available for numeric indicators (`AnimatedNumber`, `AnimatedMetric numeric`), no looping number animation
 - [x] Validated login, ERP/TMS navigation and 320–1920px in Chromium (Chrome/Brave/Edge engine) and Firefox 142, plus reduced-motion pass — no console/page errors, no overflow, no ghosting
 - [ ] Lint still unavailable: the project has no ESLint flat configuration
+
+## Runtime de movimento (correção arquitetural)
+- [x] Transição de rota única, declarada no layout autenticado em volta do Outlet (fora dos shells)
+- [x] `mode="popLayout"` em vez de `mode="wait"`: entrada imediata, saída curta e sobreposta
+- [x] Entrada com stagger dos blocos da página (GSAP, apenas na montagem)
+- [x] Fail-safe visível: removido o "safety reveal" que escondia a tela por 1,2s
+- [x] Logo com entrada + blur, sheen recorrente único, hover só em CSS no wrapper
+- [x] Corrigido laço infinito de registro do cabeçalho quando duas páginas coexistem
