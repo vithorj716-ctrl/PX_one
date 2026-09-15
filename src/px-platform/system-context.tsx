@@ -28,13 +28,10 @@ export function SystemProvider({ children }: { children: ReactNode }) {
         setAllowedKeys([]);
         return;
       }
-      const { data } = await supabase
-        .from("px_usuario_sistemas")
-        .select("sistema_key")
-        .eq("ativo", true);
-      const keys = (data ?? []).map((r: any) => r.sistema_key as string);
-      // Diretor Geral: se nada listado mas tem role executiva, libera tudo ativo (fallback defensivo)
-      setAllowedKeys(keys);
+      // Fonte única: px_effective_systems resolve tipo + perfis + concessões diretas no banco.
+      const { data } = await (supabase as any).rpc("px_effective_systems");
+      const keys = ((data ?? []) as Array<{ sistema_key: string }>).map((r) => r.sistema_key);
+      setAllowedKeys([...new Set(keys)]);
     } finally {
       setLoading(false);
     }

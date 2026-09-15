@@ -1,26 +1,28 @@
-// Administração de usuários da plataforma — apenas executivos (master_admin/socio/diretor).
+// Administração de usuários da plataforma. Autorização real: assertAdmin (px_is_admin no banco).
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertAdmin } from "@/authz/authz.server";
+import { USER_LEVELS } from "@/authz/catalog";
 
-export const APP_ROLES = ["master_admin", "socio", "diretor", "gestor", "consultor", "auditor"] as const;
+export const APP_ROLES = USER_LEVELS;
 export type AppRole = (typeof APP_ROLES)[number];
-
-async function assertExecutivo(ctx: any) {
-  const { data, error } = await ctx.supabase.rpc("is_executive", { _user_id: ctx.userId });
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Apenas administradores podem gerenciar usuários.");
-}
 
 export const listPlatformUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertExecutivo(context);
+    await assertAdmin(context.supabase);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
     if (error) throw new Error(error.message);
 
     const { data: roles } = await supabaseAdmin.from("user_roles").select("user_id, role");
+    const { data: vinculos } = await (supabaseAdmin as any)
+      .from("px_usuario_perfis")
+      .select("user_id, perfil_id");
+    const { data: sistemas } = await supabaseAdmin
+      .from("px_usuario_sistemas")
+      .select("user_id, sistema_key, ativo");
     const { data: metas } = await supabaseAdmin
       .from("px_usuarios_meta")
       .select("user_id, nome, login, cargo, situacao");
@@ -32,6 +34,15 @@ export const listPlatformUsers = createServerFn({ method: "GET" })
       rolesByUser.set(r.user_id, arr);
     }
     const metaByUser = new Map((metas ?? []).map((m: any) => [m.user_id, m]));
+    const perfisByUser = new Map<string, string[]>();
+    for (const v of (vinculos ?? []) as Array<{ user_id: string; perfil_id: string }>) {
+      perfisByUser.set(v.user_id, [...(perfisByUser.get(v.user_id) ?? []), v.perfil_id]);
+    }
+    const sistemasByUser = new Map<string, string[]>();
+    for (const s of (sistemas ?? []) as Array<{ user_id: string; sistema_key: string; ativo: boolean }>) {
+      if (!s.ativo) continue;
+      sistemasByUser.set(s.user_id, [...(sistemasByUser.get(s.user_id) ?? []), s.sistema_key]);
+    }
 
     return list.users.map((u) => {
       const meta: any = metaByUser.get(u.id);
@@ -45,6 +56,8 @@ export const listPlatformUsers = createServerFn({ method: "GET" })
         created_at: u.created_at,
         last_sign_in_at: u.last_sign_in_at ?? null,
         roles: rolesByUser.get(u.id) ?? [],
+        perfis: perfisByUser.get(u.id) ?? [],
+        sistemas: sistemasByUser.get(u.id) ?? [],
       };
     });
   });
@@ -57,7 +70,7 @@ export const setUserRoles = createServerFn({ method: "POST" })
     return { userId: d.userId, roles };
   })
   .handler(async ({ data, context }) => {
-    await assertExecutivo(context);
+    await assertAdmin(context.supabase);
     if (data.userId === context.userId && !data.roles.includes("master_admin")) {
       throw new Error("Você não pode remover o seu próprio acesso de administrador total.");
     }
@@ -82,7 +95,7 @@ export const resetUserPassword = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
-    await assertExecutivo(context);
+    await assertAdmin(context.supabase);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, { password: data.password });
     if (error) throw new Error(error.message);
@@ -110,7 +123,7 @@ export const createPlatformUser = createServerFn({ method: "POST" })
     };
   })
   .handler(async ({ data, context }) => {
-    await assertExecutivo(context);
+    await assertAdmin(context.supabase);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
@@ -155,7 +168,7 @@ export const updatePlatformUser = createServerFn({ method: "POST" })
     };
   })
   .handler(async ({ data, context }) => {
-    await assertExecutivo(context);
+    await assertAdmin(context.supabase);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const patch = {
@@ -186,11 +199,14 @@ export const deletePlatformUser = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
-    await assertExecutivo(context);
+    await assertAdmin(context.supabase);
     if (data.userId === context.userId) throw new Error("Você não pode excluir o seu próprio usuário.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId);
     await supabaseAdmin.from("px_usuario_sistemas").delete().eq("user_id", data.userId);
+    await (supabaseAdmin as any).from("px_usuario_perfis").delete().eq("user_id", data.userId);
+    await (supabaseAdmin as any).from("px_usuario_permissoes").delete().eq("user_id", data.userId);
+    await (supabaseAdmin as any).from("px_usuario_empresas").delete().eq("user_id", data.userId);
     await supabaseAdmin.from("px_usuarios_meta").delete().eq("user_id", data.userId);
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
     if (error) throw new Error(error.message);
