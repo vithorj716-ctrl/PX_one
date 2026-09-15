@@ -34,3 +34,10 @@
 - [ ] Apply restrained dashboard metric/chart entry and preserve stable tables
 - [ ] Verify Canvas, reduced motion, cleanup, and overlay lifecycle
 - [ ] Validate login, ERP/TMS rapid navigation, all required viewports, console, lint, typecheck, and production build
+
+## Acesso efetivo (launcher)
+- [x] RPC única `get_my_effective_access()` (SECURITY DEFINER, auth.uid()) como fonte de verdade
+- [x] SystemProvider e AuthzProvider consomem a mesma query; sem lógica paralela
+- [x] Erro de carregamento ≠ ausência de acesso (launcher mostra erro + "Tentar novamente")
+- [x] MASTER_ADMIN vê todos os sistemas ativos sem linhas em px_usuario_sistemas (testado com rollback)
+- [x] Validado no navegador: login, /launcher, /tms, /admin/usuarios, /admin/perfis, ERP — console sem erros

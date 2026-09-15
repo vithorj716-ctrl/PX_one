@@ -24,10 +24,16 @@ export function AnimatedLogo({ children, className = "", wordmark, submark, vari
         gsap.set(root.querySelector("[data-logo-sheen]"), { opacity: 0 });
         return;
       }
+      // Alvos ausentes (sem wordmark/submark) não entram na timeline: evita avisos do GSAP.
+      const pick = (sel: string) => (root.querySelectorAll(sel).length ? sel : null);
+      const markSel = pick("[data-logo-mark]");
+      const sheenSel = pick("[data-logo-sheen]");
+      const wordSel = pick("[data-logo-word]");
+      const lineSel = pick("[data-logo-line]");
       const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
       const login = variant === "login";
-      timeline
-        .fromTo("[data-logo-mark]", {
+      if (markSel) timeline
+        .fromTo(markSel, {
           opacity: 0,
           y: login ? 18 : 6,
           scale: login ? 0.86 : 0.94,
@@ -38,28 +44,32 @@ export function AnimatedLogo({ children, className = "", wordmark, submark, vari
           scale: 1,
           filter: "blur(0px)",
           duration: login ? 0.9 : BRAND_MOTION.markDuration,
-        })
-        .fromTo("[data-logo-sheen]", { xPercent: -140, opacity: 0.12 }, {
+        });
+      if (sheenSel) timeline
+        .fromTo(sheenSel, { xPercent: -140, opacity: 0.12 }, {
           xPercent: 140,
           opacity: 0.12,
           duration: BRAND_MOTION.sheenDuration,
           ease: "power2.inOut",
-        }, "-=0.35")
-        .fromTo("[data-logo-word]", { opacity: 0, x: -8 }, {
+        }, "-=0.35");
+      if (wordSel) timeline
+        .fromTo(wordSel, { opacity: 0, x: -8 }, {
           opacity: 1,
           x: 0,
           duration: BRAND_MOTION.wordDuration,
           stagger: BRAND_MOTION.wordStagger,
-        }, "-=0.7")
-        .fromTo("[data-logo-line]", { scaleX: 0 }, {
+        }, "-=0.7");
+      if (lineSel) timeline
+        .fromTo(lineSel, { scaleX: 0 }, {
           scaleX: 1,
           duration: BRAND_MOTION.lineDuration,
           transformOrigin: "left center",
-        }, "-=0.4")
-        .set("[data-logo-sheen]", { opacity: 0 })
-        .set("[data-logo-mark], [data-logo-word], [data-logo-line]", { opacity: 1, transform: "none", filter: "none" });
+        }, "-=0.4");
+      if (sheenSel) timeline.set(sheenSel, { opacity: 0 });
+      const finals = [markSel, wordSel, lineSel].filter(Boolean) as string[];
+      if (finals.length) timeline.set(finals, { opacity: 1, transform: "none", filter: "none" });
 
-      gsap.fromTo("[data-logo-sheen]", { xPercent: -140, opacity: 0 }, {
+      if (sheenSel) gsap.fromTo(sheenSel, { xPercent: -140, opacity: 0 }, {
         xPercent: 140,
         opacity: 0.1,
         duration: BRAND_MOTION.recurringSheenDuration,

@@ -1,11 +1,18 @@
+// PX Platform — SystemProvider: sistema ativo + navegação.
+// NÃO decide autorização: consome o acesso efetivo central (get_my_effective_access).
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useEffectiveAccessQuery } from "@/authz/authz-context";
+import { ACCESS_QUERY_KEY } from "@/authz/access-client";
+import { ANY } from "@/authz/catalog";
 import { PX_SYSTEMS, type PxSystem } from "./systems";
 
-const STORAGE_KEY = "px:active-system";
+const STORAGE_KEY = "px:active-system"; // preferência de navegação apenas — nunca autorização.
 
 type Ctx = {
   loading: boolean;
+  error: Error | null;
   allowedSystems: PxSystem[];
   activeSystem: PxSystem | null;
   setActiveSystem: (key: string | null) => void;
@@ -16,34 +23,20 @@ type Ctx = {
 const SystemCtx = createContext<Ctx | null>(null);
 
 export function SystemProvider({ children }: { children: ReactNode }) {
-  const [loading, setLoading] = useState(true);
-  const [allowedKeys, setAllowedKeys] = useState<string[]>([]);
+  const queryClient = useQueryClient();
+  const { data, isLoading, error } = useEffectiveAccessQuery();
   const [activeKey, setActiveKeyState] = useState<string | null>(null);
-
-  const refresh = useCallback(async () => {
-    setLoading(true);
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) {
-        setAllowedKeys([]);
-        return;
-      }
-      // Fonte única: px_effective_systems resolve tipo + perfis + concessões diretas no banco.
-      const { data } = await (supabase as any).rpc("px_effective_systems");
-      const keys = ((data ?? []) as Array<{ sistema_key: string }>).map((r) => r.sistema_key);
-      setAllowedKeys([...new Set(keys)]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
       if (saved) setActiveKeyState(saved);
     } catch {}
-    void refresh();
-  }, [refresh]);
+  }, []);
+
+  const refresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: ACCESS_QUERY_KEY });
+  }, [queryClient]);
 
   const setActiveSystem = useCallback((key: string | null) => {
     setActiveKeyState(key);
@@ -53,6 +46,7 @@ export function SystemProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, []);
 
+  // Operação de DADOS (telemetria de último acesso) — não é autorização.
   const touchLastAccess = useCallback(async (key: string) => {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) return;
@@ -63,13 +57,13 @@ export function SystemProvider({ children }: { children: ReactNode }) {
       .eq("sistema_key", key);
   }, []);
 
-  const allowedSystems = useMemo(
-    () =>
-      PX_SYSTEMS.filter(
-        (s) => s.status === "ativo" && (allowedKeys.includes("*") || allowedKeys.includes(s.key)),
-      ),
-    [allowedKeys],
-  );
+  // MASTER_ADMIN recebe "*" do banco → todos os sistemas ativos do registry.
+  const allowedSystems = useMemo(() => {
+    if (!data) return [];
+    const keys = new Set(data.systems.map((s) => s.sistema_key));
+    const global = data.isMaster || keys.has(ANY);
+    return PX_SYSTEMS.filter((s) => s.status === "ativo" && (global || keys.has(s.key)));
+  }, [data]);
 
   const activeSystem = useMemo(
     () => PX_SYSTEMS.find((s) => s.key === activeKey) ?? null,
@@ -77,7 +71,17 @@ export function SystemProvider({ children }: { children: ReactNode }) {
   );
 
   return (
-    <SystemCtx.Provider value={{ loading, allowedSystems, activeSystem, setActiveSystem, refresh, touchLastAccess }}>
+    <SystemCtx.Provider
+      value={{
+        loading: isLoading,
+        error: (error as Error | null) ?? null,
+        allowedSystems,
+        activeSystem,
+        setActiveSystem,
+        refresh,
+        touchLastAccess,
+      }}
+    >
       {children}
     </SystemCtx.Provider>
   );

@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PersistentAppShell } from "@/components/app-shell";
 import { PersistentTmsShell } from "@/components/tms/tms-shell";
 import { AuthzProvider } from "@/authz/authz-context";
-import { getMyAccess } from "@/authz/access.functions";
+import { fetchMyEffectiveAccess } from "@/authz/access-client";
 import { hasModuleAccess, hasSystemAccess } from "@/authz/access";
 import { requirementForPath } from "@/authz/route-map";
 
@@ -26,7 +26,14 @@ export const Route = createFileRoute("/_authenticated")({
 
     const requirement = requirementForPath(location.pathname);
     if (requirement) {
-      const access = await getMyAccess();
+      // Erro de carregamento NÃO é ausência de acesso: manda ao Launcher, que mostra
+      // "Não foi possível carregar seus acessos." com "Tentar novamente".
+      let access;
+      try {
+        access = await fetchMyEffectiveAccess();
+      } catch {
+        throw redirect({ to: "/launcher" });
+      }
       if (!hasSystemAccess(access, requirement.system)) {
         throw redirect({
           to: "/acesso-negado",
