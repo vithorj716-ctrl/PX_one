@@ -64,15 +64,10 @@ export function normalizeAccess(raw: RawAccess): EffectiveAccessPayload {
 
 /** Carrega o acesso efetivo do usuário autenticado. Lança AccessLoadError em falha. */
 export async function fetchMyEffectiveAccess(): Promise<EffectiveAccessPayload> {
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError) {
-    console.error("[PX AUTH] Falha ao carregar autorização", {
-      stage: "auth.getUser",
-      message: userError.message,
-    });
-    throw new AccessLoadError(userError.message, { stage: "auth.getUser" });
-  }
-  if (!userData.user) return EMPTY_PAYLOAD;
+  // Sessão ausente = visitante anônimo (não é erro de autorização).
+  const { data: sessionData } = await supabase.auth.getSession();
+  const sessionUser = sessionData.session?.user ?? null;
+  if (!sessionUser) return EMPTY_PAYLOAD;
 
   const { data, error } = await (
     supabase as unknown as {
@@ -90,7 +85,7 @@ export async function fetchMyEffectiveAccess(): Promise<EffectiveAccessPayload> 
       message: error.message,
       details: error.details,
       hint: error.hint,
-      userId: userData.user.id,
+      userId: sessionUser.id,
     });
     throw new AccessLoadError(error.message, {
       stage: "rpc.get_my_effective_access",
@@ -104,7 +99,7 @@ export async function fetchMyEffectiveAccess(): Promise<EffectiveAccessPayload> 
     console.error("[PX AUTH] Falha ao carregar autorização", {
       stage: "rpc.get_my_effective_access",
       message: "resposta vazia",
-      userId: userData.user.id,
+      userId: sessionUser.id,
     });
     throw new AccessLoadError("Resposta vazia da autorização.", {
       stage: "rpc.get_my_effective_access",
