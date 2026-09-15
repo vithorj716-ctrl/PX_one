@@ -143,6 +143,10 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
+  // Runs before the first client paint, so the CSS safety reveal is dropped and
+  // the GSAP entry timelines own opacity/transform from the very first frame.
+  useIsomorphicLayoutEffect(() => armMotionRuntime(), []);
+
   // Feature-detection flags for CSS graceful degradation (no user-agent sniffing).
   useEffect(() => initCapabilityFlags(), []);
 
