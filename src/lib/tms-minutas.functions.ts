@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertCan } from "@/authz/authz.server";
 
 export const MOTIVOS_CANCELAMENTO = [
   { value: "solicitacao_duplicada", label: "Solicitação duplicada" },
@@ -19,6 +20,7 @@ export const cancelarMinuta = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxlog-tms", "minutas", "tms_minutas", "update");
     const { supabase, userId } = context;
 
     const { data: m } = await supabase.from("tms_minutas").select("id, cancelada_em, status").eq("id", data.minuta_id).maybeSingle() as any;

@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertCan } from "@/authz/authz.server";
 
 export const loadFinancialData = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -50,6 +51,7 @@ export const saveScenario = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: { nome: string; descricao?: string; empresa_id?: string | null; payload: any }) => i)
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxone-erp", "financeiro", "fi_cenarios", "create");
     const { error, data: row } = await context.supabase
       .from("financial_scenarios")
       .insert({

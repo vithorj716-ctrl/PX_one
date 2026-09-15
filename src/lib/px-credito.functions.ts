@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertCan } from "@/authz/authz.server";
 
 export type SaldoCliente = {
   cliente_id: string;
@@ -50,6 +51,7 @@ export const upsertCreditoCliente = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxlog-tms", "financeiro", "px_cliente_credito", "update");
     const sb = context.supabase as any;
     const { cliente_id, ...rest } = data;
     const existing = await sb.from("px_cliente_credito").select("id").eq("cliente_id", cliente_id).maybeSingle();
@@ -72,6 +74,7 @@ export const liberarBloqueio = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxlog-tms", "financeiro", "px_cliente_credito", "approve");
     const sb = context.supabase as any;
     const { error } = await sb.from("px_cliente_credito")
       .update({ liberado_ate: data.ate, liberado_por: context.userId, observacoes: data.motivo ?? null })
@@ -96,6 +99,7 @@ export const criarLancamento = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxlog-tms", "financeiro", "px_financeiro_lancamentos", "create");
     const sb = context.supabase as any;
     const { error, data: row } = await sb.from("px_cliente_lancamentos")
       .insert({ ...data, created_by: context.userId }).select("*").single();

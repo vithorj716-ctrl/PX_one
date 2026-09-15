@@ -22,9 +22,15 @@
 - [x] Validate login, repeated navigation, overlays, mobile, desktop, console, typecheck, and production build (lint unavailable: no ESLint configuration)
 
 ## Motors Hub motion parity
-- [ ] Centralize timing, easing, spring, and stagger values from the confirmed reference
-- [ ] Match brand and login sequencing without competing animation owners
-- [ ] Match route, navigation, drawer, press, and desktop scroll behavior
+- [x] Centralize timing, easing, spring, and stagger values from the confirmed reference
+- [x] Match brand and login sequencing without competing animation owners
+- [x] Match route, navigation, drawer, press, and desktop scroll behavior
+
+## Autorização única (usuário -> nível -> perfil -> sistema -> módulo -> ação -> empresa)
+- [x] Cadeia canônica no banco com funções SECURITY DEFINER e RLS por permissão
+- [x] Módulo src/authz como fonte única no código (catálogo, acesso efetivo, provider, gate de rotas)
+- [x] Telas de usuários e perfis gravando perfis, sistemas e permissões reais
+- [x] docs/autorizacao.md e testes da matriz de autorização
 - [ ] Apply restrained dashboard metric/chart entry and preserve stable tables
 - [ ] Verify Canvas, reduced motion, cleanup, and overlay lifecycle
 - [ ] Validate login, ERP/TMS rapid navigation, all required viewports, console, lint, typecheck, and production build

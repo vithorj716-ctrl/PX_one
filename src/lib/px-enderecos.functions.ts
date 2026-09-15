@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertCan } from "@/authz/authz.server";
 
 export const TIPOS_ENDERECO = [
   { value: "matriz", label: "Matriz" },
@@ -79,6 +80,7 @@ export const upsertEndereco = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxone-erp", "cadastros", "px_cliente_enderecos", "update");
     const { supabase, userId } = context;
     const { id, ...rest } = data;
     const payload: any = {
@@ -107,6 +109,7 @@ export const deleteEndereco = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxone-erp", "cadastros", "px_cliente_enderecos", "delete");
     const { error } = await (context.supabase as any)
       .from("px_registry_enderecos").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
@@ -152,6 +155,7 @@ export const upsertContato = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxone-erp", "cadastros", "px_cliente_contatos", "update");
     const { supabase, userId } = context;
     const { id, ...rest } = data;
     const payload: any = { ...rest, updated_by: userId, updated_at: new Date().toISOString() };
@@ -175,6 +179,7 @@ export const deleteContato = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxone-erp", "cadastros", "px_cliente_contatos", "delete");
     const { error } = await (context.supabase as any)
       .from("px_registry_contatos").delete().eq("id", data.id);
     if (error) throw new Error(error.message);

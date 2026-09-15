@@ -1,12 +1,12 @@
-// Painel de administração da PX API — apenas executivos.
+// Painel de administração da PX API — restrito a administradores da plataforma (px_is_admin).
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowLeft, KeyRound, Plus, Power, RefreshCw, ShieldCheck } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { supabase } from "@/integrations/supabase/client";
+import { useAuthz } from "@/authz/authz-context";
 import {
   listApiClients,
   createApiClient,
@@ -40,18 +40,8 @@ export const Route = createFileRoute("/_authenticated/admin/px-api")({
 
 function PxApiAdmin() {
   const navigate = useNavigate();
-  const [allowed, setAllowed] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) { setAllowed(false); return; }
-      const { data } = await supabase
-        .from("user_roles").select("role").eq("user_id", userData.user.id);
-      const ok = (data ?? []).some((r: any) => ["master_admin", "socio", "diretor"].includes(r.role));
-      setAllowed(ok);
-    })();
-  }, []);
+  const { isAdmin, loading: authzLoading } = useAuthz();
+  const allowed = authzLoading ? null : isAdmin;
 
   if (allowed === null) {
     return <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">Verificando permissões…</div>;

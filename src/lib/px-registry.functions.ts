@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertCan } from "@/authz/authz.server";
 import { isValidCnpj, onlyDigits } from "./cnpj";
 
 export const CATEGORIAS_CLIENTE = [
@@ -103,6 +104,7 @@ export const upsertCliente = createServerFn({ method: "POST" })
     return { ...d, cnpj };
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxone-erp", "cadastros", "clientes", "update");
     const { supabase, userId } = context;
     const now = new Date().toISOString();
 
@@ -184,6 +186,7 @@ export const setClienteAtivo = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxone-erp", "cadastros", "clientes", "update");
     const { supabase, userId } = context;
     const patch: any = data.ativo
       ? { ativo: true, inativado_em: null, inativado_por: null, motivo_inativacao: null, updated_by: userId, updated_at: new Date().toISOString() }
@@ -210,6 +213,7 @@ export const duplicateCliente = createServerFn({ method: "POST" })
     return { id: d.id, novo_cnpj: cnpj };
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxone-erp", "cadastros", "clientes", "create");
     const { supabase, userId } = context;
     const { data: src, error: se } = await (supabase as any).from("px_registry_clientes").select("*").eq("id", data.id).single();
     if (se) throw new Error(se.message);
@@ -237,6 +241,7 @@ export const linkClienteToSistema = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
+    await assertCan(context.supabase, "pxone-erp", "cadastros", "clientes", "update");
     const { supabase, userId } = context;
     await (supabase as any)
       .from("px_registry_vinculos")

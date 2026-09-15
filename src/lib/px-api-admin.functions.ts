@@ -7,6 +7,7 @@
 
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertAdmin } from "@/authz/authz.server";
 import { sha256Hex, randomToken } from "@/px-api/jwt";
 
 const ESCOPOS_VALIDOS = [
@@ -28,16 +29,11 @@ const ESCOPOS_VALIDOS = [
   "admin:write",
 ];
 
-async function assertExecutivo(ctx: any): Promise<void> {
-  const { data, error } = await ctx.supabase.rpc("is_executive", { _user_id: ctx.userId });
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Apenas executivos podem gerenciar a PX API.");
-}
 
 export const listApiClients = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertExecutivo(context);
+    await assertAdmin(context.supabase);
     const { data, error } = await (context.supabase as any)
       .from("px_api_clients")
       .select("id, sistema_key, nome, descricao, api_key_prefix, escopos, rate_limit_rpm, ativo, created_at, updated_at")
@@ -68,7 +64,7 @@ export const createApiClient = createServerFn({ method: "POST" })
     };
   })
   .handler(async ({ data, context }) => {
-    await assertExecutivo(context);
+    await assertAdmin(context.supabase);
     const apiKey = `pxa_${randomToken(20)}`;
     const secret = `pxs_${randomToken(32)}`;
     const apiKeyHash = await sha256Hex(apiKey);
@@ -110,7 +106,7 @@ export const setApiClientAtivo = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
-    await assertExecutivo(context);
+    await assertAdmin(context.supabase);
     const { error } = await (context.supabase as any)
       .from("px_api_clients").update({ ativo: data.ativo }).eq("id", data.id);
     if (error) throw new Error(error.message);
@@ -124,7 +120,7 @@ export const revokeApiToken = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
-    await assertExecutivo(context);
+    await assertAdmin(context.supabase);
     const { error } = await (context.supabase as any)
       .from("px_api_tokens")
       .update({ revogado: true, revogado_em: new Date().toISOString(), revogado_por: context.userId })
@@ -137,7 +133,7 @@ export const listApiLogs = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { sistema_key?: string; limit?: number; status?: number } | undefined) => d ?? {})
   .handler(async ({ data, context }) => {
-    await assertExecutivo(context);
+    await assertAdmin(context.supabase);
     const limit = Math.min(500, Math.max(1, data?.limit ?? 100));
     let q = (context.supabase as any)
       .from("px_api_logs")

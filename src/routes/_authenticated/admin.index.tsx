@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { Users, Shield, ArrowLeft, Boxes, KeyRound } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuthz } from "@/authz/authz-context";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({ meta: [{ title: "Administração da Plataforma" }] }),
@@ -10,20 +9,9 @@ export const Route = createFileRoute("/_authenticated/admin/")({
 
 function AdminHome() {
   const navigate = useNavigate();
-  const [allowed, setAllowed] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) { setAllowed(false); return; }
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userData.user.id);
-      const ok = (data ?? []).some((r: any) => ["master_admin", "socio", "diretor"].includes(r.role));
-      setAllowed(ok);
-    })();
-  }, []);
+  // Autorização real vem do banco (px_is_admin); aqui só controlamos a experiência.
+  const { isAdmin, loading } = useAuthz();
+  const allowed = loading ? null : isAdmin;
 
   if (allowed === null) {
     return <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">Verificando permissões…</div>;
@@ -31,7 +19,7 @@ function AdminHome() {
   if (!allowed) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-3">
-        <div className="text-sm text-muted-foreground">Acesso restrito ao Diretor Geral.</div>
+        <div className="text-sm text-muted-foreground">Acesso restrito aos administradores da plataforma.</div>
         <button onClick={() => navigate({ to: "/launcher" })} className="text-xs px-3 py-1.5 rounded-md ring-1 ring-border">Voltar ao Launcher</button>
       </div>
     );

@@ -1,11 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertEmpresa } from "@/authz/authz.server";
 
 export type AuditAction = "create" | "update" | "inactivate" | "reactivate" | "duplicate" | "delete";
 
 export const logAudit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { entity_type: string; entity_id: string; action: AuditAction; diff?: Record<string, unknown> | null }) => {
+  .inputValidator((d: {
+    entity_type: string;
+    entity_id: string;
+    action: AuditAction;
+    diff?: Record<string, unknown> | null;
+    empresa_id?: string | null;
+    sistema_key?: string | null;
+    modulo_key?: string | null;
+    resultado?: "sucesso" | "negado" | "erro";
+  }) => {
     if (!d?.entity_type) throw new Error("entity_type obrigatório");
     if (!d?.entity_id) throw new Error("entity_id obrigatório");
     if (!d?.action) throw new Error("action obrigatória");
@@ -13,6 +23,7 @@ export const logAudit = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     const { supabase, userId, claims } = context;
+    await assertEmpresa(supabase, data.empresa_id ?? null);
     const label = (claims as any)?.email ?? (claims as any)?.user_metadata?.full_name ?? null;
     const { error } = await (supabase as any).from("px_audit_log").insert({
       entity_type: data.entity_type,
@@ -21,11 +32,16 @@ export const logAudit = createServerFn({ method: "POST" })
       diff: data.diff ?? null,
       user_id: userId,
       user_label: label,
+      empresa_id: data.empresa_id ?? null,
+      sistema_key: data.sistema_key ?? null,
+      modulo_key: data.modulo_key ?? null,
+      resultado: data.resultado ?? "sucesso",
     });
     if (error) throw new Error(error.message);
     return { ok: true };
   });
 
+// Leitura da auditoria: a policy px_audit_log_sel (px_is_admin) é a autorização real.
 export const listAudit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { entity_type: string; entity_id: string }) => d)
