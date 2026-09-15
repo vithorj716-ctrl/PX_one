@@ -41,3 +41,17 @@
 - [x] Erro de carregamento ≠ ausência de acesso (launcher mostra erro + "Tentar novamente")
 - [x] MASTER_ADMIN vê todos os sistemas ativos sem linhas em px_usuario_sistemas (testado com rollback)
 - [x] Validado no navegador: login, /launcher, /tms, /admin/usuarios, /admin/perfis, ERP — console sem erros
+
+## Motion cross-browser hardening
+- [x] Remove privacy-farbled `hardwareConcurrency`/`deviceMemory` gating from the Canvas backdrop (Brave root cause)
+- [x] Replace GSAP `transform: none` finishers with `clearProps` so CSS hover/press states survive the entry timelines
+- [x] Fix the root Supabase `onAuthStateChange` cleanup escaping the effect (leaked listener per mount)
+- [x] Single motion token file (instant/fast/micro/base/enter/exit/menu/drawer/modal/page/emphasis) + shared Motion variants
+- [x] Feature detection (`src/lib/browser-capabilities.ts`) with `@supports`/flag fallbacks for backdrop-filter, color-mix and oklch — no user-agent sniffing
+- [x] Shared sliding nav indicator, hover layer, icon micro-interaction and collapsed tooltip in one `NavItem` (Motion owns layoutId, CSS owns the rest)
+- [x] Coordinated sidebar collapse (width + spacing + clipping), header scroll compaction without height/font-size animation
+- [x] Reference-counted scroll lock so Lenis stops for drawers, dialogs and the command palette; nested scrollers opt out via `data-lenis-prevent`
+- [x] Live reduced-motion re-arming for Canvas and Lenis; every RAF/timeline/listener cancelled on unmount
+- [x] `@number-flow/react` available for numeric indicators (`AnimatedNumber`, `AnimatedMetric numeric`), no looping number animation
+- [x] Validated login, ERP/TMS navigation and 320–1920px in Chromium (Chrome/Brave/Edge engine) and Firefox 142, plus reduced-motion pass — no console/page errors, no overflow, no ghosting
+- [ ] Lint still unavailable: the project has no ESLint flat configuration
