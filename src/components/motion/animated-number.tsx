@@ -1,10 +1,10 @@
-import NumberFlow from "@number-flow/react";
+import NumberFlow, { type Format } from "@number-flow/react";
 import { useReducedMotion } from "motion/react";
 import { DURATION, MOTION_EASE_CSS, ms } from "@/components/motion/tokens";
 
 type AnimatedNumberProps = {
   value: number;
-  format?: Intl.NumberFormatOptions;
+  format?: Format;
   locales?: string | string[];
   prefix?: string;
   suffix?: string;
