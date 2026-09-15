@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AcessoNegadoRouteImport } from './routes/acesso-negado'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedValuationRouteImport } from './routes/_authenticated/valuation'
@@ -106,6 +107,11 @@ const LoginRoute = LoginRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcessoNegadoRoute = AcessoNegadoRouteImport.update({
+  id: '/acesso-negado',
+  path: '/acesso-negado',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -588,6 +594,7 @@ const ApiPublicV1ClientesIdContatosContatoIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
+  '/acesso-negado': typeof AcessoNegadoRoute
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
   '/ai-analyst': typeof AuthenticatedAiAnalystRoute
@@ -676,6 +683,7 @@ export interface FileRoutesByFullPath {
   '/api/public/v1/clientes/$id/enderecos/$enderecoId': typeof ApiPublicV1ClientesIdEnderecosEnderecoIdRoute
 }
 export interface FileRoutesByTo {
+  '/acesso-negado': typeof AcessoNegadoRoute
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
   '/ai-analyst': typeof AuthenticatedAiAnalystRoute
@@ -765,6 +773,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/acesso-negado': typeof AcessoNegadoRoute
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
   '/_authenticated/ai-analyst': typeof AuthenticatedAiAnalystRoute
@@ -857,6 +866,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/acesso-negado'
     | '/auth'
     | '/login'
     | '/ai-analyst'
@@ -945,6 +955,7 @@ export interface FileRouteTypes {
     | '/api/public/v1/clientes/$id/enderecos/$enderecoId'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/acesso-negado'
     | '/auth'
     | '/login'
     | '/ai-analyst'
@@ -1033,6 +1044,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_authenticated'
+    | '/acesso-negado'
     | '/auth'
     | '/login'
     | '/_authenticated/ai-analyst'
@@ -1124,6 +1136,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AcessoNegadoRoute: typeof AcessoNegadoRoute
   AuthRoute: typeof AuthRoute
   LoginRoute: typeof LoginRoute
   ApiPublicV1ClientesRoute: typeof ApiPublicV1ClientesRouteWithChildren
@@ -1155,6 +1168,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/acesso-negado': {
+      id: '/acesso-negado'
+      path: '/acesso-negado'
+      fullPath: '/acesso-negado'
+      preLoaderRoute: typeof AcessoNegadoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -2053,6 +2073,7 @@ const ApiPublicV1UsuariosRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AcessoNegadoRoute: AcessoNegadoRoute,
   AuthRoute: AuthRoute,
   LoginRoute: LoginRoute,
   ApiPublicV1ClientesRoute: ApiPublicV1ClientesRouteWithChildren,
