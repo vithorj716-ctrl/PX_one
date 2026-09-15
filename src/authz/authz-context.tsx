@@ -2,25 +2,29 @@
 // Só controla experiência/navegação. A autorização real é do banco e das server functions.
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { getMyAccess } from "./access.functions";
 import {
-  EMPTY_ACCESS,
+  ACCESS_QUERY_KEY,
+  EMPTY_PAYLOAD,
+  fetchMyEffectiveAccess,
+  type EffectiveAccessPayload,
+} from "./access-client";
+import {
   can as canAccess,
   hasEmpresaAccess,
   hasModuleAccess,
   hasSystemAccess,
-  type EffectiveAccess,
 } from "./access";
 import type { Action, SystemKey } from "./catalog";
 
-export const ACCESS_QUERY_KEY = ["px", "authz", "me"] as const;
+export { ACCESS_QUERY_KEY };
 
 type Ctx = {
-  access: EffectiveAccess;
+  access: EffectiveAccessPayload;
   loading: boolean;
+  error: Error | null;
   isMaster: boolean;
   isAdmin: boolean;
+  isExecutive: boolean;
   hasSystem: (system: SystemKey | string) => boolean;
   hasModule: (system: SystemKey | string, module: string) => boolean;
   can: (system: SystemKey | string, module: string, resource: string, action: Action) => boolean;
@@ -30,18 +34,21 @@ type Ctx = {
 
 const AuthzCtx = createContext<Ctx | null>(null);
 
-export function AuthzProvider({ children }: { children: ReactNode }) {
-  const fetchAccess = useServerFn(getMyAccess);
-  const queryClient = useQueryClient();
-
-  const { data, isLoading } = useQuery({
+/** Hook base — usado pelo AuthzProvider e pelo SystemProvider (mesma query, um só fetch). */
+export function useEffectiveAccessQuery() {
+  return useQuery({
     queryKey: ACCESS_QUERY_KEY,
-    queryFn: () => fetchAccess(),
+    queryFn: fetchMyEffectiveAccess,
     staleTime: 60_000,
     retry: false,
   });
+}
 
-  const access = data ?? EMPTY_ACCESS;
+export function AuthzProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
+  const { data, isLoading, error } = useEffectiveAccessQuery();
+
+  const access = data ?? EMPTY_PAYLOAD;
 
   const refresh = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: ACCESS_QUERY_KEY });
@@ -51,15 +58,17 @@ export function AuthzProvider({ children }: { children: ReactNode }) {
     () => ({
       access,
       loading: isLoading,
+      error: (error as Error | null) ?? null,
       isMaster: access.isMaster,
       isAdmin: access.isAdmin,
+      isExecutive: access.isExecutive,
       hasSystem: (system) => hasSystemAccess(access, system),
       hasModule: (system, module) => hasModuleAccess(access, system, module),
       can: (system, module, resource, action) => canAccess(access, system, module, resource, action),
       hasEmpresa: (empresaId) => hasEmpresaAccess(access, empresaId),
       refresh,
     }),
-    [access, isLoading, refresh],
+    [access, isLoading, error, refresh],
   );
 
   return <AuthzCtx.Provider value={value}>{children}</AuthzCtx.Provider>;
