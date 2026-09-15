@@ -304,6 +304,20 @@
 .status-warning .live-dot { background: var(--warning); }
 .status-critical .live-dot { background: var(--destructive); animation-duration: 2.8s; }
 
+/* ===== Pre-hydration entry arming =====
+   Server-rendered entry targets ship hidden so the GSAP timeline never has to
+   "un-paint" finished content once hydration lands. The safety keyframe reveals
+   them at 1.2s if the bundle never boots; `html[data-motion="ready"]` drops it
+   the moment the motion runtime is alive, leaving GSAP as the only writer of
+   opacity/transform on these elements. */
+@keyframes motionSafetyReveal { to { opacity: 1; } }
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="ready"]) :is([data-logo-mark], [data-login-copy], [data-login-rule], [data-login-field], [data-login-submit]) {
+    opacity: 0;
+    animation: motionSafetyReveal 0.35s var(--ease-px) 1200ms forwards;
+  }
+}
+
 /* ===== Logo micro-interaction =====
    CSS owns hover only; GSAP owns the entry timeline on the inner mark. */
 .logo-hover { transition: transform var(--motion-base) var(--ease-px), filter var(--motion-base) var(--ease-px); }

@@ -16,6 +16,8 @@ import { EmpresaProvider } from "@/px-core/empresa-context";
 import { SystemProvider } from "@/px-platform/system-context";
 import { AnimatedBackground } from "@/components/motion/animated-background";
 import { initCapabilityFlags } from "@/lib/browser-capabilities";
+import { armMotionRuntime } from "@/components/motion/motion-runtime";
+import { useIsomorphicLayoutEffect } from "@/components/motion/use-isomorphic-layout-effect";
 
 function NotFoundComponent() {
   return (
