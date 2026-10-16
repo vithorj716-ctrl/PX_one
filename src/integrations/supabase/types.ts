@@ -10,3149 +10,1859 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
-      business_plans: {
+      audit_logs: {
         Row: {
-          ano_inicio: number
+          action: string
+          actor_id: string | null
+          after_data: Json | null
+          before_data: Json | null
           created_at: string
-          descricao: string | null
-          empresa_id: string | null
-          horizonte: Database["public"]["Enums"]["plan_horizon"]
+          details: Json
+          entity: string
+          entity_id: string | null
           id: string
-          meta_ebitda: number | null
-          meta_receita: number | null
-          meta_valuation: number | null
-          progresso: number | null
-          status: string | null
-          titulo: string
-          updated_at: string
         }
         Insert: {
-          ano_inicio: number
+          action: string
+          actor_id?: string | null
+          after_data?: Json | null
+          before_data?: Json | null
           created_at?: string
-          descricao?: string | null
-          empresa_id?: string | null
-          horizonte: Database["public"]["Enums"]["plan_horizon"]
+          details?: Json
+          entity: string
+          entity_id?: string | null
           id?: string
-          meta_ebitda?: number | null
-          meta_receita?: number | null
-          meta_valuation?: number | null
-          progresso?: number | null
-          status?: string | null
-          titulo: string
-          updated_at?: string
         }
         Update: {
-          ano_inicio?: number
+          action?: string
+          actor_id?: string | null
+          after_data?: Json | null
+          before_data?: Json | null
           created_at?: string
-          descricao?: string | null
-          empresa_id?: string | null
-          horizonte?: Database["public"]["Enums"]["plan_horizon"]
+          details?: Json
+          entity?: string
+          entity_id?: string | null
           id?: string
-          meta_ebitda?: number | null
-          meta_receita?: number | null
-          meta_valuation?: number | null
-          progresso?: number | null
-          status?: string | null
-          titulo?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "business_plans_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      categorias_custo: {
-        Row: {
-          created_at: string
-          descricao: string | null
-          id: string
-          nome: string
-        }
-        Insert: {
-          created_at?: string
-          descricao?: string | null
-          id?: string
-          nome: string
-        }
-        Update: {
-          created_at?: string
-          descricao?: string | null
-          id?: string
-          nome?: string
         }
         Relationships: []
       }
-      custos: {
+      clients: {
         Row: {
-          categoria_id: string | null
-          centro_custo: string | null
           created_at: string
-          created_by: string | null
-          data: string
-          descricao: string | null
-          empresa_id: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          deleted_reason: string | null
+          document: string | null
+          email: string | null
           id: string
-          nome: string
+          name: string
+          notes: string | null
+          phone: string | null
           status: string
-          tipo_custo: Database["public"]["Enums"]["tipo_custo"]
           updated_at: string
-          valor: number
         }
         Insert: {
-          categoria_id?: string | null
-          centro_custo?: string | null
           created_at?: string
-          created_by?: string | null
-          data?: string
-          descricao?: string | null
-          empresa_id?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deleted_reason?: string | null
+          document?: string | null
+          email?: string | null
           id?: string
-          nome: string
+          name: string
+          notes?: string | null
+          phone?: string | null
           status?: string
-          tipo_custo?: Database["public"]["Enums"]["tipo_custo"]
           updated_at?: string
-          valor?: number
         }
         Update: {
-          categoria_id?: string | null
-          centro_custo?: string | null
           created_at?: string
-          created_by?: string | null
-          data?: string
-          descricao?: string | null
-          empresa_id?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deleted_reason?: string | null
+          document?: string | null
+          email?: string | null
           id?: string
-          nome?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
           status?: string
-          tipo_custo?: Database["public"]["Enums"]["tipo_custo"]
-          updated_at?: string
-          valor?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "custos_categoria_id_fkey"
-            columns: ["categoria_id"]
-            isOneToOne: false
-            referencedRelation: "categorias_custo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "custos_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      decisions: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          data_decisao: string | null
-          descricao: string | null
-          empresa_id: string | null
-          id: string
-          impacto_financeiro: number | null
-          responsavel: string | null
-          status: string | null
-          titulo: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          data_decisao?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
-          id?: string
-          impacto_financeiro?: number | null
-          responsavel?: string | null
-          status?: string | null
-          titulo: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          data_decisao?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
-          id?: string
-          impacto_financeiro?: number | null
-          responsavel?: string | null
-          status?: string | null
-          titulo?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "decisions_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      documents: {
-        Row: {
-          categoria: string | null
-          created_at: string
-          created_by: string | null
-          descricao: string | null
-          empresa_id: string | null
-          id: string
-          nome: string
-          updated_at: string
-          url: string | null
-        }
-        Insert: {
-          categoria?: string | null
-          created_at?: string
-          created_by?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
-          id?: string
-          nome: string
-          updated_at?: string
-          url?: string | null
-        }
-        Update: {
-          categoria?: string | null
-          created_at?: string
-          created_by?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
-          id?: string
-          nome?: string
-          updated_at?: string
-          url?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "documents_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      empresas: {
-        Row: {
-          cnpj: string | null
-          codigo: string
-          configuracoes: Json
-          cor_primaria: string | null
-          cor_secundaria: string | null
-          cor_tema: string | null
-          created_at: string
-          id: string
-          logo_url: string | null
-          nome: string
-          nome_fantasia: string | null
-          razao_social: string | null
-          segmento: string | null
-          setor: string | null
-          situacao: string
-        }
-        Insert: {
-          cnpj?: string | null
-          codigo: string
-          configuracoes?: Json
-          cor_primaria?: string | null
-          cor_secundaria?: string | null
-          cor_tema?: string | null
-          created_at?: string
-          id?: string
-          logo_url?: string | null
-          nome: string
-          nome_fantasia?: string | null
-          razao_social?: string | null
-          segmento?: string | null
-          setor?: string | null
-          situacao?: string
-        }
-        Update: {
-          cnpj?: string | null
-          codigo?: string
-          configuracoes?: Json
-          cor_primaria?: string | null
-          cor_secundaria?: string | null
-          cor_tema?: string | null
-          created_at?: string
-          id?: string
-          logo_url?: string | null
-          nome?: string
-          nome_fantasia?: string | null
-          razao_social?: string | null
-          segmento?: string | null
-          setor?: string | null
-          situacao?: string
-        }
-        Relationships: []
-      }
-      financial_scenarios: {
-        Row: {
-          created_at: string
-          descricao: string | null
-          empresa_id: string | null
-          id: string
-          nome: string
-          payload: Json
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          descricao?: string | null
-          empresa_id?: string | null
-          id?: string
-          nome: string
-          payload?: Json
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          descricao?: string | null
-          empresa_id?: string | null
-          id?: string
-          nome?: string
-          payload?: Json
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "financial_scenarios_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      growth_initiatives: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          descricao: string | null
-          empresa_id: string | null
-          id: string
-          investimento: number | null
-          prazo_meses: number | null
-          retorno_projetado: number | null
-          status: string | null
-          tipo: string | null
-          titulo: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
-          id?: string
-          investimento?: number | null
-          prazo_meses?: number | null
-          retorno_projetado?: number | null
-          status?: string | null
-          tipo?: string | null
-          titulo: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
-          id?: string
-          investimento?: number | null
-          prazo_meses?: number | null
-          retorno_projetado?: number | null
-          status?: string | null
-          tipo?: string | null
-          titulo?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "growth_initiatives_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      investor_updates: {
-        Row: {
-          autor: string | null
-          conteudo: string | null
-          created_at: string
-          created_by: string | null
-          id: string
-          periodo: string | null
-          titulo: string
-          updated_at: string
-        }
-        Insert: {
-          autor?: string | null
-          conteudo?: string | null
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          periodo?: string | null
-          titulo: string
-          updated_at?: string
-        }
-        Update: {
-          autor?: string | null
-          conteudo?: string | null
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          periodo?: string | null
-          titulo?: string
           updated_at?: string
         }
         Relationships: []
       }
-      key_results: {
+      distribution_operations: {
         Row: {
-          atual: number | null
           created_at: string
-          descricao: string
           id: string
-          meta: number | null
-          okr_id: string
-          unidade: string | null
-          updated_at: string
-        }
-        Insert: {
-          atual?: number | null
-          created_at?: string
-          descricao: string
-          id?: string
-          meta?: number | null
-          okr_id: string
-          unidade?: string | null
-          updated_at?: string
-        }
-        Update: {
-          atual?: number | null
-          created_at?: string
-          descricao?: string
-          id?: string
-          meta?: number | null
-          okr_id?: string
-          unidade?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "key_results_okr_id_fkey"
-            columns: ["okr_id"]
-            isOneToOne: false
-            referencedRelation: "okrs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      kpi_snapshots: {
-        Row: {
-          caixa: number | null
-          capital_giro: number | null
-          contas_pagar: number | null
-          contas_receber: number | null
-          created_at: string
-          ebitda: number | null
-          empresa_id: string | null
-          endividamento: number | null
-          id: string
-          lucro_liquido: number | null
-          periodo: string
-          receita: number | null
-          valuation: number | null
-        }
-        Insert: {
-          caixa?: number | null
-          capital_giro?: number | null
-          contas_pagar?: number | null
-          contas_receber?: number | null
-          created_at?: string
-          ebitda?: number | null
-          empresa_id?: string | null
-          endividamento?: number | null
-          id?: string
-          lucro_liquido?: number | null
-          periodo: string
-          receita?: number | null
-          valuation?: number | null
-        }
-        Update: {
-          caixa?: number | null
-          capital_giro?: number | null
-          contas_pagar?: number | null
-          contas_receber?: number | null
-          created_at?: string
-          ebitda?: number | null
-          empresa_id?: string | null
-          endividamento?: number | null
-          id?: string
-          lucro_liquido?: number | null
-          periodo?: string
-          receita?: number | null
-          valuation?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "kpi_snapshots_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      kpis: {
-        Row: {
-          categoria: string | null
-          created_at: string
-          created_by: string | null
-          empresa_id: string | null
-          id: string
-          meta: number | null
-          nome: string
-          observacoes: string | null
-          periodo: string | null
-          unidade: string | null
-          updated_at: string
-          valor: number | null
-        }
-        Insert: {
-          categoria?: string | null
-          created_at?: string
-          created_by?: string | null
-          empresa_id?: string | null
-          id?: string
-          meta?: number | null
-          nome: string
-          observacoes?: string | null
-          periodo?: string | null
-          unidade?: string | null
-          updated_at?: string
-          valor?: number | null
-        }
-        Update: {
-          categoria?: string | null
-          created_at?: string
-          created_by?: string | null
-          empresa_id?: string | null
-          id?: string
-          meta?: number | null
-          nome?: string
-          observacoes?: string | null
-          periodo?: string | null
-          unidade?: string | null
-          updated_at?: string
-          valor?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "kpis_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      markup_calculations: {
-        Row: {
-          categoria: string | null
-          centro_custo: string | null
-          created_at: string
-          descricao: string | null
-          empresa_id: string | null
-          fornecedor: string | null
-          id: string
-          inputs: Json
-          lucro_desejado: number | null
-          margem_desejada: number | null
-          preco_sugerido: number | null
-          produto: string
-          resultados: Json
-          servico: string | null
-          updated_at: string
+          route_ids: string[]
           user_id: string
         }
         Insert: {
-          categoria?: string | null
-          centro_custo?: string | null
           created_at?: string
-          descricao?: string | null
-          empresa_id?: string | null
-          fornecedor?: string | null
-          id?: string
-          inputs?: Json
-          lucro_desejado?: number | null
-          margem_desejada?: number | null
-          preco_sugerido?: number | null
-          produto: string
-          resultados?: Json
-          servico?: string | null
-          updated_at?: string
+          id: string
+          route_ids: string[]
           user_id: string
         }
         Update: {
-          categoria?: string | null
-          centro_custo?: string | null
           created_at?: string
-          descricao?: string | null
-          empresa_id?: string | null
-          fornecedor?: string | null
           id?: string
-          inputs?: Json
-          lucro_desejado?: number | null
-          margem_desejada?: number | null
-          preco_sugerido?: number | null
-          produto?: string
-          resultados?: Json
-          servico?: string | null
+          route_ids?: string[]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      import_batches: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          filename: string
+          id: string
+          invalid_rows: number
+          status: Database["public"]["Enums"]["import_status"]
+          total_rows: number
+          user_id: string
+          valid_rows: number
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          filename: string
+          id?: string
+          invalid_rows?: number
+          status?: Database["public"]["Enums"]["import_status"]
+          total_rows?: number
+          user_id: string
+          valid_rows?: number
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          filename?: string
+          id?: string
+          invalid_rows?: number
+          status?: Database["public"]["Enums"]["import_status"]
+          total_rows?: number
+          user_id?: string
+          valid_rows?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_batches_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      motorcycles: {
+        Row: {
+          brand: string | null
+          chassis: string | null
+          client_id: string | null
+          color: string | null
+          created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          deleted_reason: string | null
+          id: string
+          model: string | null
+          plate: string
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          brand?: string | null
+          chassis?: string | null
+          client_id?: string | null
+          color?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deleted_reason?: string | null
+          id?: string
+          model?: string | null
+          plate: string
           updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          brand?: string | null
+          chassis?: string | null
+          client_id?: string | null
+          color?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deleted_reason?: string | null
+          id?: string
+          model?: string | null
+          plate?: string
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "motorcycles_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          category: string
+          created_at: string
+          data: Json
+          entity_id: string | null
+          entity_type: string | null
+          event_key: string
+          id: string
+          push_attempts: number
+          push_status: string
+          pushed_at: string | null
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          category?: string
+          created_at?: string
+          data?: Json
+          entity_id?: string | null
+          entity_type?: string | null
+          event_key: string
+          id?: string
+          push_attempts?: number
+          push_status?: string
+          pushed_at?: string | null
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          category?: string
+          created_at?: string
+          data?: Json
+          entity_id?: string | null
+          entity_type?: string | null
+          event_key?: string
+          id?: string
+          push_attempts?: number
+          push_status?: string
+          pushed_at?: string | null
+          read_at?: string | null
+          title?: string
+          type?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "markup_calculations_empresa_id_fkey"
-            columns: ["empresa_id"]
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "empresas"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      okrs: {
+      occurrence_events: {
         Row: {
+          actor_id: string | null
           created_at: string
-          created_by: string | null
-          descricao: string | null
-          empresa_id: string | null
+          details: Json
+          event_type: string
+          from_status: Database["public"]["Enums"]["occurrence_status"] | null
           id: string
-          objetivo: string
-          progresso: number | null
-          responsavel: string | null
-          trimestre: string | null
-          updated_at: string
+          occurrence_id: string
+          route_id: string | null
+          to_status: Database["public"]["Enums"]["occurrence_status"] | null
         }
         Insert: {
+          actor_id?: string | null
           created_at?: string
-          created_by?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
+          details?: Json
+          event_type: string
+          from_status?: Database["public"]["Enums"]["occurrence_status"] | null
           id?: string
-          objetivo: string
-          progresso?: number | null
-          responsavel?: string | null
-          trimestre?: string | null
-          updated_at?: string
+          occurrence_id: string
+          route_id?: string | null
+          to_status?: Database["public"]["Enums"]["occurrence_status"] | null
         }
         Update: {
+          actor_id?: string | null
           created_at?: string
-          created_by?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
+          details?: Json
+          event_type?: string
+          from_status?: Database["public"]["Enums"]["occurrence_status"] | null
           id?: string
-          objetivo?: string
-          progresso?: number | null
-          responsavel?: string | null
-          trimestre?: string | null
-          updated_at?: string
+          occurrence_id?: string
+          route_id?: string | null
+          to_status?: Database["public"]["Enums"]["occurrence_status"] | null
         }
         Relationships: [
           {
-            foreignKeyName: "okrs_empresa_id_fkey"
-            columns: ["empresa_id"]
+            foreignKeyName: "occurrence_events_occurrence_id_fkey"
+            columns: ["occurrence_id"]
             isOneToOne: false
-            referencedRelation: "empresas"
+            referencedRelation: "occurrences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "occurrence_events_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
             referencedColumns: ["id"]
           },
         ]
       }
-      payback_projects: {
+      occurrences: {
         Row: {
+          address: string | null
+          city: string | null
+          client_id: string | null
+          code: number
           created_at: string
           created_by: string | null
-          descricao: string | null
-          empresa_id: string | null
+          current_route_id: string | null
+          debt_amount: number | null
+          deleted_at: string | null
+          deleted_by: string | null
+          deleted_reason: string | null
           id: string
-          investimento_inicial: number | null
-          nome: string
-          prazo_meses: number | null
-          retorno_mensal: number | null
-          status: string | null
-          taxa_desconto: number | null
+          import_batch_id: string | null
+          latitude: number | null
+          longitude: number | null
+          motorcycle_id: string | null
+          notes: string | null
+          phone: string | null
+          priority: Database["public"]["Enums"]["priority_level"]
+          state: string | null
+          status: Database["public"]["Enums"]["occurrence_status"]
+          updated_at: string
+          zip: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          client_id?: string | null
+          code?: never
+          created_at?: string
+          created_by?: string | null
+          current_route_id?: string | null
+          debt_amount?: number | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deleted_reason?: string | null
+          id?: string
+          import_batch_id?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          motorcycle_id?: string | null
+          notes?: string | null
+          phone?: string | null
+          priority?: Database["public"]["Enums"]["priority_level"]
+          state?: string | null
+          status?: Database["public"]["Enums"]["occurrence_status"]
+          updated_at?: string
+          zip?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          client_id?: string | null
+          code?: never
+          created_at?: string
+          created_by?: string | null
+          current_route_id?: string | null
+          debt_amount?: number | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deleted_reason?: string | null
+          id?: string
+          import_batch_id?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          motorcycle_id?: string | null
+          notes?: string | null
+          phone?: string | null
+          priority?: Database["public"]["Enums"]["priority_level"]
+          state?: string | null
+          status?: Database["public"]["Enums"]["occurrence_status"]
+          updated_at?: string
+          zip?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "occurrences_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "occurrences_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "occurrences_current_route_fk"
+            columns: ["current_route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "occurrences_import_batch_id_fkey"
+            columns: ["import_batch_id"]
+            isOneToOne: false
+            referencedRelation: "import_batches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "occurrences_motorcycle_id_fkey"
+            columns: ["motorcycle_id"]
+            isOneToOne: false
+            referencedRelation: "motorcycles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      operators: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          deleted_reason: string | null
+          id: string
+          is_active: boolean
+          name: string
+          phone: string | null
+          profile_id: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
-          created_by?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deleted_reason?: string | null
           id?: string
-          investimento_inicial?: number | null
-          nome: string
-          prazo_meses?: number | null
-          retorno_mensal?: number | null
-          status?: string | null
-          taxa_desconto?: number | null
+          is_active?: boolean
+          name: string
+          phone?: string | null
+          profile_id?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
-          created_by?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deleted_reason?: string | null
           id?: string
-          investimento_inicial?: number | null
-          nome?: string
-          prazo_meses?: number | null
-          retorno_mensal?: number | null
-          status?: string | null
-          taxa_desconto?: number | null
+          is_active?: boolean
+          name?: string
+          phone?: string | null
+          profile_id?: string | null
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "payback_projects_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
+            foreignKeyName: "operators_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
       profiles: {
         Row: {
-          avatar_url: string | null
           created_at: string
-          display_name: string | null
+          email: string
+          full_name: string
           id: string
+          is_active: boolean
           updated_at: string
         }
         Insert: {
-          avatar_url?: string | null
           created_at?: string
-          display_name?: string | null
+          email: string
+          full_name?: string
           id: string
+          is_active?: boolean
           updated_at?: string
         }
         Update: {
-          avatar_url?: string | null
           created_at?: string
-          display_name?: string | null
+          email?: string
+          full_name?: string
           id?: string
+          is_active?: boolean
           updated_at?: string
         }
         Relationships: []
       }
-      px_ai_usage: {
+      push_subscriptions: {
         Row: {
-          created_at: string
-          id: string
-          modelo: string
-          modulo: string
-          tokens_in: number
-          tokens_out: number
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          modelo: string
-          modulo: string
-          tokens_in?: number
-          tokens_out?: number
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          modelo?: string
-          modulo?: string
-          tokens_in?: number
-          tokens_out?: number
-        }
-        Relationships: []
-      }
-      px_api_clients: {
-        Row: {
-          allowed_origins: string[]
-          api_key_hash: string
-          api_key_prefix: string
-          ativo: boolean
-          created_at: string
-          criado_por: string | null
-          descricao: string | null
-          escopos: string[]
-          id: string
-          nome: string
-          observacoes: string | null
-          rate_limit_rpm: number
-          secret_hash: string
-          sistema_key: string
-          updated_at: string
-        }
-        Insert: {
-          allowed_origins?: string[]
-          api_key_hash: string
-          api_key_prefix: string
-          ativo?: boolean
-          created_at?: string
-          criado_por?: string | null
-          descricao?: string | null
-          escopos?: string[]
-          id?: string
-          nome: string
-          observacoes?: string | null
-          rate_limit_rpm?: number
-          secret_hash: string
-          sistema_key: string
-          updated_at?: string
-        }
-        Update: {
-          allowed_origins?: string[]
-          api_key_hash?: string
-          api_key_prefix?: string
-          ativo?: boolean
-          created_at?: string
-          criado_por?: string | null
-          descricao?: string | null
-          escopos?: string[]
-          id?: string
-          nome?: string
-          observacoes?: string | null
-          rate_limit_rpm?: number
-          secret_hash?: string
-          sistema_key?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      px_api_idempotency: {
-        Row: {
-          api_client_id: string
+          auth: string
           created_at: string
           endpoint: string
-          expires_at: string
+          failure_count: number
           id: string
-          idempotency_key: string
-          method: string
-          request_hash: string
-          response_body: Json
-          response_status: number
+          last_seen_at: string
+          last_success_at: string | null
+          p256dh: string
+          user_agent: string | null
+          user_id: string
         }
         Insert: {
-          api_client_id: string
+          auth: string
           created_at?: string
           endpoint: string
-          expires_at?: string
+          failure_count?: number
           id?: string
-          idempotency_key: string
-          method: string
-          request_hash: string
-          response_body: Json
-          response_status: number
+          last_seen_at?: string
+          last_success_at?: string | null
+          p256dh: string
+          user_agent?: string | null
+          user_id: string
         }
         Update: {
-          api_client_id?: string
+          auth?: string
           created_at?: string
           endpoint?: string
-          expires_at?: string
+          failure_count?: number
           id?: string
-          idempotency_key?: string
-          method?: string
-          request_hash?: string
-          response_body?: Json
-          response_status?: number
+          last_seen_at?: string
+          last_success_at?: string | null
+          p256dh?: string
+          user_agent?: string | null
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "px_api_idempotency_api_client_id_fkey"
-            columns: ["api_client_id"]
+            foreignKeyName: "push_subscriptions_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "px_api_clients"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      px_api_logs: {
+      role_permissions: {
         Row: {
-          api_client_id: string | null
-          created_at: string
-          endpoint: string
-          erro_codigo: string | null
-          erro_mensagem: string | null
-          id: string
-          ip: string | null
-          latencia_ms: number | null
-          metodo: string
-          request_id: string | null
-          sistema_key: string | null
-          status: number
-          user_agent: string | null
-          user_id: string | null
+          permission: string
+          role: Database["public"]["Enums"]["app_role"]
         }
         Insert: {
-          api_client_id?: string | null
-          created_at?: string
-          endpoint: string
-          erro_codigo?: string | null
-          erro_mensagem?: string | null
-          id?: string
-          ip?: string | null
-          latencia_ms?: number | null
-          metodo: string
-          request_id?: string | null
-          sistema_key?: string | null
-          status: number
-          user_agent?: string | null
-          user_id?: string | null
+          permission: string
+          role: Database["public"]["Enums"]["app_role"]
         }
         Update: {
-          api_client_id?: string | null
-          created_at?: string
-          endpoint?: string
-          erro_codigo?: string | null
-          erro_mensagem?: string | null
-          id?: string
-          ip?: string | null
-          latencia_ms?: number | null
-          metodo?: string
-          request_id?: string | null
-          sistema_key?: string | null
-          status?: number
-          user_agent?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "px_api_logs_api_client_id_fkey"
-            columns: ["api_client_id"]
-            isOneToOne: false
-            referencedRelation: "px_api_clients"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      px_api_tokens: {
-        Row: {
-          api_client_id: string
-          created_at: string
-          escopos: string[]
-          expires_at: string
-          id: string
-          ip: string | null
-          jti: string
-          refresh_expires_at: string | null
-          refresh_token_hash: string | null
-          revogado: boolean
-          revogado_em: string | null
-          revogado_por: string | null
-          updated_at: string
-          user_agent: string | null
-        }
-        Insert: {
-          api_client_id: string
-          created_at?: string
-          escopos?: string[]
-          expires_at: string
-          id?: string
-          ip?: string | null
-          jti: string
-          refresh_expires_at?: string | null
-          refresh_token_hash?: string | null
-          revogado?: boolean
-          revogado_em?: string | null
-          revogado_por?: string | null
-          updated_at?: string
-          user_agent?: string | null
-        }
-        Update: {
-          api_client_id?: string
-          created_at?: string
-          escopos?: string[]
-          expires_at?: string
-          id?: string
-          ip?: string | null
-          jti?: string
-          refresh_expires_at?: string | null
-          refresh_token_hash?: string | null
-          revogado?: boolean
-          revogado_em?: string | null
-          revogado_por?: string | null
-          updated_at?: string
-          user_agent?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "px_api_tokens_api_client_id_fkey"
-            columns: ["api_client_id"]
-            isOneToOne: false
-            referencedRelation: "px_api_clients"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      px_audit_log: {
-        Row: {
-          action: string
-          created_at: string
-          diff: Json | null
-          entity_id: string
-          entity_type: string
-          id: string
-          user_id: string | null
-          user_label: string | null
-        }
-        Insert: {
-          action: string
-          created_at?: string
-          diff?: Json | null
-          entity_id: string
-          entity_type: string
-          id?: string
-          user_id?: string | null
-          user_label?: string | null
-        }
-        Update: {
-          action?: string
-          created_at?: string
-          diff?: Json | null
-          entity_id?: string
-          entity_type?: string
-          id?: string
-          user_id?: string | null
-          user_label?: string | null
+          permission?: string
+          role?: Database["public"]["Enums"]["app_role"]
         }
         Relationships: []
       }
-      px_cliente_credito: {
+      route_services: {
         Row: {
-          bloqueado: boolean
-          cliente_id: string
           created_at: string
-          dia_fechamento: number | null
-          dia_vencimento: number | null
+          created_by: string | null
+          route_id: string
+          service_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          route_id: string
+          service_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          route_id?: string
+          service_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "route_services_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_services_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_services_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "service_catalog"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      route_stop_evidence: {
+        Row: {
+          captured_at: string | null
+          created_at: string
+          height: number | null
           id: string
-          liberado_ate: string | null
-          liberado_por: string | null
-          limite_credito: number
-          motivo_bloqueio: string | null
-          observacoes: string | null
-          prazo_dias: number
+          kind: string
+          mime_type: string
+          occurrence_id: string | null
+          route_stop_id: string
+          sequence: number
+          size_bytes: number
+          storage_path: string
+          uploaded_at: string
+          uploaded_by: string | null
+          width: number | null
+        }
+        Insert: {
+          captured_at?: string | null
+          created_at?: string
+          height?: number | null
+          id?: string
+          kind?: string
+          mime_type: string
+          occurrence_id?: string | null
+          route_stop_id: string
+          sequence: number
+          size_bytes: number
+          storage_path: string
+          uploaded_at?: string
+          uploaded_by?: string | null
+          width?: number | null
+        }
+        Update: {
+          captured_at?: string | null
+          created_at?: string
+          height?: number | null
+          id?: string
+          kind?: string
+          mime_type?: string
+          occurrence_id?: string | null
+          route_stop_id?: string
+          sequence?: number
+          size_bytes?: number
+          storage_path?: string
+          uploaded_at?: string
+          uploaded_by?: string | null
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "route_stop_evidence_occurrence_id_fkey"
+            columns: ["occurrence_id"]
+            isOneToOne: false
+            referencedRelation: "occurrences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_stop_evidence_route_stop_id_fkey"
+            columns: ["route_stop_id"]
+            isOneToOne: false
+            referencedRelation: "route_stops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      route_stops: {
+        Row: {
+          capture_accuracy: number | null
+          capture_latitude: number | null
+          capture_location_timestamp: string | null
+          capture_longitude: number | null
+          capture_operator_id: string | null
+          capture_server_received_at: string | null
+          capture_without_gps: boolean
+          capture_without_gps_reason: string | null
+          completed_at: string | null
+          completed_by: string | null
+          completion_key: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          occurrence_id: string
+          result: Database["public"]["Enums"]["occurrence_status"] | null
+          route_id: string
+          sequence: number
+          skip_reason: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["route_stop_status"]
           updated_at: string
         }
         Insert: {
-          bloqueado?: boolean
-          cliente_id: string
+          capture_accuracy?: number | null
+          capture_latitude?: number | null
+          capture_location_timestamp?: string | null
+          capture_longitude?: number | null
+          capture_operator_id?: string | null
+          capture_server_received_at?: string | null
+          capture_without_gps?: boolean
+          capture_without_gps_reason?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          completion_key?: string | null
           created_at?: string
-          dia_fechamento?: number | null
-          dia_vencimento?: number | null
           id?: string
-          liberado_ate?: string | null
-          liberado_por?: string | null
-          limite_credito?: number
-          motivo_bloqueio?: string | null
-          observacoes?: string | null
-          prazo_dias?: number
+          notes?: string | null
+          occurrence_id: string
+          result?: Database["public"]["Enums"]["occurrence_status"] | null
+          route_id: string
+          sequence: number
+          skip_reason?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["route_stop_status"]
           updated_at?: string
         }
         Update: {
-          bloqueado?: boolean
-          cliente_id?: string
+          capture_accuracy?: number | null
+          capture_latitude?: number | null
+          capture_location_timestamp?: string | null
+          capture_longitude?: number | null
+          capture_operator_id?: string | null
+          capture_server_received_at?: string | null
+          capture_without_gps?: boolean
+          capture_without_gps_reason?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          completion_key?: string | null
           created_at?: string
-          dia_fechamento?: number | null
-          dia_vencimento?: number | null
           id?: string
-          liberado_ate?: string | null
-          liberado_por?: string | null
-          limite_credito?: number
-          motivo_bloqueio?: string | null
-          observacoes?: string | null
-          prazo_dias?: number
+          notes?: string | null
+          occurrence_id?: string
+          result?: Database["public"]["Enums"]["occurrence_status"] | null
+          route_id?: string
+          sequence?: number
+          skip_reason?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["route_stop_status"]
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "px_cliente_credito_cliente_id_fkey"
-            columns: ["cliente_id"]
+            foreignKeyName: "route_stops_capture_operator_id_fkey"
+            columns: ["capture_operator_id"]
+            isOneToOne: false
+            referencedRelation: "operators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_stops_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_stops_occurrence_id_fkey"
+            columns: ["occurrence_id"]
+            isOneToOne: false
+            referencedRelation: "occurrences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_stops_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      route_tracking_current: {
+        Row: {
+          accuracy: number | null
+          altitude: number | null
+          captured_at: string
+          device_id: string | null
+          heading: number | null
+          latitude: number
+          longitude: number
+          operator_id: string
+          received_at: string
+          route_id: string
+          sequence_number: number
+          speed: number | null
+          tracking_session_id: string
+          updated_at: string
+        }
+        Insert: {
+          accuracy?: number | null
+          altitude?: number | null
+          captured_at: string
+          device_id?: string | null
+          heading?: number | null
+          latitude: number
+          longitude: number
+          operator_id: string
+          received_at?: string
+          route_id: string
+          sequence_number: number
+          speed?: number | null
+          tracking_session_id: string
+          updated_at?: string
+        }
+        Update: {
+          accuracy?: number | null
+          altitude?: number | null
+          captured_at?: string
+          device_id?: string | null
+          heading?: number | null
+          latitude?: number
+          longitude?: number
+          operator_id?: string
+          received_at?: string
+          route_id?: string
+          sequence_number?: number
+          speed?: number | null
+          tracking_session_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "route_tracking_current_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "operators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_tracking_current_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_tracking_current_tracking_session_id_fkey"
+            columns: ["tracking_session_id"]
             isOneToOne: true
-            referencedRelation: "px_cliente_saldo"
-            referencedColumns: ["cliente_id"]
-          },
-          {
-            foreignKeyName: "px_cliente_credito_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: true
-            referencedRelation: "px_registry_clientes"
+            referencedRelation: "route_tracking_sessions"
             referencedColumns: ["id"]
           },
         ]
       }
-      px_cliente_lancamentos: {
+      route_tracking_events: {
         Row: {
-          cliente_id: string
           created_at: string
-          created_by: string | null
-          descricao: string
-          emissao: string
-          id: string
-          observacoes: string | null
-          origem: string
-          pago_em: string | null
-          referencia_id: string | null
-          referencia_tipo: string | null
-          status: string
-          tipo: string
-          updated_at: string
-          valor: number
-          vencimento: string | null
+          details: Json
+          event: string
+          id: number
+          route_id: string | null
+          tracking_session_id: string | null
         }
         Insert: {
-          cliente_id: string
           created_at?: string
-          created_by?: string | null
-          descricao: string
-          emissao?: string
-          id?: string
-          observacoes?: string | null
-          origem: string
-          pago_em?: string | null
-          referencia_id?: string | null
-          referencia_tipo?: string | null
-          status?: string
-          tipo: string
-          updated_at?: string
-          valor: number
-          vencimento?: string | null
+          details?: Json
+          event: string
+          id?: never
+          route_id?: string | null
+          tracking_session_id?: string | null
         }
         Update: {
-          cliente_id?: string
           created_at?: string
-          created_by?: string | null
-          descricao?: string
-          emissao?: string
-          id?: string
-          observacoes?: string | null
-          origem?: string
-          pago_em?: string | null
-          referencia_id?: string | null
-          referencia_tipo?: string | null
-          status?: string
-          tipo?: string
-          updated_at?: string
-          valor?: number
-          vencimento?: string | null
+          details?: Json
+          event?: string
+          id?: never
+          route_id?: string | null
+          tracking_session_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "px_cliente_lancamentos_cliente_id_fkey"
-            columns: ["cliente_id"]
+            foreignKeyName: "route_tracking_events_tracking_session_id_fkey"
+            columns: ["tracking_session_id"]
             isOneToOne: false
-            referencedRelation: "px_cliente_saldo"
-            referencedColumns: ["cliente_id"]
-          },
-          {
-            foreignKeyName: "px_cliente_lancamentos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "px_registry_clientes"
+            referencedRelation: "route_tracking_sessions"
             referencedColumns: ["id"]
           },
         ]
       }
-      px_empresa_modulos: {
+      route_tracking_points: {
         Row: {
-          ativo: boolean
-          configuracoes: Json
-          created_at: string
-          empresa_id: string
-          habilitado_em: string
-          id: string
-          modulo_key: string
-          updated_at: string
+          accuracy: number | null
+          altitude: number | null
+          captured_at: string
+          heading: number | null
+          id: number
+          latitude: number
+          longitude: number
+          operator_id: string
+          received_at: string
+          route_id: string
+          sequence_number: number
+          speed: number | null
+          tracking_session_id: string
         }
         Insert: {
-          ativo?: boolean
-          configuracoes?: Json
-          created_at?: string
-          empresa_id: string
-          habilitado_em?: string
-          id?: string
-          modulo_key: string
-          updated_at?: string
+          accuracy?: number | null
+          altitude?: number | null
+          captured_at: string
+          heading?: number | null
+          id?: never
+          latitude: number
+          longitude: number
+          operator_id: string
+          received_at?: string
+          route_id: string
+          sequence_number: number
+          speed?: number | null
+          tracking_session_id: string
         }
         Update: {
-          ativo?: boolean
-          configuracoes?: Json
-          created_at?: string
-          empresa_id?: string
-          habilitado_em?: string
-          id?: string
-          modulo_key?: string
-          updated_at?: string
+          accuracy?: number | null
+          altitude?: number | null
+          captured_at?: string
+          heading?: number | null
+          id?: never
+          latitude?: number
+          longitude?: number
+          operator_id?: string
+          received_at?: string
+          route_id?: string
+          sequence_number?: number
+          speed?: number | null
+          tracking_session_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "px_empresa_modulos_empresa_id_fkey"
-            columns: ["empresa_id"]
+            foreignKeyName: "route_tracking_points_tracking_session_id_fkey"
+            columns: ["tracking_session_id"]
             isOneToOne: false
-            referencedRelation: "empresas"
+            referencedRelation: "route_tracking_sessions"
             referencedColumns: ["id"]
           },
         ]
       }
-      px_events: {
+      route_tracking_sessions: {
         Row: {
+          background_capable: boolean | null
           created_at: string
+          device_state: string | null
+          device_state_at: string | null
+          ended_at: string | null
+          ended_reason: string | null
           id: string
-          origem: string | null
-          payload: Json
-          tipo: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          origem?: string | null
-          payload?: Json
-          tipo: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          origem?: string | null
-          payload?: Json
-          tipo?: string
-        }
-        Relationships: []
-      }
-      px_filiais: {
-        Row: {
-          ativo: boolean
-          cidade: string | null
-          cnpj: string | null
-          created_at: string
-          empresa_id: string
-          id: string
-          nome: string
-          uf: string | null
-          updated_at: string
-        }
-        Insert: {
-          ativo?: boolean
-          cidade?: string | null
-          cnpj?: string | null
-          created_at?: string
-          empresa_id: string
-          id?: string
-          nome: string
-          uf?: string | null
-          updated_at?: string
-        }
-        Update: {
-          ativo?: boolean
-          cidade?: string | null
-          cnpj?: string | null
-          created_at?: string
-          empresa_id?: string
-          id?: string
-          nome?: string
-          uf?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "px_filiais_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      px_integration_inbox: {
-        Row: {
-          created_at: string
-          erro: string | null
-          evento: string
-          external_id: string | null
-          id: string
-          payload: Json
-          processed_at: string | null
-          sistema_origem: string
+          last_heartbeat_at: string | null
+          last_location_at: string | null
+          last_seen_at: string | null
+          last_sequence: number
+          operator_id: string
+          platform: string | null
+          presence: string
+          route_id: string
+          started_at: string
           status: string
         }
         Insert: {
+          background_capable?: boolean | null
           created_at?: string
-          erro?: string | null
-          evento: string
-          external_id?: string | null
+          device_state?: string | null
+          device_state_at?: string | null
+          ended_at?: string | null
+          ended_reason?: string | null
           id?: string
-          payload?: Json
-          processed_at?: string | null
-          sistema_origem: string
+          last_heartbeat_at?: string | null
+          last_location_at?: string | null
+          last_seen_at?: string | null
+          last_sequence?: number
+          operator_id: string
+          platform?: string | null
+          presence?: string
+          route_id: string
+          started_at?: string
           status?: string
         }
         Update: {
+          background_capable?: boolean | null
           created_at?: string
-          erro?: string | null
-          evento?: string
-          external_id?: string | null
+          device_state?: string | null
+          device_state_at?: string | null
+          ended_at?: string | null
+          ended_reason?: string | null
           id?: string
-          payload?: Json
-          processed_at?: string | null
-          sistema_origem?: string
+          last_heartbeat_at?: string | null
+          last_location_at?: string | null
+          last_seen_at?: string | null
+          last_sequence?: number
+          operator_id?: string
+          platform?: string | null
+          presence?: string
+          route_id?: string
+          started_at?: string
           status?: string
         }
-        Relationships: []
-      }
-      px_integration_links: {
-        Row: {
-          created_at: string
-          id: string
-          id_destino: string
-          id_origem: string
-          metadata: Json
-          sistema_destino: string
-          sistema_origem: string
-          tipo_destino: string
-          tipo_origem: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          id_destino: string
-          id_origem: string
-          metadata?: Json
-          sistema_destino: string
-          sistema_origem: string
-          tipo_destino: string
-          tipo_origem: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          id_destino?: string
-          id_origem?: string
-          metadata?: Json
-          sistema_destino?: string
-          sistema_origem?: string
-          tipo_destino?: string
-          tipo_origem?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      px_perfil_permissoes: {
-        Row: {
-          acao: string
-          created_at: string
-          id: string
-          perfil_id: string
-          sistema_key: string
-        }
-        Insert: {
-          acao: string
-          created_at?: string
-          id?: string
-          perfil_id: string
-          sistema_key: string
-        }
-        Update: {
-          acao?: string
-          created_at?: string
-          id?: string
-          perfil_id?: string
-          sistema_key?: string
-        }
         Relationships: [
           {
-            foreignKeyName: "px_perfil_permissoes_perfil_id_fkey"
-            columns: ["perfil_id"]
+            foreignKeyName: "route_tracking_sessions_operator_id_fkey"
+            columns: ["operator_id"]
             isOneToOne: false
-            referencedRelation: "px_perfis"
+            referencedRelation: "operators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_tracking_sessions_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
             referencedColumns: ["id"]
           },
         ]
       }
-      px_perfis: {
+      routes: {
         Row: {
-          created_at: string
-          descricao: string | null
-          id: string
-          is_system: boolean
-          nome: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          descricao?: string | null
-          id?: string
-          is_system?: boolean
-          nome: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          descricao?: string | null
-          id?: string
-          is_system?: boolean
-          nome?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      px_registry_clientes: {
-        Row: {
-          api_payload: Json | null
-          ativo: boolean
-          bairro: string | null
-          categorias: string[]
-          cep: string | null
-          cidade: string | null
-          cnae_descricao: string | null
-          cnae_principal: string | null
-          cnpj: string
-          complemento: string | null
-          condicao_pagamento: string | null
-          contato_cargo: string | null
-          contato_nome: string | null
+          cancel_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          code: string
           created_at: string
           created_by: string | null
-          data_abertura: string | null
-          email: string | null
+          distribution_operation_id: string | null
+          finished_at: string | null
+          finished_by: string | null
           id: string
-          inativado_em: string | null
-          inativado_por: string | null
-          limite_credito: number | null
-          logradouro: string | null
-          motivo_inativacao: string | null
-          natureza_juridica: string | null
-          nome_fantasia: string | null
-          numero: string | null
-          observacoes: string | null
-          observacoes_comerciais: string | null
-          prazo_padrao_dias: number | null
-          razao_social: string | null
-          situacao_cadastral: string | null
-          tabela_frete_id: string | null
-          telefone: string | null
-          uf: string | null
+          operator_id: string | null
+          paused_at: string | null
+          route_date: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["route_status"]
           updated_at: string
-          updated_by: string | null
-          whatsapp: string | null
         }
         Insert: {
-          api_payload?: Json | null
-          ativo?: boolean
-          bairro?: string | null
-          categorias?: string[]
-          cep?: string | null
-          cidade?: string | null
-          cnae_descricao?: string | null
-          cnae_principal?: string | null
-          cnpj: string
-          complemento?: string | null
-          condicao_pagamento?: string | null
-          contato_cargo?: string | null
-          contato_nome?: string | null
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          code: string
           created_at?: string
           created_by?: string | null
-          data_abertura?: string | null
-          email?: string | null
+          distribution_operation_id?: string | null
+          finished_at?: string | null
+          finished_by?: string | null
           id?: string
-          inativado_em?: string | null
-          inativado_por?: string | null
-          limite_credito?: number | null
-          logradouro?: string | null
-          motivo_inativacao?: string | null
-          natureza_juridica?: string | null
-          nome_fantasia?: string | null
-          numero?: string | null
-          observacoes?: string | null
-          observacoes_comerciais?: string | null
-          prazo_padrao_dias?: number | null
-          razao_social?: string | null
-          situacao_cadastral?: string | null
-          tabela_frete_id?: string | null
-          telefone?: string | null
-          uf?: string | null
+          operator_id?: string | null
+          paused_at?: string | null
+          route_date: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["route_status"]
           updated_at?: string
-          updated_by?: string | null
-          whatsapp?: string | null
         }
         Update: {
-          api_payload?: Json | null
-          ativo?: boolean
-          bairro?: string | null
-          categorias?: string[]
-          cep?: string | null
-          cidade?: string | null
-          cnae_descricao?: string | null
-          cnae_principal?: string | null
-          cnpj?: string
-          complemento?: string | null
-          condicao_pagamento?: string | null
-          contato_cargo?: string | null
-          contato_nome?: string | null
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          code?: string
           created_at?: string
           created_by?: string | null
-          data_abertura?: string | null
-          email?: string | null
+          distribution_operation_id?: string | null
+          finished_at?: string | null
+          finished_by?: string | null
           id?: string
-          inativado_em?: string | null
-          inativado_por?: string | null
-          limite_credito?: number | null
-          logradouro?: string | null
-          motivo_inativacao?: string | null
-          natureza_juridica?: string | null
-          nome_fantasia?: string | null
-          numero?: string | null
-          observacoes?: string | null
-          observacoes_comerciais?: string | null
-          prazo_padrao_dias?: number | null
-          razao_social?: string | null
-          situacao_cadastral?: string | null
-          tabela_frete_id?: string | null
-          telefone?: string | null
-          uf?: string | null
+          operator_id?: string | null
+          paused_at?: string | null
+          route_date?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["route_status"]
           updated_at?: string
-          updated_by?: string | null
-          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routes_distribution_operation_id_fkey"
+            columns: ["distribution_operation_id"]
+            isOneToOne: false
+            referencedRelation: "distribution_operations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routes_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "operators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_catalog: {
+        Row: {
+          aguia_description: string | null
+          billing_description: string | null
+          billing_value: number | null
+          code: string
+          created_at: string
+          field_rules: Json
+          id: string
+          is_active: boolean
+          name: string
+          pricing_type: string
+          requires_identity: boolean
+          sort_order: number
+          unit_value: number | null
+          updated_at: string
+        }
+        Insert: {
+          aguia_description?: string | null
+          billing_description?: string | null
+          billing_value?: number | null
+          code: string
+          created_at?: string
+          field_rules: Json
+          id?: string
+          is_active?: boolean
+          name: string
+          pricing_type: string
+          requires_identity?: boolean
+          sort_order?: number
+          unit_value?: number | null
+          updated_at?: string
+        }
+        Update: {
+          aguia_description?: string | null
+          billing_description?: string | null
+          billing_value?: number | null
+          code?: string
+          created_at?: string
+          field_rules?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          pricing_type?: string
+          requires_identity?: boolean
+          sort_order?: number
+          unit_value?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_catalog_pricing_fk"
+            columns: ["pricing_type"]
+            isOneToOne: false
+            referencedRelation: "service_pricing_models"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
+      service_execution_evidence: {
+        Row: {
+          created_at: string
+          execution_id: string
+          id: string
+          mime_type: string | null
+          size_bytes: number | null
+          storage_path: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          execution_id: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          execution_id?: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_execution_evidence_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "service_executions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_executions: {
+        Row: {
+          cancel_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          client_name: string | null
+          created_at: string
+          extra_description: string | null
+          id: string
+          notes: string | null
+          operator_id: string
+          origin: string
+          performed_at: string
+          performed_by: string
+          phone: string | null
+          plate: string | null
+          pricing_type_snapshot: string
+          quantity: number
+          registered_by: string | null
+          route_id: string | null
+          route_stop_id: string | null
+          rule_snapshot: Json | null
+          service_id: string
+          service_name_snapshot: string
+          settlement_id: string | null
+          status: Database["public"]["Enums"]["execution_status"]
+          total_value: number | null
+          unit_value_snapshot: number | null
+          value_defined_at: string | null
+          value_defined_by: string | null
+        }
+        Insert: {
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          client_name?: string | null
+          created_at?: string
+          extra_description?: string | null
+          id: string
+          notes?: string | null
+          operator_id: string
+          origin?: string
+          performed_at?: string
+          performed_by: string
+          phone?: string | null
+          plate?: string | null
+          pricing_type_snapshot: string
+          quantity?: number
+          registered_by?: string | null
+          route_id?: string | null
+          route_stop_id?: string | null
+          rule_snapshot?: Json | null
+          service_id: string
+          service_name_snapshot: string
+          settlement_id?: string | null
+          status: Database["public"]["Enums"]["execution_status"]
+          total_value?: number | null
+          unit_value_snapshot?: number | null
+          value_defined_at?: string | null
+          value_defined_by?: string | null
+        }
+        Update: {
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          client_name?: string | null
+          created_at?: string
+          extra_description?: string | null
+          id?: string
+          notes?: string | null
+          operator_id?: string
+          origin?: string
+          performed_at?: string
+          performed_by?: string
+          phone?: string | null
+          plate?: string | null
+          pricing_type_snapshot?: string
+          quantity?: number
+          registered_by?: string | null
+          route_id?: string | null
+          route_stop_id?: string | null
+          rule_snapshot?: Json | null
+          service_id?: string
+          service_name_snapshot?: string
+          settlement_id?: string | null
+          status?: Database["public"]["Enums"]["execution_status"]
+          total_value?: number | null
+          unit_value_snapshot?: number | null
+          value_defined_at?: string | null
+          value_defined_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_executions_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "operators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_executions_registered_by_fkey"
+            columns: ["registered_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_executions_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_executions_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "service_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_executions_settlement_id_fkey"
+            columns: ["settlement_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_settlements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_price_history: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          id: string
+          new_value: number | null
+          old_value: number | null
+          service_id: string
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          new_value?: number | null
+          old_value?: number | null
+          service_id: string
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          new_value?: number | null
+          old_value?: number | null
+          service_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_price_history_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "service_catalog"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_pricing_models: {
+        Row: {
+          awaits_admin_value: boolean
+          code: string
+          description: string
+          is_active: boolean
+          label: string
+          sort_order: number
+          uses_quantity_rules: boolean
+          uses_unit_value: boolean
+        }
+        Insert: {
+          awaits_admin_value?: boolean
+          code: string
+          description: string
+          is_active?: boolean
+          label: string
+          sort_order?: number
+          uses_quantity_rules?: boolean
+          uses_unit_value?: boolean
+        }
+        Update: {
+          awaits_admin_value?: boolean
+          code?: string
+          description?: string
+          is_active?: boolean
+          label?: string
+          sort_order?: number
+          uses_quantity_rules?: boolean
+          uses_unit_value?: boolean
         }
         Relationships: []
       }
-      px_registry_contatos: {
-        Row: {
-          cargo: string | null
-          cliente_id: string
-          created_at: string
-          created_by: string | null
-          email: string | null
-          endereco_id: string | null
-          id: string
-          is_principal: boolean
-          nome: string
-          observacoes: string | null
-          setor: string
-          telefone: string | null
-          updated_at: string
-          updated_by: string | null
-          whatsapp: string | null
-        }
-        Insert: {
-          cargo?: string | null
-          cliente_id: string
-          created_at?: string
-          created_by?: string | null
-          email?: string | null
-          endereco_id?: string | null
-          id?: string
-          is_principal?: boolean
-          nome: string
-          observacoes?: string | null
-          setor?: string
-          telefone?: string | null
-          updated_at?: string
-          updated_by?: string | null
-          whatsapp?: string | null
-        }
-        Update: {
-          cargo?: string | null
-          cliente_id?: string
-          created_at?: string
-          created_by?: string | null
-          email?: string | null
-          endereco_id?: string | null
-          id?: string
-          is_principal?: boolean
-          nome?: string
-          observacoes?: string | null
-          setor?: string
-          telefone?: string | null
-          updated_at?: string
-          updated_by?: string | null
-          whatsapp?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "px_registry_contatos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "px_cliente_saldo"
-            referencedColumns: ["cliente_id"]
-          },
-          {
-            foreignKeyName: "px_registry_contatos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "px_registry_clientes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "px_registry_contatos_endereco_id_fkey"
-            columns: ["endereco_id"]
-            isOneToOne: false
-            referencedRelation: "px_registry_enderecos"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      px_registry_enderecos: {
-        Row: {
-          apelido: string | null
-          ativo: boolean
-          bairro: string | null
-          cep: string | null
-          cidade: string | null
-          cliente_id: string
-          complemento: string | null
-          created_at: string
-          created_by: string | null
-          id: string
-          is_padrao_destinatario: boolean
-          is_padrao_remetente: boolean
-          janela_recebimento: string | null
-          logradouro: string | null
-          numero: string | null
-          observacoes: string | null
-          ponto_referencia: string | null
-          restricoes: string[]
-          tipo: string
-          uf: string | null
-          updated_at: string
-          updated_by: string | null
-        }
-        Insert: {
-          apelido?: string | null
-          ativo?: boolean
-          bairro?: string | null
-          cep?: string | null
-          cidade?: string | null
-          cliente_id: string
-          complemento?: string | null
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          is_padrao_destinatario?: boolean
-          is_padrao_remetente?: boolean
-          janela_recebimento?: string | null
-          logradouro?: string | null
-          numero?: string | null
-          observacoes?: string | null
-          ponto_referencia?: string | null
-          restricoes?: string[]
-          tipo?: string
-          uf?: string | null
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Update: {
-          apelido?: string | null
-          ativo?: boolean
-          bairro?: string | null
-          cep?: string | null
-          cidade?: string | null
-          cliente_id?: string
-          complemento?: string | null
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          is_padrao_destinatario?: boolean
-          is_padrao_remetente?: boolean
-          janela_recebimento?: string | null
-          logradouro?: string | null
-          numero?: string | null
-          observacoes?: string | null
-          ponto_referencia?: string | null
-          restricoes?: string[]
-          tipo?: string
-          uf?: string | null
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "px_registry_enderecos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "px_cliente_saldo"
-            referencedColumns: ["cliente_id"]
-          },
-          {
-            foreignKeyName: "px_registry_enderecos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "px_registry_clientes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      px_registry_vinculos: {
-        Row: {
-          cliente_id: string
-          id: string
-          sistema_key: string
-          vinculado_em: string
-          vinculado_por: string | null
-        }
-        Insert: {
-          cliente_id: string
-          id?: string
-          sistema_key: string
-          vinculado_em?: string
-          vinculado_por?: string | null
-        }
-        Update: {
-          cliente_id?: string
-          id?: string
-          sistema_key?: string
-          vinculado_em?: string
-          vinculado_por?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "px_registry_vinculos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "px_cliente_saldo"
-            referencedColumns: ["cliente_id"]
-          },
-          {
-            foreignKeyName: "px_registry_vinculos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "px_registry_clientes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      px_shared_resources: {
-        Row: {
-          created_at: string
-          empresa_origem_id: string
-          empresas_compartilhadas: string[]
-          id: string
-          recurso_id: string
-          tipo: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          empresa_origem_id: string
-          empresas_compartilhadas?: string[]
-          id?: string
-          recurso_id: string
-          tipo: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          empresa_origem_id?: string
-          empresas_compartilhadas?: string[]
-          id?: string
-          recurso_id?: string
-          tipo?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "px_shared_resources_empresa_origem_id_fkey"
-            columns: ["empresa_origem_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      px_usuario_perfis: {
-        Row: {
-          created_at: string
-          perfil_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          perfil_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          perfil_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "px_usuario_perfis_perfil_id_fkey"
-            columns: ["perfil_id"]
-            isOneToOne: false
-            referencedRelation: "px_perfis"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      px_usuario_sistemas: {
-        Row: {
-          ativo: boolean
-          created_at: string
-          id: string
-          sistema_key: string
-          ultimo_acesso: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          ativo?: boolean
-          created_at?: string
-          id?: string
-          sistema_key: string
-          ultimo_acesso?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          ativo?: boolean
-          created_at?: string
-          id?: string
-          sistema_key?: string
-          ultimo_acesso?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      px_usuarios_meta: {
-        Row: {
-          cargo: string | null
-          created_at: string
-          empresa_id: string | null
-          login: string
-          nome: string
-          observacoes: string | null
-          situacao: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          cargo?: string | null
-          created_at?: string
-          empresa_id?: string | null
-          login: string
-          nome: string
-          observacoes?: string | null
-          situacao?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          cargo?: string | null
-          created_at?: string
-          empresa_id?: string | null
-          login?: string
-          nome?: string
-          observacoes?: string | null
-          situacao?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "px_usuarios_meta_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      risks: {
-        Row: {
-          categoria: string | null
-          created_at: string
-          created_by: string | null
-          descricao: string | null
-          empresa_id: string | null
-          id: string
-          impacto: number | null
-          mitigacao: string | null
-          probabilidade: number | null
-          responsavel: string | null
-          status: string | null
-          titulo: string
-          updated_at: string
-        }
-        Insert: {
-          categoria?: string | null
-          created_at?: string
-          created_by?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
-          id?: string
-          impacto?: number | null
-          mitigacao?: string | null
-          probabilidade?: number | null
-          responsavel?: string | null
-          status?: string | null
-          titulo: string
-          updated_at?: string
-        }
-        Update: {
-          categoria?: string | null
-          created_at?: string
-          created_by?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
-          id?: string
-          impacto?: number | null
-          mitigacao?: string | null
-          probabilidade?: number | null
-          responsavel?: string | null
-          status?: string | null
-          titulo?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "risks_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      timeline_events: {
+      service_quantity_rules: {
         Row: {
           created_at: string
           created_by: string | null
-          data_evento: string
-          descricao: string | null
-          empresa_id: string | null
           id: string
-          tipo: string | null
-          titulo: string
-          updated_at: string
+          is_active: boolean
+          max_qty: number | null
+          min_qty: number
+          per_unit: boolean
+          service_id: string
+          value: number
         }
         Insert: {
           created_at?: string
           created_by?: string | null
-          data_evento: string
-          descricao?: string | null
-          empresa_id?: string | null
           id?: string
-          tipo?: string | null
-          titulo: string
-          updated_at?: string
+          is_active?: boolean
+          max_qty?: number | null
+          min_qty: number
+          per_unit?: boolean
+          service_id: string
+          value: number
         }
         Update: {
           created_at?: string
           created_by?: string | null
-          data_evento?: string
-          descricao?: string | null
-          empresa_id?: string | null
           id?: string
-          tipo?: string | null
-          titulo?: string
-          updated_at?: string
+          is_active?: boolean
+          max_qty?: number | null
+          min_qty?: number
+          per_unit?: boolean
+          service_id?: string
+          value?: number
         }
         Relationships: [
           {
-            foreignKeyName: "timeline_events_empresa_id_fkey"
-            columns: ["empresa_id"]
+            foreignKeyName: "service_quantity_rules_service_id_fkey"
+            columns: ["service_id"]
             isOneToOne: false
-            referencedRelation: "empresas"
+            referencedRelation: "service_catalog"
             referencedColumns: ["id"]
           },
         ]
       }
-      tms_cancelamentos: {
+      tracking_settings: {
         Row: {
-          created_at: string
-          escopo: string
-          id: string
-          minuta_id: string | null
-          motivo: string
-          motivo_texto: string | null
-          usuario_id: string | null
-          viagem_id: string | null
-          volume_id: string | null
+          id: boolean
+          max_accuracy_m: number
+          max_age_h: number
+          max_future_skew_s: number
+          max_speed_mps: number
+          presence_ttl_seconds: number
+          retention_days: number
         }
         Insert: {
-          created_at?: string
-          escopo: string
-          id?: string
-          minuta_id?: string | null
-          motivo: string
-          motivo_texto?: string | null
-          usuario_id?: string | null
-          viagem_id?: string | null
-          volume_id?: string | null
+          id?: boolean
+          max_accuracy_m?: number
+          max_age_h?: number
+          max_future_skew_s?: number
+          max_speed_mps?: number
+          presence_ttl_seconds?: number
+          retention_days?: number
         }
         Update: {
-          created_at?: string
-          escopo?: string
-          id?: string
-          minuta_id?: string | null
-          motivo?: string
-          motivo_texto?: string | null
-          usuario_id?: string | null
-          viagem_id?: string | null
-          volume_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_cancelamentos_minuta_id_fkey"
-            columns: ["minuta_id"]
-            isOneToOne: false
-            referencedRelation: "tms_minutas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_cancelamentos_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "tms_viagens"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_cancelamentos_volume_id_fkey"
-            columns: ["volume_id"]
-            isOneToOne: false
-            referencedRelation: "tms_volumes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_clientes: {
-        Row: {
-          ativo: boolean
-          cidade: string | null
-          cnpj: string | null
-          contato: string | null
-          created_at: string
-          email: string | null
-          empresa_id: string | null
-          endereco: string | null
-          id: string
-          nome: string
-          observacoes: string | null
-          registry_id: string | null
-          telefone: string | null
-          uf: string | null
-          updated_at: string
-        }
-        Insert: {
-          ativo?: boolean
-          cidade?: string | null
-          cnpj?: string | null
-          contato?: string | null
-          created_at?: string
-          email?: string | null
-          empresa_id?: string | null
-          endereco?: string | null
-          id?: string
-          nome: string
-          observacoes?: string | null
-          registry_id?: string | null
-          telefone?: string | null
-          uf?: string | null
-          updated_at?: string
-        }
-        Update: {
-          ativo?: boolean
-          cidade?: string | null
-          cnpj?: string | null
-          contato?: string | null
-          created_at?: string
-          email?: string | null
-          empresa_id?: string | null
-          endereco?: string | null
-          id?: string
-          nome?: string
-          observacoes?: string | null
-          registry_id?: string | null
-          telefone?: string | null
-          uf?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_clientes_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_clientes_registry_id_fkey"
-            columns: ["registry_id"]
-            isOneToOne: false
-            referencedRelation: "px_cliente_saldo"
-            referencedColumns: ["cliente_id"]
-          },
-          {
-            foreignKeyName: "tms_clientes_registry_id_fkey"
-            columns: ["registry_id"]
-            isOneToOne: false
-            referencedRelation: "px_registry_clientes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_eventos: {
-        Row: {
-          created_at: string
-          id: string
-          minuta_id: string | null
-          operador_id: string | null
-          origem_evento: string | null
-          payload: Json
-          tipo: Database["public"]["Enums"]["tms_evento_tipo"]
-          volume_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          minuta_id?: string | null
-          operador_id?: string | null
-          origem_evento?: string | null
-          payload?: Json
-          tipo: Database["public"]["Enums"]["tms_evento_tipo"]
-          volume_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          minuta_id?: string | null
-          operador_id?: string | null
-          origem_evento?: string | null
-          payload?: Json
-          tipo?: Database["public"]["Enums"]["tms_evento_tipo"]
-          volume_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_eventos_minuta_id_fkey"
-            columns: ["minuta_id"]
-            isOneToOne: false
-            referencedRelation: "tms_minutas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_eventos_volume_id_fkey"
-            columns: ["volume_id"]
-            isOneToOne: false
-            referencedRelation: "tms_volumes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_lm_comprovantes: {
-        Row: {
-          assinatura_base64: string | null
-          created_at: string
-          criado_por: string | null
-          entrega_id: string
-          foto_fachada: string | null
-          foto_mercadoria: string | null
-          id: string
-          lat: number | null
-          lng: number | null
-          observacoes: string | null
-          recebedor_doc: string | null
-          recebedor_nome: string | null
-        }
-        Insert: {
-          assinatura_base64?: string | null
-          created_at?: string
-          criado_por?: string | null
-          entrega_id: string
-          foto_fachada?: string | null
-          foto_mercadoria?: string | null
-          id?: string
-          lat?: number | null
-          lng?: number | null
-          observacoes?: string | null
-          recebedor_doc?: string | null
-          recebedor_nome?: string | null
-        }
-        Update: {
-          assinatura_base64?: string | null
-          created_at?: string
-          criado_por?: string | null
-          entrega_id?: string
-          foto_fachada?: string | null
-          foto_mercadoria?: string | null
-          id?: string
-          lat?: number | null
-          lng?: number | null
-          observacoes?: string | null
-          recebedor_doc?: string | null
-          recebedor_nome?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_lm_comprovantes_entrega_id_fkey"
-            columns: ["entrega_id"]
-            isOneToOne: false
-            referencedRelation: "tms_lm_entregas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_lm_entregas: {
-        Row: {
-          cep: string | null
-          cidade: string | null
-          cliente_id: string | null
-          concluida_em: string | null
-          created_at: string
-          cubagem: number
-          destinatario: string
-          distancia_km: number | null
-          endereco: string | null
-          id: string
-          janela_fim: string | null
-          janela_inicio: string | null
-          lat: number | null
-          lng: number | null
-          minuta_id: string | null
-          observacoes: string | null
-          ordem: number
-          peso: number
-          prioridade: string
-          qtd_volumes: number
-          rota_id: string | null
-          status: string
-          telefone: string | null
-          tempo_estimado_min: number | null
-          uf: string | null
-          updated_at: string
-          valor_mercadoria: number
-        }
-        Insert: {
-          cep?: string | null
-          cidade?: string | null
-          cliente_id?: string | null
-          concluida_em?: string | null
-          created_at?: string
-          cubagem?: number
-          destinatario: string
-          distancia_km?: number | null
-          endereco?: string | null
-          id?: string
-          janela_fim?: string | null
-          janela_inicio?: string | null
-          lat?: number | null
-          lng?: number | null
-          minuta_id?: string | null
-          observacoes?: string | null
-          ordem?: number
-          peso?: number
-          prioridade?: string
-          qtd_volumes?: number
-          rota_id?: string | null
-          status?: string
-          telefone?: string | null
-          tempo_estimado_min?: number | null
-          uf?: string | null
-          updated_at?: string
-          valor_mercadoria?: number
-        }
-        Update: {
-          cep?: string | null
-          cidade?: string | null
-          cliente_id?: string | null
-          concluida_em?: string | null
-          created_at?: string
-          cubagem?: number
-          destinatario?: string
-          distancia_km?: number | null
-          endereco?: string | null
-          id?: string
-          janela_fim?: string | null
-          janela_inicio?: string | null
-          lat?: number | null
-          lng?: number | null
-          minuta_id?: string | null
-          observacoes?: string | null
-          ordem?: number
-          peso?: number
-          prioridade?: string
-          qtd_volumes?: number
-          rota_id?: string | null
-          status?: string
-          telefone?: string | null
-          tempo_estimado_min?: number | null
-          uf?: string | null
-          updated_at?: string
-          valor_mercadoria?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_lm_entregas_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "tms_clientes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_lm_entregas_minuta_id_fkey"
-            columns: ["minuta_id"]
-            isOneToOne: false
-            referencedRelation: "tms_minutas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_lm_entregas_rota_id_fkey"
-            columns: ["rota_id"]
-            isOneToOne: false
-            referencedRelation: "tms_lm_rotas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_lm_eventos: {
-        Row: {
-          created_at: string
-          criado_por: string | null
-          entrega_id: string | null
-          id: string
-          payload: Json
-          rota_id: string | null
-          tipo: string
-        }
-        Insert: {
-          created_at?: string
-          criado_por?: string | null
-          entrega_id?: string | null
-          id?: string
-          payload?: Json
-          rota_id?: string | null
-          tipo: string
-        }
-        Update: {
-          created_at?: string
-          criado_por?: string | null
-          entrega_id?: string | null
-          id?: string
-          payload?: Json
-          rota_id?: string | null
-          tipo?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_lm_eventos_entrega_id_fkey"
-            columns: ["entrega_id"]
-            isOneToOne: false
-            referencedRelation: "tms_lm_entregas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_lm_eventos_rota_id_fkey"
-            columns: ["rota_id"]
-            isOneToOne: false
-            referencedRelation: "tms_lm_rotas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_lm_motoristas: {
-        Row: {
-          ativo: boolean
-          cnh: string | null
-          cpf: string | null
-          created_at: string
-          empresa_id: string | null
-          id: string
-          nome: string
-          telefone: string | null
-          updated_at: string
-        }
-        Insert: {
-          ativo?: boolean
-          cnh?: string | null
-          cpf?: string | null
-          created_at?: string
-          empresa_id?: string | null
-          id?: string
-          nome: string
-          telefone?: string | null
-          updated_at?: string
-        }
-        Update: {
-          ativo?: boolean
-          cnh?: string | null
-          cpf?: string | null
-          created_at?: string
-          empresa_id?: string | null
-          id?: string
-          nome?: string
-          telefone?: string | null
-          updated_at?: string
+          id?: boolean
+          max_accuracy_m?: number
+          max_age_h?: number
+          max_future_skew_s?: number
+          max_speed_mps?: number
+          presence_ttl_seconds?: number
+          retention_days?: number
         }
         Relationships: []
-      }
-      tms_lm_ocorrencias: {
-        Row: {
-          created_at: string
-          criado_por: string | null
-          descricao: string | null
-          entrega_id: string
-          foto_url: string | null
-          id: string
-          tipo: string
-        }
-        Insert: {
-          created_at?: string
-          criado_por?: string | null
-          descricao?: string | null
-          entrega_id: string
-          foto_url?: string | null
-          id?: string
-          tipo: string
-        }
-        Update: {
-          created_at?: string
-          criado_por?: string | null
-          descricao?: string | null
-          entrega_id?: string
-          foto_url?: string | null
-          id?: string
-          tipo?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_lm_ocorrencias_entrega_id_fkey"
-            columns: ["entrega_id"]
-            isOneToOne: false
-            referencedRelation: "tms_lm_entregas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_lm_rotas: {
-        Row: {
-          cidade: string | null
-          created_at: string
-          data: string
-          empresa_id: string | null
-          faturavel: boolean
-          hora_finalizada: string | null
-          hora_prevista: string | null
-          hora_saida: string | null
-          id: string
-          motorista_id: string | null
-          numero: number
-          observacoes: string | null
-          status: string
-          updated_at: string
-          valor_rota: number
-          veiculo_id: string | null
-        }
-        Insert: {
-          cidade?: string | null
-          created_at?: string
-          data?: string
-          empresa_id?: string | null
-          faturavel?: boolean
-          hora_finalizada?: string | null
-          hora_prevista?: string | null
-          hora_saida?: string | null
-          id?: string
-          motorista_id?: string | null
-          numero?: number
-          observacoes?: string | null
-          status?: string
-          updated_at?: string
-          valor_rota?: number
-          veiculo_id?: string | null
-        }
-        Update: {
-          cidade?: string | null
-          created_at?: string
-          data?: string
-          empresa_id?: string | null
-          faturavel?: boolean
-          hora_finalizada?: string | null
-          hora_prevista?: string | null
-          hora_saida?: string | null
-          id?: string
-          motorista_id?: string | null
-          numero?: number
-          observacoes?: string | null
-          status?: string
-          updated_at?: string
-          valor_rota?: number
-          veiculo_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_lm_rotas_motorista_id_fkey"
-            columns: ["motorista_id"]
-            isOneToOne: false
-            referencedRelation: "tms_lm_motoristas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_lm_rotas_veiculo_id_fkey"
-            columns: ["veiculo_id"]
-            isOneToOne: false
-            referencedRelation: "tms_lm_veiculos"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_lm_veiculos: {
-        Row: {
-          ativo: boolean
-          capacidade_kg: number
-          capacidade_m3: number
-          created_at: string
-          empresa_id: string | null
-          id: string
-          modelo: string | null
-          placa: string
-          updated_at: string
-        }
-        Insert: {
-          ativo?: boolean
-          capacidade_kg?: number
-          capacidade_m3?: number
-          created_at?: string
-          empresa_id?: string | null
-          id?: string
-          modelo?: string | null
-          placa: string
-          updated_at?: string
-        }
-        Update: {
-          ativo?: boolean
-          capacidade_kg?: number
-          capacidade_m3?: number
-          created_at?: string
-          empresa_id?: string | null
-          id?: string
-          modelo?: string | null
-          placa?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      tms_lm_volumes: {
-        Row: {
-          carregado_em: string | null
-          codigo: string
-          created_at: string
-          entrega_id: string
-          entregue_em: string | null
-          id: string
-          separado_em: string | null
-          status: string
-        }
-        Insert: {
-          carregado_em?: string | null
-          codigo: string
-          created_at?: string
-          entrega_id: string
-          entregue_em?: string | null
-          id?: string
-          separado_em?: string | null
-          status?: string
-        }
-        Update: {
-          carregado_em?: string | null
-          codigo?: string
-          created_at?: string
-          entrega_id?: string
-          entregue_em?: string | null
-          id?: string
-          separado_em?: string | null
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_lm_volumes_entrega_id_fkey"
-            columns: ["entrega_id"]
-            isOneToOne: false
-            referencedRelation: "tms_lm_entregas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_minutas: {
-        Row: {
-          cancelada_em: string | null
-          cancelada_por: string | null
-          cancelamento_motivo: string | null
-          cliente_id: string | null
-          created_at: string
-          cubagem: number
-          data_coleta: string | null
-          destinatario: Json
-          destino: string
-          empresa_id: string | null
-          id: string
-          janela_atendimento: string | null
-          necessita_coleta: boolean
-          numero: number
-          observacoes: string | null
-          origem: string
-          peso: number
-          peso_cubado: number
-          peso_taxado: number
-          prazo_dias: number
-          qtd_volumes: number
-          remetente: Json
-          responsavel_id: string | null
-          status: string
-          status_financeiro: string
-          tipo_mercadoria: string | null
-          updated_at: string
-          valor_frete: number
-          valor_mercadoria: number
-        }
-        Insert: {
-          cancelada_em?: string | null
-          cancelada_por?: string | null
-          cancelamento_motivo?: string | null
-          cliente_id?: string | null
-          created_at?: string
-          cubagem?: number
-          data_coleta?: string | null
-          destinatario?: Json
-          destino: string
-          empresa_id?: string | null
-          id?: string
-          janela_atendimento?: string | null
-          necessita_coleta?: boolean
-          numero?: number
-          observacoes?: string | null
-          origem: string
-          peso?: number
-          peso_cubado?: number
-          peso_taxado?: number
-          prazo_dias?: number
-          qtd_volumes?: number
-          remetente?: Json
-          responsavel_id?: string | null
-          status?: string
-          status_financeiro?: string
-          tipo_mercadoria?: string | null
-          updated_at?: string
-          valor_frete?: number
-          valor_mercadoria?: number
-        }
-        Update: {
-          cancelada_em?: string | null
-          cancelada_por?: string | null
-          cancelamento_motivo?: string | null
-          cliente_id?: string | null
-          created_at?: string
-          cubagem?: number
-          data_coleta?: string | null
-          destinatario?: Json
-          destino?: string
-          empresa_id?: string | null
-          id?: string
-          janela_atendimento?: string | null
-          necessita_coleta?: boolean
-          numero?: number
-          observacoes?: string | null
-          origem?: string
-          peso?: number
-          peso_cubado?: number
-          peso_taxado?: number
-          prazo_dias?: number
-          qtd_volumes?: number
-          remetente?: Json
-          responsavel_id?: string | null
-          status?: string
-          status_financeiro?: string
-          tipo_mercadoria?: string | null
-          updated_at?: string
-          valor_frete?: number
-          valor_mercadoria?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_minutas_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "tms_clientes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_minutas_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_tabela_frete: {
-        Row: {
-          ativo: boolean
-          cliente_id: string | null
-          created_at: string
-          destino: string | null
-          faixa_cubagem_max: number | null
-          faixa_cubagem_min: number | null
-          faixa_peso_max: number | null
-          faixa_peso_min: number | null
-          id: string
-          nome: string
-          origem: string | null
-          prazo_dias: number
-          regra: Json
-          tipo_cobranca: string
-          updated_at: string
-          valor_coleta: number
-          valor_entrega: number
-          valor_kg: number
-          valor_m3: number
-          valor_minimo: number
-        }
-        Insert: {
-          ativo?: boolean
-          cliente_id?: string | null
-          created_at?: string
-          destino?: string | null
-          faixa_cubagem_max?: number | null
-          faixa_cubagem_min?: number | null
-          faixa_peso_max?: number | null
-          faixa_peso_min?: number | null
-          id?: string
-          nome: string
-          origem?: string | null
-          prazo_dias?: number
-          regra?: Json
-          tipo_cobranca?: string
-          updated_at?: string
-          valor_coleta?: number
-          valor_entrega?: number
-          valor_kg?: number
-          valor_m3?: number
-          valor_minimo?: number
-        }
-        Update: {
-          ativo?: boolean
-          cliente_id?: string | null
-          created_at?: string
-          destino?: string | null
-          faixa_cubagem_max?: number | null
-          faixa_cubagem_min?: number | null
-          faixa_peso_max?: number | null
-          faixa_peso_min?: number | null
-          id?: string
-          nome?: string
-          origem?: string | null
-          prazo_dias?: number
-          regra?: Json
-          tipo_cobranca?: string
-          updated_at?: string
-          valor_coleta?: number
-          valor_entrega?: number
-          valor_kg?: number
-          valor_m3?: number
-          valor_minimo?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_tabela_frete_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "tms_clientes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_viagem_eventos: {
-        Row: {
-          codigo: string | null
-          created_at: string
-          id: string
-          motivo: string | null
-          operador_id: string | null
-          payload: Json
-          tipo: string
-          viagem_id: string
-          volume_id: string | null
-        }
-        Insert: {
-          codigo?: string | null
-          created_at?: string
-          id?: string
-          motivo?: string | null
-          operador_id?: string | null
-          payload?: Json
-          tipo: string
-          viagem_id: string
-          volume_id?: string | null
-        }
-        Update: {
-          codigo?: string | null
-          created_at?: string
-          id?: string
-          motivo?: string | null
-          operador_id?: string | null
-          payload?: Json
-          tipo?: string
-          viagem_id?: string
-          volume_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_viagem_eventos_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "tms_viagens"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_viagem_eventos_volume_id_fkey"
-            columns: ["volume_id"]
-            isOneToOne: false
-            referencedRelation: "tms_volumes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_viagem_minutas: {
-        Row: {
-          created_at: string
-          minuta_id: string
-          viagem_id: string
-        }
-        Insert: {
-          created_at?: string
-          minuta_id: string
-          viagem_id: string
-        }
-        Update: {
-          created_at?: string
-          minuta_id?: string
-          viagem_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_viagem_minutas_minuta_id_fkey"
-            columns: ["minuta_id"]
-            isOneToOne: false
-            referencedRelation: "tms_minutas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_viagem_minutas_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "tms_viagens"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_viagens: {
-        Row: {
-          codigo: string
-          created_at: string
-          cubagem_prev: number
-          data_prevista: string | null
-          destino: string
-          empresa_id: string | null
-          finalizada_em: string | null
-          id: string
-          iniciada_em: string | null
-          motorista_id: string | null
-          motorista_nome: string | null
-          observacoes: string | null
-          operador_id: string | null
-          origem: string
-          peso_emb: number
-          peso_prev: number
-          placa: string | null
-          qtd_volumes_emb: number
-          qtd_volumes_prev: number
-          resumo: Json | null
-          rota: string | null
-          status: string
-          tempo_operacao_min: number | null
-          updated_at: string
-          veiculo_id: string | null
-        }
-        Insert: {
-          codigo: string
-          created_at?: string
-          cubagem_prev?: number
-          data_prevista?: string | null
-          destino: string
-          empresa_id?: string | null
-          finalizada_em?: string | null
-          id?: string
-          iniciada_em?: string | null
-          motorista_id?: string | null
-          motorista_nome?: string | null
-          observacoes?: string | null
-          operador_id?: string | null
-          origem: string
-          peso_emb?: number
-          peso_prev?: number
-          placa?: string | null
-          qtd_volumes_emb?: number
-          qtd_volumes_prev?: number
-          resumo?: Json | null
-          rota?: string | null
-          status?: string
-          tempo_operacao_min?: number | null
-          updated_at?: string
-          veiculo_id?: string | null
-        }
-        Update: {
-          codigo?: string
-          created_at?: string
-          cubagem_prev?: number
-          data_prevista?: string | null
-          destino?: string
-          empresa_id?: string | null
-          finalizada_em?: string | null
-          id?: string
-          iniciada_em?: string | null
-          motorista_id?: string | null
-          motorista_nome?: string | null
-          observacoes?: string | null
-          operador_id?: string | null
-          origem?: string
-          peso_emb?: number
-          peso_prev?: number
-          placa?: string | null
-          qtd_volumes_emb?: number
-          qtd_volumes_prev?: number
-          resumo?: Json | null
-          rota?: string | null
-          status?: string
-          tempo_operacao_min?: number | null
-          updated_at?: string
-          veiculo_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_viagens_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_viagens_motorista_id_fkey"
-            columns: ["motorista_id"]
-            isOneToOne: false
-            referencedRelation: "tms_lm_motoristas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_viagens_veiculo_id_fkey"
-            columns: ["veiculo_id"]
-            isOneToOne: false
-            referencedRelation: "tms_lm_veiculos"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tms_volumes: {
-        Row: {
-          altura: number | null
-          bloqueado: boolean
-          bloqueio_motivo: string | null
-          codigo: string
-          comprimento: number | null
-          created_at: string
-          embarcado_em: string | null
-          embarcado_por: string | null
-          hub_atual: string | null
-          id: string
-          largura: number | null
-          minuta_id: string
-          numero: number
-          peso: number
-          status: string
-          updated_at: string
-          viagem_id: string | null
-        }
-        Insert: {
-          altura?: number | null
-          bloqueado?: boolean
-          bloqueio_motivo?: string | null
-          codigo: string
-          comprimento?: number | null
-          created_at?: string
-          embarcado_em?: string | null
-          embarcado_por?: string | null
-          hub_atual?: string | null
-          id?: string
-          largura?: number | null
-          minuta_id: string
-          numero: number
-          peso?: number
-          status?: string
-          updated_at?: string
-          viagem_id?: string | null
-        }
-        Update: {
-          altura?: number | null
-          bloqueado?: boolean
-          bloqueio_motivo?: string | null
-          codigo?: string
-          comprimento?: number | null
-          created_at?: string
-          embarcado_em?: string | null
-          embarcado_por?: string | null
-          hub_atual?: string | null
-          id?: string
-          largura?: number | null
-          minuta_id?: string
-          numero?: number
-          peso?: number
-          status?: string
-          updated_at?: string
-          viagem_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tms_volumes_minuta_id_fkey"
-            columns: ["minuta_id"]
-            isOneToOne: false
-            referencedRelation: "tms_minutas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tms_volumes_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "tms_viagens"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       user_roles: {
         Row: {
-          created_at: string
           id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
-          created_at?: string
           id?: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
-          created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
         Relationships: []
       }
-      valuation_models: {
+      weekly_settlements: {
         Row: {
-          ano_base: number | null
-          created_at: string
-          created_by: string | null
-          crescimento_perpetuo: number | null
-          ebitda: number | null
-          empresa_id: string | null
-          fcf_anual: number | null
+          closed_at: string
+          closed_by: string
+          executions_count: number
           id: string
-          metodologia: string
-          multiplo: number | null
-          premissas: string | null
-          updated_at: string
-          valor_calculado: number | null
-          wacc: number | null
+          operator_id: string
+          reopened_at: string | null
+          reopened_by: string | null
+          reopened_reason: string | null
+          status: string
+          total_value: number
+          week_end: string
+          week_start: string
         }
         Insert: {
-          ano_base?: number | null
-          created_at?: string
-          created_by?: string | null
-          crescimento_perpetuo?: number | null
-          ebitda?: number | null
-          empresa_id?: string | null
-          fcf_anual?: number | null
+          closed_at?: string
+          closed_by: string
+          executions_count: number
           id?: string
-          metodologia: string
-          multiplo?: number | null
-          premissas?: string | null
-          updated_at?: string
-          valor_calculado?: number | null
-          wacc?: number | null
+          operator_id: string
+          reopened_at?: string | null
+          reopened_by?: string | null
+          reopened_reason?: string | null
+          status?: string
+          total_value: number
+          week_end: string
+          week_start: string
         }
         Update: {
-          ano_base?: number | null
-          created_at?: string
-          created_by?: string | null
-          crescimento_perpetuo?: number | null
-          ebitda?: number | null
-          empresa_id?: string | null
-          fcf_anual?: number | null
+          closed_at?: string
+          closed_by?: string
+          executions_count?: number
           id?: string
-          metodologia?: string
-          multiplo?: number | null
-          premissas?: string | null
-          updated_at?: string
-          valor_calculado?: number | null
-          wacc?: number | null
+          operator_id?: string
+          reopened_at?: string | null
+          reopened_by?: string | null
+          reopened_reason?: string | null
+          status?: string
+          total_value?: number
+          week_end?: string
+          week_start?: string
         }
         Relationships: [
           {
-            foreignKeyName: "valuation_models_empresa_id_fkey"
-            columns: ["empresa_id"]
+            foreignKeyName: "weekly_settlements_operator_id_fkey"
+            columns: ["operator_id"]
             isOneToOne: false
-            referencedRelation: "empresas"
+            referencedRelation: "operators"
             referencedColumns: ["id"]
           },
         ]
       }
     }
     Views: {
-      px_cliente_saldo: {
-        Row: {
-          bloqueado: boolean | null
-          cliente_id: string | null
-          disponivel: number | null
-          liberado_ate: string | null
-          limite_credito: number | null
-          motivo_bloqueio: string | null
-          utilizado: number | null
-          vencido: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
+      _aguia_can_view_client: {
+        Args: { p_client_id: string }
+        Returns: boolean
+      }
+      _aguia_can_view_motorcycle: {
+        Args: { p_motorcycle_id: string }
+        Returns: boolean
+      }
+      _audit: {
+        Args: {
+          _action: string
+          _details?: Json
+          _entity: string
+          _entity_id: string
+        }
+        Returns: undefined
+      }
+      _audit_full: {
+        Args: {
+          _action: string
+          _after: Json
+          _before: Json
+          _details?: Json
+          _entity: string
+          _entity_id: string
+        }
+        Returns: undefined
+      }
+      _can_operate_route: { Args: { _route: string }; Returns: boolean }
+      _can_read_stop_evidence: { Args: { p_name: string }; Returns: boolean }
+      _can_upload_stop_evidence: { Args: { p_name: string }; Returns: boolean }
+      _can_view_stop: { Args: { p_stop: string }; Returns: boolean }
+      _cancel_route_executions: {
+        Args: {
+          p_keep: string[]
+          p_reason: string
+          p_route: string
+          p_where_stop: string
+        }
+        Returns: undefined
+      }
+      _compact_sequence: { Args: { _route: string }; Returns: undefined }
+      _compute_price: {
+        Args: {
+          _qty: number
+          _s: Database["public"]["Tables"]["service_catalog"]["Row"]
+        }
+        Returns: Json
+      }
+      _field_rules_default: {
+        Args: { _pricing: string; _requires_identity: boolean }
+        Returns: Json
+      }
+      _finance_admin: { Args: never; Returns: boolean }
+      _is_route_operator: { Args: { _route: string }; Returns: boolean }
+      _local_date: { Args: { _t: string }; Returns: string }
+      _lock_route: {
+        Args: { p_route_id: string }
+        Returns: {
+          cancel_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          code: string
+          created_at: string
+          created_by: string | null
+          distribution_operation_id: string | null
+          finished_at: string | null
+          finished_by: string | null
+          id: string
+          operator_id: string | null
+          paused_at: string | null
+          route_date: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["route_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "routes"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      _norm_plate: { Args: { _p: string }; Returns: string }
+      _notify: {
+        Args: {
+          _body: string
+          _category?: string
+          _data: Json
+          _entity_id?: string
+          _entity_type?: string
+          _event_key: string
+          _title: string
+          _type: string
+          _user: string
+        }
+        Returns: undefined
+      }
+      _ntf_stop_event: {
+        Args: { _route: string; _stop: string; _type: string }
+        Returns: undefined
+      }
+      _occ_event: {
+        Args: {
+          _details?: Json
+          _from: Database["public"]["Enums"]["occurrence_status"]
+          _occ: string
+          _route: string
+          _to: Database["public"]["Enums"]["occurrence_status"]
+          _type: string
+        }
+        Returns: undefined
+      }
+      _operator_is_assignable: {
+        Args: { p_operator_id: string }
+        Returns: boolean
+      }
+      _operator_user: { Args: { _operator: string }; Returns: string }
+      _plannable: {
+        Args: { _s: Database["public"]["Enums"]["occurrence_status"] }
+        Returns: boolean
+      }
+      _push_secret_ok: { Args: { p_secret: string }; Returns: boolean }
+      _refresh_settlement: {
+        Args: { p_settlement: string }
+        Returns: undefined
+      }
+      _require: { Args: { _permission: string }; Returns: undefined }
+      _rpc_on: { Args: never; Returns: undefined }
+      _rule_overlaps: {
+        Args: { _except: string; _max: number; _min: number; _service: string }
+        Returns: boolean
+      }
+      _sync_stop_services: { Args: { p_stop_id: string }; Returns: number }
+      _tracking_end: {
+        Args: { _reason: string; _route: string }
+        Returns: undefined
+      }
+      _tracking_start: {
+        Args: { _operator: string; _route: string }
+        Returns: undefined
+      }
+      _valid_field_rules: { Args: { _f: Json }; Returns: boolean }
+      _valid_plate: { Args: { _p: string }; Returns: boolean }
+      _visible_route_status: {
+        Args: { _s: Database["public"]["Enums"]["route_status"] }
+        Returns: boolean
+      }
+      _week_start: { Args: { _d: string }; Returns: string }
+      add_occurrence_to_route: {
+        Args: { p_occurrence_id: string; p_route_id: string }
+        Returns: Json
+      }
+      admin_create_user: {
+        Args: {
+          p_email: string
+          p_full_name: string
+          p_password: string
+          p_roles: Database["public"]["Enums"]["app_role"][]
+        }
+        Returns: string
+      }
+      admin_delete_user: { Args: { p_user_id: string }; Returns: undefined }
+      admin_quote_service: {
+        Args: { p_quantity?: number; p_service_id: string }
+        Returns: Json
+      }
+      admin_register_service_execution: {
+        Args: {
+          p_client_name: string
+          p_description: string
+          p_extra_value?: number
+          p_id: string
+          p_notes: string
+          p_operator_id: string
+          p_performed_at: string
+          p_phone: string
+          p_plate: string
+          p_quantity: number
+          p_service_id: string
+        }
+        Returns: Json
+      }
+      admin_update_user: {
+        Args: {
+          p_email: string
+          p_full_name: string
+          p_password: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      assignable_operator_ids: { Args: never; Returns: string[] }
+      cancel_execution: {
+        Args: { p_id: string; p_reason?: string }
+        Returns: undefined
+      }
+      cancel_route: {
+        Args: { p_reason: string; p_route_id: string }
+        Returns: Json
+      }
+      claim_push_batch: {
+        Args: { p_limit?: number; p_secret: string }
+        Returns: Json
+      }
+      close_week: { Args: { p_week_start: string }; Returns: Json }
+      complete_push_batch: {
+        Args: {
+          p_gone: string[]
+          p_ok: string[]
+          p_results: Json
+          p_secret: string
+        }
+        Returns: undefined
+      }
+      complete_stop: {
+        Args: {
+          p_capture: Json
+          p_evidence: Json
+          p_idempotency_key: string
+          p_notes: string
+          p_result: Database["public"]["Enums"]["occurrence_status"]
+          p_stop_id: string
+        }
+        Returns: Json
+      }
+      correct_stop_result: {
+        Args: {
+          p_reason: string
+          p_result: Database["public"]["Enums"]["occurrence_status"]
+          p_stop_id: string
+        }
+        Returns: undefined
+      }
+      create_route: {
+        Args: {
+          p_operator_id: string
+          p_route_date: string
+          p_service_ids?: string[]
+        }
+        Returns: Json
+      }
+      dashboard_summary: { Args: { p_date?: string }; Returns: Json }
+      deactivate_quantity_rule: { Args: { p_id: string }; Returns: undefined }
+      delete_client: {
+        Args: { p_id: string; p_reason?: string }
+        Returns: Json
+      }
+      delete_execution: { Args: { p_id: string }; Returns: Json }
+      delete_import_batch: {
+        Args: { p_id: string; p_with_occurrences?: boolean }
+        Returns: Json
+      }
+      delete_motorcycle: {
+        Args: { p_id: string; p_reason?: string }
+        Returns: Json
+      }
+      delete_occurrence: {
+        Args: { p_id: string; p_reason?: string }
+        Returns: Json
+      }
+      delete_operator: {
+        Args: { p_id: string; p_reason?: string }
+        Returns: Json
+      }
+      delete_quantity_rule: { Args: { p_id: string }; Returns: Json }
+      delete_route: { Args: { p_route_id: string }; Returns: Json }
+      delete_service: { Args: { p_id: string }; Returns: Json }
+      distribute_occurrences: {
+        Args: {
+          p_occurrence_ids: string[]
+          p_operation_id: string
+          p_operator_ids: string[]
+          p_route_date: string
+          p_service_ids?: string[]
+        }
+        Returns: Json
+      }
+      finish_route: { Args: { p_route_id: string }; Returns: Json }
+      get_active_tracking_sessions: {
+        Args: never
+        Returns: {
+          accuracy: number
+          captured_at: string
+          device_state: string
+          device_state_at: string
+          heading: number
+          last_heartbeat_at: string
+          last_location_at: string
+          last_seen_at: string
+          latitude: number
+          longitude: number
+          operator_id: string
+          operator_name: string
+          platform: string
+          presence: string
+          presence_ttl_seconds: number
+          route_code: string
+          route_id: string
+          route_status: Database["public"]["Enums"]["route_status"]
+          sequence_number: number
+          server_received_at: string
+          session_id: string
+          speed: number
+          started_at: string
+        }[]
+      }
+      get_my_tracking_session: { Args: never; Returns: Json }
+      has_permission: { Args: { _permission: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -3160,39 +1870,262 @@ export type Database = {
         }
         Returns: boolean
       }
-      has_system_access: {
-        Args: { _sistema: string; _user_id: string }
-        Returns: boolean
+      heartbeat_route_tracking: {
+        Args: { p_details?: Json; p_event?: string; p_session_id: string }
+        Returns: Json
       }
-      is_executive: { Args: { _user_id: string }; Returns: boolean }
+      import_occurrences: {
+        Args: { p_filename: string; p_rows: Json }
+        Returns: Json
+      }
+      import_occurrences_text: {
+        Args: { p_rows: Json; p_source: string }
+        Returns: Json
+      }
+      link_operator_user: {
+        Args: { p_operator_id: string; p_profile_id: string }
+        Returns: undefined
+      }
+      log_export: {
+        Args: { p_filters: Json; p_report: string; p_rows: number }
+        Returns: undefined
+      }
+      mark_notifications_read: { Args: { p_ids?: string[] }; Returns: number }
+      move_occurrence: {
+        Args: {
+          p_from_route_id: string
+          p_occurrence_id: string
+          p_to_route_id: string
+        }
+        Returns: Json
+      }
+      my_earnings: { Args: { p_from: string; p_to: string }; Returns: Json }
+      my_operator_id: { Args: never; Returns: string }
+      my_permissions: {
+        Args: never
+        Returns: {
+          permission: string
+        }[]
+      }
+      my_roles: {
+        Args: never
+        Returns: {
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
+      }
+      my_route_services: { Args: never; Returns: Json }
+      pause_route: {
+        Args: { p_reason?: string; p_route_id: string }
+        Returns: undefined
+      }
+      purge_route_tracking_points: { Args: never; Returns: number }
+      push_public_key: { Args: never; Returns: string }
+      quote_service: {
+        Args: { p_quantity?: number; p_service_id: string }
+        Returns: Json
+      }
+      register_push_subscription: {
+        Args: {
+          p_auth: string
+          p_endpoint: string
+          p_p256dh: string
+          p_user_agent: string
+        }
+        Returns: undefined
+      }
+      register_service_execution: {
+        Args: {
+          p_client_name: string
+          p_description: string
+          p_evidence: Json
+          p_id: string
+          p_notes: string
+          p_phone: string
+          p_plate: string
+          p_quantity: number
+          p_route_id: string
+          p_service_id: string
+        }
+        Returns: Json
+      }
+      release_occurrence: {
+        Args: { p_occurrence_id: string; p_reason?: string }
+        Returns: undefined
+      }
+      reopen_route: {
+        Args: { p_reason: string; p_route_id: string }
+        Returns: Json
+      }
+      reopen_settlement: {
+        Args: { p_id: string; p_reason: string }
+        Returns: undefined
+      }
+      reorder_route_stops: {
+        Args: { p_route_id: string; p_stops: Json }
+        Returns: undefined
+      }
+      reorder_services: { Args: { p_ids: string[] }; Returns: undefined }
+      report_summary: { Args: { p_from: string; p_to: string }; Returns: Json }
+      resume_route: { Args: { p_route_id: string }; Returns: undefined }
+      route_services_overview: { Args: { p_route_id: string }; Returns: Json }
+      send_operator_message: {
+        Args: {
+          p_body: string
+          p_operator_id: string
+          p_request_id: string
+          p_title: string
+        }
+        Returns: undefined
+      }
+      service_catalog_overview: { Args: never; Returns: Json }
+      service_history: {
+        Args: { p_limit?: number; p_service_id: string }
+        Returns: Json
+      }
+      services_summary: {
+        Args: { p_from: string; p_group: string; p_to: string }
+        Returns: Json
+      }
+      set_execution_value: {
+        Args: { p_id: string; p_reason?: string; p_value: number }
+        Returns: undefined
+      }
+      set_operator_active: {
+        Args: { p_active: boolean; p_id: string }
+        Returns: undefined
+      }
+      set_quantity_rule_active: {
+        Args: { p_active: boolean; p_id: string }
+        Returns: undefined
+      }
+      set_route_services: {
+        Args: { p_route_id: string; p_service_ids: string[] }
+        Returns: Json
+      }
+      set_service_descriptions: {
+        Args: {
+          p_aguia_description: string
+          p_billing_description: string
+          p_billing_value: number
+          p_id: string
+        }
+        Returns: undefined
+      }
+      set_user_active: {
+        Args: { p_active: boolean; p_user_id: string }
+        Returns: undefined
+      }
+      set_user_roles: {
+        Args: {
+          p_roles: Database["public"]["Enums"]["app_role"][]
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      settlement_preview: { Args: { p_week_start: string }; Returns: Json }
+      start_route: { Args: { p_route_id: string }; Returns: undefined }
+      start_stop: { Args: { p_stop_id: string }; Returns: undefined }
+      unregister_push_subscription: {
+        Args: { p_endpoint: string }
+        Returns: undefined
+      }
+      update_execution: {
+        Args: {
+          p_client_name: string
+          p_description: string
+          p_id: string
+          p_notes: string
+          p_performed_at: string
+          p_phone: string
+          p_plate: string
+          p_quantity: number
+          p_total_value: number
+        }
+        Returns: Json
+      }
+      update_route: {
+        Args: {
+          p_operator_id: string
+          p_route_date: string
+          p_route_id: string
+        }
+        Returns: Json
+      }
+      update_route_location: {
+        Args: { p_device_id: string; p_points: Json; p_session_id: string }
+        Returns: Json
+      }
+      update_user_profile: {
+        Args: { p_full_name: string; p_user_id: string }
+        Returns: undefined
+      }
+      upsert_quantity_rule: {
+        Args: {
+          p_id: string
+          p_max: number
+          p_min: number
+          p_per_unit: boolean
+          p_service_id: string
+          p_value: number
+        }
+        Returns: string
+      }
+      upsert_service: {
+        Args: {
+          p_field_rules?: Json
+          p_id: string
+          p_is_active: boolean
+          p_name: string
+          p_pricing_type: string
+          p_requires_identity: boolean
+          p_unit_value: number
+        }
+        Returns: string
+      }
     }
     Enums: {
       app_role:
-        | "master_admin"
         | "admin"
-        | "socio"
-        | "diretor"
-        | "gestor"
-        | "consultor"
-        | "auditor"
-      plan_horizon: "1_ano" | "3_anos" | "5_anos" | "10_anos"
-      tipo_custo: "fixo" | "variavel" | "unico" | "recorrente"
-      tms_evento_tipo:
-        | "solicitado"
-        | "coleta_programada"
-        | "coletado"
-        | "recebido_hub_origem"
-        | "conferido"
-        | "etiquetado"
-        | "embarcado"
-        | "em_transferencia"
-        | "recebido_hub_destino"
-        | "separado"
-        | "em_rota"
-        | "saiu_entrega"
-        | "entregue"
-        | "ocorrencia"
-        | "devolucao"
+        | "manager"
+        | "operator"
+        | "financial"
+        | "viewer"
+        | "driver"
+      execution_status: "awaiting_value" | "approved" | "settled" | "cancelled"
+      import_status:
+        | "draft"
+        | "validated"
+        | "committed"
+        | "failed"
+        | "cancelled"
+      occurrence_status:
+        | "pending"
+        | "available"
+        | "assigned"
+        | "in_route"
+        | "located"
+        | "recovered"
+        | "not_located"
+        | "wrong_address"
+        | "rescheduled"
+        | "cancelled"
+        | "finished"
+      priority_level: "low" | "normal" | "high" | "urgent"
+      route_status:
+        | "draft"
+        | "planned"
+        | "assigned"
+        | "in_progress"
+        | "paused"
+        | "finished"
+        | "cancelled"
+      route_stop_status:
+        | "pending"
+        | "in_progress"
+        | "completed"
+        | "skipped"
+        | "cancelled"
+      service_pricing_type: "fixed" | "quantity" | "extra"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3321,33 +2254,46 @@ export const Constants = {
   public: {
     Enums: {
       app_role: [
-        "master_admin",
         "admin",
-        "socio",
-        "diretor",
-        "gestor",
-        "consultor",
-        "auditor",
+        "manager",
+        "operator",
+        "financial",
+        "viewer",
+        "driver",
       ],
-      plan_horizon: ["1_ano", "3_anos", "5_anos", "10_anos"],
-      tipo_custo: ["fixo", "variavel", "unico", "recorrente"],
-      tms_evento_tipo: [
-        "solicitado",
-        "coleta_programada",
-        "coletado",
-        "recebido_hub_origem",
-        "conferido",
-        "etiquetado",
-        "embarcado",
-        "em_transferencia",
-        "recebido_hub_destino",
-        "separado",
-        "em_rota",
-        "saiu_entrega",
-        "entregue",
-        "ocorrencia",
-        "devolucao",
+      execution_status: ["awaiting_value", "approved", "settled", "cancelled"],
+      import_status: ["draft", "validated", "committed", "failed", "cancelled"],
+      occurrence_status: [
+        "pending",
+        "available",
+        "assigned",
+        "in_route",
+        "located",
+        "recovered",
+        "not_located",
+        "wrong_address",
+        "rescheduled",
+        "cancelled",
+        "finished",
       ],
+      priority_level: ["low", "normal", "high", "urgent"],
+      route_status: [
+        "draft",
+        "planned",
+        "assigned",
+        "in_progress",
+        "paused",
+        "finished",
+        "cancelled",
+      ],
+      route_stop_status: [
+        "pending",
+        "in_progress",
+        "completed",
+        "skipped",
+        "cancelled",
+      ],
+      service_pricing_type: ["fixed", "quantity", "extra"],
     },
   },
 } as const
